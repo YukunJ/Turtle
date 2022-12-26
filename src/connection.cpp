@@ -1,0 +1,100 @@
+/**
+ * @file connection.cpp
+ * @author Yukun J
+ * @expectation this file should be compatible to compile in C++
+ * program on Linux
+ * @init_date Dec 25 2022
+ *
+ * This is an implementation file implementing the TCP connection, which
+ * supports callback functionality
+ */
+
+#include "connection.h"
+
+namespace TURTLE_SERVER {
+
+Connection::Connection(Looper *looper, std::unique_ptr<Socket> socket)
+    : looper_(looper), socket_(std::move(socket)), read_buffer_(std::make_unique<Buffer>()), write_buffer_(std::make_unique<Buffer>()), events_(0), revents_(0) {}
+
+auto Connection::GetFd() const -> int { return socket_->GetFd(); }
+
+auto Connection::GetSocket() -> Socket * { return socket_.get(); }
+
+void Connection::SetEvents(uint32_t events) { events_ = events; }
+
+auto Connection::GetEvents() const -> uint32_t { return events_; }
+
+void Connection::SetRevents(uint32_t revents) { revents_ = revents; }
+
+auto Connection::GetRevents() const -> uint32_t { return revents_; }
+
+void Connection::SetInPoller(bool in_poller) { in_poller_ = in_poller; }
+
+auto Connection::InPoller() const -> bool { return in_poller_; }
+
+void Connection::SetCallback(
+    const std::function<void(Connection *)> &callback) {
+  callback_ = [callback, this] { return callback(this); };
+}
+
+auto Connection::GetCallback() -> std::function<void()> { return callback_; }
+
+auto Connection::GetLooper() -> Looper * { return looper_; }
+
+auto Connection::GetReadBuffer() -> Buffer * { return read_buffer_.get(); }
+
+auto Connection::GetWriteBuffer() -> Buffer * { return write_buffer_.get(); }
+
+auto Connection::GetReadBufferSize() -> size_t { return read_buffer_->Size(); }
+
+auto Connection::GetWriteBufferSize() -> size_t {
+  return write_buffer_->Size();
+}
+
+void Connection::WriteToReadBuffer(const char *buf, size_t size) {
+  read_buffer_->Append(buf, size);
+}
+
+void Connection::WriteToWriteBuffer(const char *buf, size_t size) {
+  write_buffer_->Append(buf, size);
+}
+
+void Connection::WriteToReadBuffer(const std::string &str) {
+  read_buffer_->Append(str);
+}
+
+void Connection::WriteToWriteBuffer(const std::string &str) {
+  write_buffer_->Append(str);
+}
+
+auto Connection::Read() -> const char * { return read_buffer_->buf_.data(); }
+
+auto Connection::ReadAsString() const -> std::string {
+  return read_buffer_->ToString();
+}
+
+void Connection::Send() {
+  // robust write
+  size_t curr_write = 0;
+  size_t write;
+  const size_t to_write = GetWriteBufferSize();
+  const char *buf = write_buffer_->buf_.data();
+  while (curr_write < to_write) {
+    if ((write = send(GetFd(), buf + curr_write, to_write - curr_write, 0)) <=
+        0) {
+      if (errno != EINTR) {
+        perror("Send(): send error and error is not EINTR");
+        exit(EXIT_FAILURE);
+      }
+      write = 0;
+    }
+    curr_write += write;
+  }
+  ClearWriteBuffer();
+}
+
+void Connection::ClearReadBuffer() { read_buffer_->Clear(); }
+
+void Connection::ClearWriteBuffer() { write_buffer_->Clear(); }
+
+}  // namespace TURTLE_SERVER
