@@ -38,7 +38,7 @@ ThreadPool::ThreadPool(int size) {
 
 ThreadPool::~ThreadPool() {
   Exit();
-  for (auto& worker : threads_) {
+  for (auto &worker : threads_) {
     if (worker.joinable()) {
       worker.join();
     }

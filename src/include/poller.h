@@ -9,8 +9,8 @@
  * which actively does epolling on a collection of socket descriptors to be
  * monitored
  */
-#ifndef TURTLE_SERVER_POLLER_H
-#define TURTLE_SERVER_POLLER_H
+#ifndef SRC_INCLUDE_POLLER_H_
+#define SRC_INCLUDE_POLLER_H_
 
 #include <sys/epoll.h>
 
@@ -36,16 +36,16 @@ class Poller {
 
   NON_COPYABLE(Poller);
 
-  void AddConnection(Connection* conn);
+  void AddConnection(Connection *conn);
 
-  auto Poll(int timeout = -1) -> std::vector<Connection*>;
+  auto Poll(int timeout = -1) -> std::vector<Connection *>;
 
   auto GetPollSize() const -> uint64_t;
 
  private:
   int poll_fd_;
-  struct epoll_event* poll_events_{nullptr};
+  struct epoll_event *poll_events_{nullptr};
   uint64_t poll_size_;
 };
 }  // namespace TURTLE_SERVER
-#endif  // TURTLE_SERVER_POLLER_H
+#endif  // SRC_INCLUDE_POLLER_H_

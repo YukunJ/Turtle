@@ -29,12 +29,12 @@ Socket::Socket(bool is_ipv4) : fd_(-1) {
 
 Socket::Socket(int fd) : fd_(fd) {}
 
-Socket::Socket(Socket&& other) noexcept {
+Socket::Socket(Socket &&other) noexcept {
   fd_ = other.fd_;
   other.fd_ = -1;
 }
 
-Socket& Socket::operator=(Socket&& other) noexcept {
+Socket &Socket::operator=(Socket &&other) noexcept {
   if (fd_ != -1) {
     close(fd_);
   }
@@ -52,7 +52,7 @@ Socket::~Socket() {
 
 auto Socket::GetFd() const -> int { return fd_; }
 
-void Socket::Connect(NetAddress& server_address) {
+void Socket::Connect(NetAddress &server_address) {
   assert(fd_ != -1 && "cannot Connect() with an invalid fd");
   if (connect(fd_, server_address.YieldAddr(),
               *server_address.YieldAddrLen()) == -1) {
@@ -61,7 +61,7 @@ void Socket::Connect(NetAddress& server_address) {
   }
 }
 
-void Socket::Bind(NetAddress& server_address) {
+void Socket::Bind(NetAddress &server_address) {
   assert(fd_ != -1 && "cannot Bind() with an invalid fd");
   if (bind(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) ==
       -1) {
@@ -78,7 +78,7 @@ void Socket::Listen() {
   }
 }
 
-auto Socket::Accept(NetAddress& client_address) -> int {
+auto Socket::Accept(NetAddress &client_address) -> int {
   assert(fd_ != -1 && "cannot Accept() with an invalid fd");
   int client_fd = -1;
   if ((client_fd = accept(fd_, client_address.YieldAddr(),

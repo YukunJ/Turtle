@@ -1,5 +1,5 @@
 /**
- * @file looper.h
+ * @file looper.cpp
  * @author Yukun J
  * @expectation this header file should be compatible to compile in C++
  * program on Linux
@@ -13,16 +13,26 @@
 
 namespace TURTLE_SERVER {
 
-Looper::Looper(ThreadPool* pool)
+Looper::Looper(ThreadPool *pool)
     : poller_(std::make_unique<Poller>()), pool_(pool) {}
 
 void Looper::Loop() {
+  if (!acceptor_) {
+    throw std::runtime_error(
+        "Looper: Loop() called before setting up acceptor");
+  }
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
-    for (auto& conn : ready_connections) {
+    for (auto &conn : ready_connections) {
       auto fut = DispatchTask(conn->GetCallback());
     }
   }
+}
+
+void Looper::AddAcceptor(std::unique_ptr<Acceptor> acceptor) {
+  acceptor_ = std::move(acceptor);
+  std::unique_lock<std::mutex> lock(mtx_);
+  poller_->AddConnection(acceptor_->GetAcceptorConnection());
 }
 
 void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
@@ -42,10 +52,12 @@ auto Looper::DeleteConnection(int fd) -> bool {
   return true;
 }
 
-auto Looper::DispatchTask(const std::function<void()>& task)
+auto Looper::DispatchTask(const std::function<void()> &task)
     -> std::future<void> {
   return pool_->SubmitTask(task);
 }
+
+auto Looper::GetAcceptor() -> Acceptor * { return acceptor_.get(); }
 
 void Looper::Exit() { exit_ = true; }
 

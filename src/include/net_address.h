@@ -9,8 +9,8 @@
  * of an IP address and a port
  */
 
-#ifndef TURTLE_SERVER_NET_ADDRESS_H
-#define TURTLE_SERVER_NET_ADDRESS_H
+#ifndef SRC_INCLUDE_NET_ADDRESS_H_
+#define SRC_INCLUDE_NET_ADDRESS_H_
 
 #include <arpa/inet.h>
 
@@ -54,4 +54,4 @@ class NetAddress {
 };
 
 }  // namespace TURTLE_SERVER
-#endif  // TURTLE_SERVER_NET_ADDRESS_H
+#endif  // SRC_INCLUDE_NET_ADDRESS_H_

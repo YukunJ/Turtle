@@ -15,6 +15,37 @@ PROJECT(TurtleServer
         )
 
 ######################################################################################################################
+# Search Path Specification
+######################################################################################################################
+
+# Formatting utility search path
+set(TURTLE_SERVER_BUILD_SUPPORT_DIR "${CMAKE_SOURCE_DIR}/build_support")
+set(TURTLE_SERVER_CLANG_SEARCH_PATH "/usr/local/bin" "/usr/bin" "/usr/local/opt/llvm/bin" "/usr/local/opt/llvm@8/bin" "/usr/local/Cellar/llvm/8.0.1/bin")
+
+# clang-format
+IF (NOT DEFINED CLANG_FORMAT_BIN)
+    # attempt to find the binary if user did not specify
+    FIND_PROGRAM(CLANG_FORMAT_BIN
+            NAMES clang-format clang-format-8
+            HINTS ${TURTLE_SERVER_CLANG_SEARCH_PATH})
+ENDIF ()
+IF ("${CLANG_FORMAT_BIN}" STREQUAL "CLANG_FORMAT_BIN-NOTFOUND")
+    MESSAGE(WARNING "TurtleServer/main couldn't find clang-format.")
+ELSE ()
+    MESSAGE(STATUS "TurtleServer/main found clang-format at ${CLANG_FORMAT_BIN}")
+ENDIF ()
+
+# cpplint
+FIND_PROGRAM(CPPLINT_BIN
+        NAMES cpplint cpplint.py
+        HINTS ${TURTLE_SERVER_BUILD_SUPPORT_DIR})
+IF ("${CPPLINT_BIN}" STREQUAL "CPPLINT_BIN-NOTFOUND")
+    MESSAGE(WARNING "TurtleServer/main couldn't find cpplint.")
+ELSE ()
+    MESSAGE(STATUS "TurtleServer/main found cpplint at ${CPPLINT_BIN}")
+ENDIF ()
+
+######################################################################################################################
 # Include
 ######################################################################################################################
 
@@ -52,17 +83,16 @@ ADD_LIBRARY(looper src/looper.cpp)
 # Build the thread pool
 ADD_LIBRARY(thread_pool src/thread_pool.cpp)
 
+# Build the acceptor
+ADD_LIBRARY(acceptor src/acceptor.cpp)
+
 # Build the echo server
-ADD_EXECUTABLE(echo_server echo_server.cpp)
-TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller looper thread_pool)
+ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
+TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller looper acceptor thread_pool)
 
 # Build the echo client
-ADD_EXECUTABLE(echo_client echo_client.cpp)
-TARGET_LINK_LIBRARIES(echo_client buffer net_address socket connection poller looper thread_pool)
-
-# Build the main driver
-ADD_EXECUTABLE(${PROJECT_NAME} turtle_server.cpp)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} buffer net_address socket connection poller looper thread_pool)
+ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
+TARGET_LINK_LIBRARIES(echo_client buffer net_address socket connection poller looper acceptor thread_pool)
 
 ######################################################################################################################
 # Format + Check
@@ -70,9 +100,25 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} buffer net_address socket connection polle
 
 SET(FORMAT_STYLE google)
 
-# Runs clang format and updates files in place.
+# "make format"
 add_custom_target(format
         find ${PROJECT_SOURCE_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
         |
         xargs clang-format -style=${FORMAT_STYLE} -i
 )
+
+
+# "make cpplint"
+file(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.cpp"
+        )
+
+add_custom_target(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
+        ${CPPLINT_BIN}
+        --verbose=2 --quiet
+        --linelength=120
+        --filter=-legal/copyright,-build/include_subdir,-readability/casting
+        )

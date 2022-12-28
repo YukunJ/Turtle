@@ -9,16 +9,17 @@
  * control looping for the server
  */
 
-#ifndef TURTLE_SERVER_LOOPER_H
-#define TURTLE_SERVER_LOOPER_H
+#ifndef SRC_INCLUDE_LOOPER_H_
+#define SRC_INCLUDE_LOOPER_H_
 
 #include <atomic>
 #include <functional>
-#include <future>
+#include <future>  // NOLINT
 #include <map>
 #include <memory>
-#include <mutex>
+#include <mutex>  // NOLINT
 
+#include "acceptor.h"
 #include "connection.h"
 #include "poller.h"
 #include "thread_pool.h"
@@ -28,13 +29,14 @@
 
 namespace TURTLE_SERVER {
 
+class Acceptor;
 /**
  * This Looper acts as the central coordinator between executor (ThreadPool) and
  * event polling (Poller)
  * */
 class Looper {
  public:
-  explicit Looper(ThreadPool* pool);
+  explicit Looper(ThreadPool *pool);
 
   ~Looper() = default;
 
@@ -42,20 +44,25 @@ class Looper {
 
   void Loop();
 
+  void AddAcceptor(std::unique_ptr<Acceptor> acceptor);
+
   void AddConnection(std::unique_ptr<Connection> new_conn);
 
   auto DeleteConnection(int fd) -> bool;
 
-  auto DispatchTask(const std::function<void()>& task) -> std::future<void>;
+  auto DispatchTask(const std::function<void()> &task) -> std::future<void>;
+
+  auto GetAcceptor() -> Acceptor *;
 
   void Exit();
 
  private:
-  ThreadPool* pool_;
+  ThreadPool *pool_;
   std::unique_ptr<Poller> poller_;
   std::mutex mtx_;
+  std::unique_ptr<Acceptor> acceptor_{nullptr};
   std::map<int, std::unique_ptr<Connection>> connections_;
   std::atomic<bool> exit_{false};
 };
 }  // namespace TURTLE_SERVER
-#endif  // TURTLE_SERVER_LOOPER_H
+#endif  // SRC_INCLUDE_LOOPER_H_

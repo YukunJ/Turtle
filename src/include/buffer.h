@@ -9,8 +9,8 @@
  * bytes in order
  */
 
-#ifndef TURTLE_SERVER_BUFFER_H
-#define TURTLE_SERVER_BUFFER_H
+#ifndef SRC_INCLUDE_BUFFER_H_
+#define SRC_INCLUDE_BUFFER_H_
 
 #include <string>
 #include <vector>
@@ -53,4 +53,4 @@ class Buffer {
 };
 
 }  // namespace TURTLE_SERVER
-#endif  // TURTLE_SERVER_BUFFER_H
+#endif  // SRC_INCLUDE_BUFFER_H_

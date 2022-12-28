@@ -14,7 +14,12 @@
 namespace TURTLE_SERVER {
 
 Connection::Connection(Looper *looper, std::unique_ptr<Socket> socket)
-    : looper_(looper), socket_(std::move(socket)), read_buffer_(std::make_unique<Buffer>()), write_buffer_(std::make_unique<Buffer>()), events_(0), revents_(0) {}
+    : looper_(looper),
+      socket_(std::move(socket)),
+      read_buffer_(std::make_unique<Buffer>()),
+      write_buffer_(std::make_unique<Buffer>()),
+      events_(0),
+      revents_(0) {}
 
 auto Connection::GetFd() const -> int { return socket_->GetFd(); }
 
@@ -71,6 +76,36 @@ auto Connection::Read() -> const char * { return read_buffer_->buf_.data(); }
 
 auto Connection::ReadAsString() const -> std::string {
   return read_buffer_->ToString();
+}
+
+auto Connection::Recv() -> std::pair<ssize_t, bool> {
+  // read all available bytes, since Edge-trigger
+  int from_fd = GetFd();
+  ssize_t read = 0;
+  char buf[TEMP_BUF_SIZE + 1];
+  memset(buf, 0, sizeof(buf));
+  while (true) {
+    ssize_t curr_read = recv(from_fd, buf, TEMP_BUF_SIZE, 0);
+    if (curr_read > 0) {
+      read += curr_read;
+      WriteToReadBuffer(buf, curr_read);
+      memset(buf, 0, sizeof(buf));
+    } else if (curr_read == 0) {
+      // the client has exit
+      std::cout << "Client exits: " << from_fd << std::endl;
+      return {read, true};
+    } else if (curr_read == -1 && errno == EINTR) {
+      // normal interrupt
+      continue;
+    } else if (curr_read == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+      // all data read
+      break;
+    } else {
+      perror("HandleConnection: recv() error");
+      exit(EXIT_FAILURE);
+    }
+  }
+  return {read, false};
 }
 
 void Connection::Send() {

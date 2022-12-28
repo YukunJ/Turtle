@@ -22,7 +22,8 @@ class EchoClient {
   explicit EchoClient(NetAddress server_address) {
     auto client_socket = std::make_unique<Socket>();
     client_socket->Connect(server_address);
-    client_connection = std::make_unique<Connection>(nullptr, std::move(client_socket));
+    client_connection =
+        std::make_unique<Connection>(nullptr, std::move(client_socket));
   }
 
   void Begin() {

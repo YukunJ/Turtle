@@ -11,17 +11,19 @@
 
 #include <algorithm>
 #include <atomic>
-#include <condition_variable>
+#include <condition_variable>  // NOLINT
 #include <functional>
-#include <future>
-#include <mutex>
+#include <future>  // NOLINT
+#include <memory>
+#include <mutex>  // NOLINT
 #include <queue>
-#include <thread>
+#include <thread>  // NOLINT
+#include <utility>
 #include <vector>
 
 #include "utils.h"
-#ifndef TURTLE_SERVER_THREAD_POOL_H
-#define TURTLE_SERVER_THREAD_POOL_H
+#ifndef SRC_INCLUDE_THREAD_POOL_H_
+#define SRC_INCLUDE_THREAD_POOL_H_
 
 /* The minimum number of threads to exist in the threadpool */
 #define MIN_NUM_THREADS_IN_POOL 2
@@ -42,7 +44,7 @@ class ThreadPool {
   NON_COPYABLE(ThreadPool);
 
   template <typename F, typename... Args>
-  decltype(auto) SubmitTask(F&& new_task, Args&&... args);
+  decltype(auto) SubmitTask(F &&new_task, Args &&...args);
 
   void Exit();
 
@@ -55,7 +57,7 @@ class ThreadPool {
 };
 
 template <typename F, typename... Args>
-decltype(auto) ThreadPool::SubmitTask(F&& new_task, Args&&... args) {
+decltype(auto) ThreadPool::SubmitTask(F &&new_task, Args &&...args) {
   using return_type = std::invoke_result_t<F, Args...>;
   if (exit_) {
     throw std::runtime_error(
@@ -74,4 +76,4 @@ decltype(auto) ThreadPool::SubmitTask(F&& new_task, Args&&... args) {
 }
 }  // namespace TURTLE_SERVER
 
-#endif  // TURTLE_SERVER_THREAD_POOL_H
+#endif  // SRC_INCLUDE_THREAD_POOL_H_

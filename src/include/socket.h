@@ -9,8 +9,8 @@
  * listener or client
  */
 
-#ifndef TURTLE_SERVER_SOCKET_H
-#define TURTLE_SERVER_SOCKET_H
+#ifndef SRC_INCLUDE_SOCKET_H_
+#define SRC_INCLUDE_SOCKET_H_
 
 #include <fcntl.h>
 #include <sys/socket.h>
@@ -37,23 +37,23 @@ class Socket {
 
   NON_COPYABLE(Socket);
 
-  Socket(Socket&& other) noexcept;
+  Socket(Socket &&other) noexcept;
 
-  Socket& operator=(Socket&& other) noexcept;
+  Socket &operator=(Socket &&other) noexcept;
 
   ~Socket();
 
   auto GetFd() const -> int;
 
   /* for client, one step: directly connect */
-  void Connect(NetAddress& server_address);
+  void Connect(NetAddress &server_address);  // NOLINT
 
   /* for server, three steps: bind + listen + accept */
-  void Bind(NetAddress& server_address);
+  void Bind(NetAddress &server_address);  // NOLINT
 
   void Listen();
 
-  auto Accept(NetAddress& client_address) -> int;
+  auto Accept(NetAddress &client_address) -> int;  // NOLINT
 
   void SetReusable();
 
@@ -63,4 +63,4 @@ class Socket {
   int fd_{-1};
 };
 }  // namespace TURTLE_SERVER
-#endif  // TURTLE_SERVER_SOCKET_H
+#endif  // SRC_INCLUDE_SOCKET_H_
