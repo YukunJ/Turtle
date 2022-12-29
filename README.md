@@ -3,20 +3,20 @@
 -----------------
 ## TURTLE
 
-**Turtle** is a C++17-based lightweight network framework for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. 
+**Turtle** is a C++17-based lightweight network framework for web server. It abstracts the tedious manipulations on the TCP socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. 
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
 ### Highlight
 
-+ Adopt non-blocking socket and edge-trigger handling mode to support high concurrency workload.
-+ Apply thread pool management to asynchronously execute requests and avoids high-of-line blocking to a great extent.
-+ Achieve low coupling and high extensible framework
-+ Allow users to build custom server by only implementing 2 virtual callback functions.
++ Adopt **non-blocking** socket and **edge-trigger** handling mode to support high concurrency workload.
++ Apply thread pool management to **asynchronously** execute requests and avoids **head-of-line** blocking to a great extent.
++ Achieve low coupling and high extensible framework.
++ Allow users to build custom server by only implementing **2** virtual callback functions.
 
 ### System Diagram
 
-<img src="image/system_architecture.png" alt="System Architecture" height="500">
+<img src="image/system_architecture.png" alt="System Architecture" height="600">
 
 The above system architecture diagram briefly shows how the **Turtle** framework works on a high level.
 
@@ -78,7 +78,7 @@ Notice that most of common functionality for accepting a new client connection i
 
 The virtual function **OnAccept(Connection \*)** users implement will be augmented into the base version and called as well. There is no base version for the **OnHandle(Connection \*)**.
 
-Let's walk through an example of traditional echo server in less than 30 lines:
+Let's walk through an example setup of the traditional echo server in less than 30 lines:
 
 ```CPP
 /* inherit from TurtleServer */
