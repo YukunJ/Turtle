@@ -86,6 +86,16 @@ ADD_LIBRARY(thread_pool src/thread_pool.cpp)
 # Build the acceptor
 ADD_LIBRARY(acceptor src/acceptor.cpp)
 
+# Build the http utils
+ADD_LIBRARY(http_utils src/http/http_utils.cpp)
+
+# Build the http header
+ADD_LIBRARY(header src/http/header.cpp)
+
+# Build the http tester
+ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
+TARGET_LINK_LIBRARIES(http_tester header http_utils)
+
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller looper acceptor thread_pool)

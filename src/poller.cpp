@@ -1,7 +1,7 @@
 /**
  * @file poller.cpp
  * @author Yukun J
- * @expectation this file should be compatible to compile in C++
+ * @expectation this implementation file should be compatible to compile in C++
  * program on Linux
  * @init_date Dec 25 2022
  *

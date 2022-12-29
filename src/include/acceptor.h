@@ -8,7 +8,6 @@
  * This is a header file implementing the Acceptor that accepts all the incoming
  * new client connections and set up customer handle functions for new clients
  */
-
 #ifndef SRC_INCLUDE_ACCEPTOR_H_
 #define SRC_INCLUDE_ACCEPTOR_H_
 

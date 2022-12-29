@@ -1,7 +1,7 @@
 /**
  * @file thread_pool.cpp
  * @author Yukun J
- * @expectation this header file should be compatible to compile in C++
+ * @expectation this implementation file should be compatible to compile in C++
  * program on Linux
  * @init_date Dec 26 2022
  *
