@@ -92,9 +92,12 @@ ADD_LIBRARY(http_utils src/http/http_utils.cpp)
 # Build the http header
 ADD_LIBRARY(header src/http/header.cpp)
 
+# Build the http request
+ADD_LIBRARY(request src/http/request.cpp)
+
 # Build the http tester
 ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
-TARGET_LINK_LIBRARIES(http_tester header http_utils)
+TARGET_LINK_LIBRARIES(http_tester request header http_utils)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)

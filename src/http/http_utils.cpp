@@ -13,6 +13,24 @@
 
 namespace TURTLE_SERVER::HTTP {
 
+auto To_Method(std::string method_str) -> Method {
+  Trim(method_str, SPACE);
+  To_Upper(method_str);
+  if (method_str == "GET") {
+    return Method::GET;
+  }
+  return Method::UNSUPPORTED;
+}
+
+auto To_Version(std::string version_str) -> Version {
+  Trim(version_str, SPACE);
+  To_Upper(version_str);
+  if (version_str == "HTTP/1.1") {
+    return Version::HTTP_1_1;
+  }
+  return Version::UNSUPPORTED;
+}
+
 auto Split(const std::string& str, const char* delim)
     -> std::vector<std::string> {
   std::vector<std::string> tokens;
@@ -52,5 +70,11 @@ void Trim(std::string& str, const char* delim) {  // NOLINT
   str.erase(r_found + 1);
   size_t l_found = str.find_first_not_of(delim);
   str.erase(0, l_found);
+}
+
+void To_Upper(std::string& str) {  // NOLINT
+  for (auto& c : str) {
+    c = toupper(c);
+  }
 }
 }  // namespace TURTLE_SERVER::HTTP
