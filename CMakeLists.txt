@@ -18,6 +18,10 @@ PROJECT(TurtleServer
 # Search Path Specification
 ######################################################################################################################
 
+# Find the required thread package on the platform
+SET(THREADS_PREFER_PTHREAD_FLAG ON)
+FIND_PACKAGE(Threads REQUIRED)
+
 # Formatting utility search path
 set(TURTLE_SERVER_BUILD_SUPPORT_DIR "${CMAKE_SOURCE_DIR}/build_support")
 set(TURTLE_SERVER_CLANG_SEARCH_PATH "/usr/local/bin" "/usr/bin" "/usr/local/opt/llvm/bin" "/usr/local/opt/llvm@8/bin" "/usr/local/Cellar/llvm/8.0.1/bin")
@@ -82,9 +86,26 @@ ADD_LIBRARY(looper src/looper.cpp)
 
 # Build the thread pool
 ADD_LIBRARY(thread_pool src/thread_pool.cpp)
+TARGET_LINK_LIBRARIES(thread_pool Threads::Threads)
 
 # Build the acceptor
 ADD_LIBRARY(acceptor src/acceptor.cpp)
+
+# Build the http utils
+ADD_LIBRARY(http_utils src/http/http_utils.cpp)
+
+# Build the http header
+ADD_LIBRARY(header src/http/header.cpp)
+
+# Build the http request
+ADD_LIBRARY(request src/http/request.cpp)
+
+# Build the http response
+ADD_LIBRARY(response src/http/response.cpp)
+
+# Build the http tester
+ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
+TARGET_LINK_LIBRARIES(http_tester request response header http_utils)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
@@ -93,6 +114,10 @@ TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller lo
 # Build the echo client
 ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client buffer net_address socket connection poller looper acceptor thread_pool)
+
+# Build the http server
+ADD_EXECUTABLE(http_server src/http/http_server.cpp)
+TARGET_LINK_LIBRARIES(http_server request response header http_utils buffer net_address socket connection poller looper acceptor thread_pool)
 
 ######################################################################################################################
 # Format + Check

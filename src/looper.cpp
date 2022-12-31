@@ -1,7 +1,7 @@
 /**
  * @file looper.cpp
  * @author Yukun J
- * @expectation this header file should be compatible to compile in C++
+ * @expectation this implementation file should be compatible to compile in C++
  * program on Linux
  * @init_date Dec 26 2022
  *
@@ -25,6 +25,7 @@ void Looper::Loop() {
     auto ready_connections = poller_->Poll(TIMEOUT);
     for (auto &conn : ready_connections) {
       auto fut = DispatchTask(conn->GetCallback());
+      fut.wait();
     }
   }
 }

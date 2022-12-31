@@ -12,6 +12,7 @@
 #ifndef SRC_INCLUDE_BUFFER_H_
 #define SRC_INCLUDE_BUFFER_H_
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -39,6 +40,8 @@ class Buffer {
   void AppendHead(const char *new_char_data, size_t data_size);
 
   void AppendHead(const std::string &new_str_data);
+
+  auto FindAndPop(const std::string &target) -> std::optional<std::string>;
 
   auto Size() const -> size_t;
 
