@@ -82,9 +82,13 @@ class HttpServer : public TurtleServer {
 
 }  // namespace TURTLE_SERVER::HTTP
 
-int main() {
+int main(int argc, char *argv[]) {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
-  TURTLE_SERVER::HTTP::HttpServer http_server(local_address, "./my_dir");
+  std::string directory = "../http_dir";
+  if (argc == 2) {
+      directory = argv[1];
+  }
+  TURTLE_SERVER::HTTP::HttpServer http_server(local_address, directory);
   http_server.Begin();
   return 0;
 }
