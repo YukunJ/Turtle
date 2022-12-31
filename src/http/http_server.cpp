@@ -84,9 +84,9 @@ class HttpServer : public TurtleServer {
 
 int main(int argc, char *argv[]) {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
-  std::string directory = "../http_dir";
+  std::string directory = "../http_dir";  // the default http serving directory
   if (argc == 2) {
-      directory = argv[1];
+    directory = argv[1];
   }
   TURTLE_SERVER::HTTP::HttpServer http_server(local_address, directory);
   http_server.Begin();

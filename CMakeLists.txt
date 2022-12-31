@@ -18,6 +18,10 @@ PROJECT(TurtleServer
 # Search Path Specification
 ######################################################################################################################
 
+# Find the required thread package on the platform
+SET(THREADS_PREFER_PTHREAD_FLAG ON)
+FIND_PACKAGE(Threads REQUIRED)
+
 # Formatting utility search path
 set(TURTLE_SERVER_BUILD_SUPPORT_DIR "${CMAKE_SOURCE_DIR}/build_support")
 set(TURTLE_SERVER_CLANG_SEARCH_PATH "/usr/local/bin" "/usr/bin" "/usr/local/opt/llvm/bin" "/usr/local/opt/llvm@8/bin" "/usr/local/Cellar/llvm/8.0.1/bin")
@@ -82,6 +86,7 @@ ADD_LIBRARY(looper src/looper.cpp)
 
 # Build the thread pool
 ADD_LIBRARY(thread_pool src/thread_pool.cpp)
+TARGET_LINK_LIBRARIES(thread_pool Threads::Threads)
 
 # Build the acceptor
 ADD_LIBRARY(acceptor src/acceptor.cpp)

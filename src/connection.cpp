@@ -102,7 +102,7 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
       break;
     } else {
       perror("HandleConnection: recv() error");
-      exit(EXIT_FAILURE);
+      return {read, true};
     }
   }
   return {read, false};
@@ -110,16 +110,16 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
 
 void Connection::Send() {
   // robust write
-  size_t curr_write = 0;
-  size_t write;
-  const size_t to_write = GetWriteBufferSize();
+  ssize_t curr_write = 0;
+  ssize_t write;
+  const ssize_t to_write = GetWriteBufferSize();
   const char *buf = write_buffer_->buf_.data();
   while (curr_write < to_write) {
     if ((write = send(GetFd(), buf + curr_write, to_write - curr_write, 0)) <=
         0) {
-      if (errno != EINTR) {
-        perror("Send(): send error and error is not EINTR");
-        exit(EXIT_FAILURE);
+      if (errno != EINTR || errno != EAGAIN) {
+        ClearWriteBuffer();
+        return;
       }
       write = 0;
     }
