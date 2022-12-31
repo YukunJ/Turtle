@@ -44,6 +44,8 @@ Request::Request(const std::string& request_str) noexcept {
   is_valid_ = true;
 }
 
+auto Request::ShouldClose() const -> bool { return should_close_; }
+
 auto Request::IsValid() const -> bool { return is_valid_; }
 
 auto Request::GetMethod() const -> Method { return method_; }
@@ -64,12 +66,12 @@ auto Request::ParseRequestLine(const std::string& request_line) -> bool {
     invalid_reason_ = "Invalid first request headline: " + request_line;
     return false;
   }
-  method_ = To_Method(tokens[0]);
+  method_ = ToMethod(tokens[0]);
   if (method_ == Method::UNSUPPORTED) {
     invalid_reason_ = "Unsupported method: " + tokens[0];
     return false;
   }
-  version_ = To_Version(tokens[2]);
+  version_ = ToVersion(tokens[2]);
   if (version_ == Version::UNSUPPORTED) {
     invalid_reason_ = "Unsupported version: " + tokens[2];
     return false;
@@ -84,11 +86,11 @@ auto Request::ParseRequestLine(const std::string& request_line) -> bool {
 void Request::ScanHeader(const Header& header) {
   auto key = header.GetKey();
   Trim(key);
-  To_Upper(key);
+  ToUpper(key);
   if (key == HEADER_CONNECTION) {
     auto value = header.GetValue();
     Trim(value);
-    To_Upper(value);
+    ToUpper(value);
     if (value == CONNECTION_KEEP_ALIVE) {
       should_close_ = false;
     }

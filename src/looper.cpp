@@ -25,6 +25,7 @@ void Looper::Loop() {
     auto ready_connections = poller_->Poll(TIMEOUT);
     for (auto &conn : ready_connections) {
       auto fut = DispatchTask(conn->GetCallback());
+      fut.wait();
     }
   }
 }

@@ -10,7 +10,6 @@
  */
 
 #include "buffer.h"
-
 namespace TURTLE_SERVER {
 
 Buffer::Buffer(size_t initial_capacity) { buf_.reserve(initial_capacity); }
@@ -29,6 +28,18 @@ void Buffer::AppendHead(const char *new_char_data, size_t data_size) {
 
 void Buffer::AppendHead(const std::string &new_str_data) {
   AppendHead(new_str_data.c_str(), new_str_data.size());
+}
+
+auto Buffer::FindAndPop(const std::string &target)
+    -> std::optional<std::string> {
+  std::optional<std::string> res = std::nullopt;
+  auto curr_content = ToString();
+  auto pos = curr_content.find(target);
+  if (pos != std::string::npos) {
+    res = curr_content.substr(0, pos + target.size());
+    buf_.erase(buf_.begin(), buf_.begin() + pos + target.size());
+  }
+  return res;
 }
 
 auto Buffer::Size() const -> size_t { return buf_.size(); }

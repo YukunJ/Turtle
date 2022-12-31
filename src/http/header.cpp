@@ -21,12 +21,14 @@ Header::Header(std::string &&key, std::string &&value)
 
 Header::Header(const std::string &line) {
   auto tokens = Split(line, COLON);
-  if (tokens.size() != 2) {
+  if (tokens.size() < 2) {
     valid_ = false;
     return;
   }
   key_ = std::move(tokens[0]);
-  value_ = std::move(tokens[1]);
+  tokens.erase(tokens.begin());
+  std::string value = Join(tokens, COLON);
+  value_ = std::move(value);
 }
 
 Header::Header(Header &&other) noexcept

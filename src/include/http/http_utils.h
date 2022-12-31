@@ -13,7 +13,10 @@
 #define SRC_INCLUDE_HTTP_HTTP_UTILS_H_
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -27,7 +30,17 @@ static constexpr char CRLF[] = {"\r\n"};
 static constexpr char COLON[] = {":"};
 static constexpr char DEFAULT_ROUTE[] = {"index.html"};
 static constexpr char HEADER_CONNECTION[] = {"CONNECTION"};
+static constexpr char CONNECTION_CLOSE[] = {"CLOSE"};
 static constexpr char CONNECTION_KEEP_ALIVE[] = {"KEEP-ALIVE"};
+
+/* Response status */
+static constexpr char HEADER_CONTENT_LENGTH[] = {"Content-Length"};
+static constexpr char SERVER[] = {"Turtle/1.0"};
+static constexpr char TURTLE_HTTP_VERSION[] = {"HTTP/1.1"};
+static constexpr char OK[] = {"200 OK"};
+static constexpr char BAD_REQUEST[] = {"400 Bad Request"};
+static constexpr char NOT_FOUND[] = {"404 Not Found"};
+static constexpr char SERVICE_UNAVAILABLE[] = {"503 Service Unavailable"};
 
 /* HTTP Method enum, only support GET method now */
 enum class Method { GET, UNSUPPORTED };
@@ -42,10 +55,10 @@ static const std::map<Version, std::string> VERSION_TO_STRING{
     {Version::HTTP_1_1, "HTTP/1.1"}, {Version::UNSUPPORTED, "UNSUPPORTED"}};
 
 /* space and case insensitive */
-auto To_Method(std::string method_str) -> Method;
+auto ToMethod(std::string method_str) -> Method;
 
 /* space and case insensitive */
-auto To_Version(std::string version_str) -> Version;
+auto ToVersion(std::string version_str) -> Version;
 
 /**
  * split a string into many sub strings, splitted by the specified delimiter
@@ -65,9 +78,32 @@ auto Join(const std::vector<std::string>& tokens, const char* delim = SPACE)
 void Trim(std::string& str, const char* delim = SPACE);  // NOLINT
 
 /**
- * convert each character in a string to upper case inplace
+ * Convert each character in a string to upper case inplace
  */
-void To_Upper(std::string& str);  // NOLINT
+void ToUpper(std::string& str);  // NOLINT
+
+/**
+ * Check if the path-specified directory exists
+ */
+bool IsDirectoryExists(const std::string& directory_path);
+
+/**
+ * Check if the path-specified path exists
+ */
+bool IsFileExists(const std::string& file_path);
+
+/**
+ * Tell the size of a file in bytes.
+ * Assume this file already exists and is verified
+ */
+size_t CheckFileSize(const std::string& file_path);
+
+/**
+ * Load the file into a vector of char
+ * able to contain binary data
+ */
+void LoadFile(const std::string& file_path,
+              std::vector<char>& buffer);  // NOLINT
 
 }  // namespace TURTLE_SERVER::HTTP
 

@@ -13,18 +13,18 @@
 
 namespace TURTLE_SERVER::HTTP {
 
-auto To_Method(std::string method_str) -> Method {
+auto ToMethod(std::string method_str) -> Method {
   Trim(method_str, SPACE);
-  To_Upper(method_str);
+  ToUpper(method_str);
   if (method_str == "GET") {
     return Method::GET;
   }
   return Method::UNSUPPORTED;
 }
 
-auto To_Version(std::string version_str) -> Version {
+auto ToVersion(std::string version_str) -> Version {
   Trim(version_str, SPACE);
-  To_Upper(version_str);
+  ToUpper(version_str);
   if (version_str == "HTTP/1.1") {
     return Version::HTTP_1_1;
   }
@@ -72,9 +72,31 @@ void Trim(std::string& str, const char* delim) {  // NOLINT
   str.erase(0, l_found);
 }
 
-void To_Upper(std::string& str) {  // NOLINT
+void ToUpper(std::string& str) {  // NOLINT
   for (auto& c : str) {
     c = toupper(c);
   }
 }
+
+bool IsDirectoryExists(const std::string& directory_path) {
+  return std::filesystem::is_directory(directory_path);
+}
+
+bool IsFileExists(const std::string& file_path) {
+  return std::filesystem::exists(file_path);
+}
+
+size_t CheckFileSize(const std::string& file_path) {
+  return std::filesystem::file_size(file_path);
+}
+
+void LoadFile(const std::string& file_path,
+              std::vector<char>& buffer) {  // NOLINT
+  size_t file_size = CheckFileSize(file_path);
+  std::ifstream file(file_path);
+  buffer.resize(file_size);
+  assert(file.is_open());
+  file.read(&buffer[0], file_size);
+}
+
 }  // namespace TURTLE_SERVER::HTTP

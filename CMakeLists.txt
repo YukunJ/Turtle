@@ -95,9 +95,12 @@ ADD_LIBRARY(header src/http/header.cpp)
 # Build the http request
 ADD_LIBRARY(request src/http/request.cpp)
 
+# Build the http response
+ADD_LIBRARY(response src/http/response.cpp)
+
 # Build the http tester
 ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
-TARGET_LINK_LIBRARIES(http_tester request header http_utils)
+TARGET_LINK_LIBRARIES(http_tester request response header http_utils)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
@@ -106,6 +109,10 @@ TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller lo
 # Build the echo client
 ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client buffer net_address socket connection poller looper acceptor thread_pool)
+
+# Build the http server
+ADD_EXECUTABLE(http_server src/http/http_server.cpp)
+TARGET_LINK_LIBRARIES(http_server request response header http_utils buffer net_address socket connection poller looper acceptor thread_pool)
 
 ######################################################################################################################
 # Format + Check

@@ -33,6 +33,7 @@ class Request {
       const std::string& request_str) noexcept;  // deserialize method
   NON_COPYABLE(Request);
   auto IsValid() const -> bool;
+  auto ShouldClose() const -> bool;
   auto GetInvalidReason() const -> std::string;
   auto GetMethod() const -> Method;
   auto GetVersion() const -> Version;
