@@ -43,7 +43,6 @@ void Poller::AddConnection(Connection *conn) {
     perror("Poller: epoll_ctl add error");
     exit(EXIT_FAILURE);
   }
-  conn->SetInPoller(true);
 }
 
 auto Poller::Poll(int timeout) -> std::vector<Connection *> {
@@ -62,5 +61,5 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
   return events_happen;
 }
 
-auto Poller::GetPollSize() const -> uint64_t { return poll_size_; }
+auto Poller::GetPollSize() const noexcept -> uint64_t { return poll_size_; }
 }  // namespace TURTLE_SERVER

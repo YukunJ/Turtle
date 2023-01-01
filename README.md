@@ -12,7 +12,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Adopt non-blocking socket and edge-trigger handling mode to support high concurrency workload.
 + Apply thread pool management to asynchronously execute requests and avoids high-of-line blocking to a great extent.
 + Achieve low coupling and high extensible framework
-+ Allow users to build custom server by only implementing 2 virtual callback functions.
++ Allow users to build custom server by only providing 2 callback functions.
 + Support HTTP GET request & response
 
 ### System Diagram
@@ -64,48 +64,48 @@ $ cd build
 $ cmake .. // because CMakeList.txt is in the root directory
 $ make
 
-// Format & Style Check
+// Format & Style Check & Line Count
 $ make format
-# make cpplint
+$ make cpplint
+$ make linecount
 ```
 
 ### Usage
 
-To setup a custom server, it should inherit from the base class [**TurtleServer**](./src/include/turtle_server.h) and only needs to specify two callback virtual functions:
+To setup a custom server, user shoudl create an instance of **TurtleServer** and then only needs to provide two callback functions:
 1. **OnAccept(Connection \*)**: A function to do extra business logic when accepting a new client connection.
 2. **OnHandle(Connection \*)**: A function to serve an existing client's request.
 
 Notice that most of common functionality for accepting a new client connection is already implemented and supported in the [**Acceptor::BaseAcceptCallback**](./src/include/acceptor.h), including socket accept, setup and put it under monitor of the **Poller**.
 
-The virtual function **OnAccept(Connection \*)** users implement will be augmented into the base version and called as well. There is no base version for the **OnHandle(Connection \*)**.
+The function provided in **OnAccept(Connection \*)** by users will be augmented into the base version and called as well. There is no base version for the **OnHandle(Connection \*)**. Users must specify one before they can call **Begin()** on the server.
 
-Let's walk through an example of traditional echo server in less than 30 lines:
+Let's walk through an example of traditional echo server in less than 20 lines:
 
 ```CPP
-/* inherit from TurtleServer */
-class EchoServer : public TurtleServer {
- public:
-  explicit EchoServer(NetAddress server_address)
-      : TurtleServer(server_address) {}
-      
-  /* nothing to add to base */
-  void OnAccept(Connection *server_conn) final {}
-  
-  /* echo back what's received from client */
-  void OnHandle(Connection *client_conn) final {
-    int from_fd = client_conn->GetFd();
-    auto [read, exit] = client_conn->Recv();
-    if (exit) {
-      client_conn->GetLooper()->DeleteConnection(from_fd);
-      return; /* client_conn is no longer valid */
-    }
-    if (read) {
-      client_conn->WriteToWriteBuffer(client_conn->ReadAsString());
-      client_conn->Send(); // write buffer is automatically cleared after send
-      client_conn->ClearReadBuffer();
-    }
-  }
-};
+#include "turtle_server.h"
+
+int main() {
+  TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
+  TURTLE_SERVER::TurtleServer echo_server(local_address);
+  echo_server
+      .OnHandle([&](TURTLE_SERVER::Connection* client_conn) {
+        int from_fd = client_conn->GetFd();
+        auto [read, exit] = client_conn->Recv();
+        if (exit) {
+          echo_server.GetLooper()->DeleteConnection(from_fd);
+          // client_conn ptr is invalid below here, do not touch it again
+          return;
+        }
+        if (read) {
+          client_conn->WriteToWriteBuffer(client_conn->ReadAsString());
+          client_conn->Send();
+          client_conn->ClearReadBuffer();
+        }
+      })
+      .Begin();
+  return 0;
+}
 ```
 The demo of this echo server and client is provided under the `./demo` folder for your reference. In the `build` directory, you can execute the following and try it out.
 

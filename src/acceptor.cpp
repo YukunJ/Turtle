@@ -19,11 +19,9 @@ namespace TURTLE_SERVER {
 Acceptor::Acceptor(Looper *looper, NetAddress server_address)
     : looper_(looper) {
   auto acceptor_sock = std::make_unique<Socket>();
-  acceptor_sock->SetReusable();
-  acceptor_sock->Bind(server_address);
+  acceptor_sock->Bind(server_address, true);
   acceptor_sock->Listen();
-  acceptor_conn =
-      std::make_unique<Connection>(looper_, std::move(acceptor_sock));
+  acceptor_conn = std::make_unique<Connection>(std::move(acceptor_sock));
   acceptor_conn->SetEvents(EPOLLIN);  // not edge-trigger for listener
   SetCustomAcceptCallback({});
   SetCustomHandleCallback({});
@@ -39,11 +37,10 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   std::cout << "New client joins: " << accept_fd << std::endl;
   auto client_sock = std::make_unique<Socket>(accept_fd);
   client_sock->SetNonBlocking();
-  auto client_connection = std::make_unique<Connection>(
-      server_conn->GetLooper(), std::move(client_sock));
+  auto client_connection = std::make_unique<Connection>(std::move(client_sock));
   client_connection->SetEvents(EPOLLIN | EPOLLET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
-  server_conn->GetLooper()->AddConnection(std::move(client_connection));
+  looper_->AddConnection(std::move(client_connection));
 }
 void Acceptor::SetCustomAcceptCallback(
     std::function<void(Connection *)> custom_accept_callback) {
@@ -59,15 +56,17 @@ void Acceptor::SetCustomHandleCallback(
   custom_handle_callback_ = std::move(custom_handle_callback);
 }
 
-auto Acceptor::GetCustomAcceptCallback() -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomAcceptCallback() const noexcept
+    -> std::function<void(Connection *)> {
   return custom_accept_callback_;
 }
 
-auto Acceptor::GetCustomHandleCallback() -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomHandleCallback() const noexcept
+    -> std::function<void(Connection *)> {
   return custom_handle_callback_;
 }
 
-auto Acceptor::GetAcceptorConnection() -> Connection * {
+auto Acceptor::GetAcceptorConnection() noexcept -> Connection * {
   return acceptor_conn.get();
 }
 

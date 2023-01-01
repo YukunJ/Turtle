@@ -184,7 +184,7 @@ int main() {
     std::cout << directory_path << " directory does not exist" << std::endl;
   }
 
-  std::vector<char> response_buf;
+  std::vector<unsigned char> response_buf;
   auto response_400 = TURTLE_SERVER::HTTP::Response::Make400Response();
   response_400.Serialize(response_buf);
   std::cout << "The 400 response is as follows: " << std::endl;

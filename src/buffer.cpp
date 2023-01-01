@@ -14,26 +14,28 @@ namespace TURTLE_SERVER {
 
 Buffer::Buffer(size_t initial_capacity) { buf_.reserve(initial_capacity); }
 
-void Buffer::Append(const char *new_char_data, size_t data_size) {
+void Buffer::Append(const unsigned char *new_char_data, size_t data_size) {
   buf_.insert(buf_.end(), new_char_data, new_char_data + data_size);
 }
 
 void Buffer::Append(const std::string &new_str_data) {
-  Append(new_str_data.c_str(), new_str_data.size());
+  Append(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
+         new_str_data.size());
 }
 
-void Buffer::AppendHead(const char *new_char_data, size_t data_size) {
+void Buffer::AppendHead(const unsigned char *new_char_data, size_t data_size) {
   buf_.insert(buf_.begin(), new_char_data, new_char_data + data_size);
 }
 
 void Buffer::AppendHead(const std::string &new_str_data) {
-  AppendHead(new_str_data.c_str(), new_str_data.size());
+  AppendHead(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
+             new_str_data.size());
 }
 
-auto Buffer::FindAndPop(const std::string &target)
+auto Buffer::FindAndPopTill(const std::string &target)
     -> std::optional<std::string> {
   std::optional<std::string> res = std::nullopt;
-  auto curr_content = ToString();
+  auto curr_content = ToStringView();
   auto pos = curr_content.find(target);
   if (pos != std::string::npos) {
     res = curr_content.substr(0, pos + target.size());
@@ -42,16 +44,14 @@ auto Buffer::FindAndPop(const std::string &target)
   return res;
 }
 
-auto Buffer::Size() const -> size_t { return buf_.size(); }
+auto Buffer::Size() const noexcept -> size_t { return buf_.size(); }
 
-auto Buffer::ToCString() -> char * {
-  return reinterpret_cast<char *>(buf_.data());
+auto Buffer::Data() noexcept -> const unsigned char * { return buf_.data(); }
+
+auto Buffer::ToStringView() const noexcept -> std::string_view {
+  return {reinterpret_cast<const char *>(buf_.data()), buf_.size()};
 }
 
-auto Buffer::ToString() const -> std::string {
-  return {buf_.begin(), buf_.end()};
-}
-
-void Buffer::Clear() { buf_.clear(); }
+void Buffer::Clear() noexcept { buf_.clear(); }
 
 }  // namespace TURTLE_SERVER

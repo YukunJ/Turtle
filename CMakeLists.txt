@@ -90,6 +90,7 @@ TARGET_LINK_LIBRARIES(thread_pool Threads::Threads)
 
 # Build the acceptor
 ADD_LIBRARY(acceptor src/acceptor.cpp)
+TARGET_LINK_LIBRARIES(acceptor looper)
 
 # Build the http utils
 ADD_LIBRARY(http_utils src/http/http_utils.cpp)
@@ -120,13 +121,13 @@ ADD_EXECUTABLE(http_server src/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server request response header http_utils buffer net_address socket connection poller looper acceptor thread_pool)
 
 ######################################################################################################################
-# Format + Check
+# Format + Lint Check + Statistics Count
 ######################################################################################################################
 
 SET(FORMAT_STYLE google)
 
 # "make format"
-add_custom_target(format
+ADD_CUSTOM_TARGET(format
         find ${PROJECT_SOURCE_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
         |
         xargs clang-format -style=${FORMAT_STYLE} -i
@@ -134,16 +135,22 @@ add_custom_target(format
 
 
 # "make cpplint"
-file(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
+FILE(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.cpp"
         )
 
-add_custom_target(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
+ADD_CUSTOM_TARGET(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
         ${CPPLINT_BIN}
         --verbose=2 --quiet
         --linelength=120
         --filter=-legal/copyright,-build/include_subdir,-readability/casting
+        )
+
+# "make linecount"
+
+ADD_CUSTOM_TARGET(linecount
+        cloc --by-file ${CMAKE_CURRENT_SOURCE_DIR}/src
         )

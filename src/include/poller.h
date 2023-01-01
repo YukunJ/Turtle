@@ -40,7 +40,7 @@ class Poller {
 
   auto Poll(int timeout = -1) -> std::vector<Connection *>;
 
-  auto GetPollSize() const -> uint64_t;
+  auto GetPollSize() const noexcept -> uint64_t;
 
  private:
   int poll_fd_;

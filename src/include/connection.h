@@ -25,9 +25,6 @@
 
 namespace TURTLE_SERVER {
 
-// forward declaration
-class Looper;
-
 /**
  * This Connection class encapsulates a TCP client connection
  * It could be set a custom callback function when new messages arrive
@@ -36,52 +33,45 @@ class Looper;
  * */
 class Connection {
  public:
-  explicit Connection(Looper *looper, std::unique_ptr<Socket> socket);
+  explicit Connection(std::unique_ptr<Socket> socket);
   ~Connection() = default;
 
   NON_COPYABLE(Connection);
 
-  auto GetFd() const -> int;
-  auto GetSocket() -> Socket *;
+  auto GetFd() const noexcept -> int;
+  auto GetSocket() noexcept -> Socket *;
 
   /* for Poller */
   void SetEvents(uint32_t events);
-  auto GetEvents() const -> uint32_t;
+  auto GetEvents() const noexcept -> uint32_t;
   void SetRevents(uint32_t revents);
-  auto GetRevents() const -> uint32_t;
+  auto GetRevents() const noexcept -> uint32_t;
 
-  void SetInPoller(bool in_poller);
-  auto InPoller() const -> bool;
   void SetCallback(const std::function<void(Connection *)> &callback);
-  auto GetCallback() -> std::function<void()>;
-
-  auto GetLooper() -> Looper *;
+  auto GetCallback() noexcept -> std::function<void()>;
 
   /* for Buffer */
-  auto GetReadBuffer() -> Buffer *;
-  auto GetWriteBuffer() -> Buffer *;
-  auto GetReadBufferSize() -> size_t;
-  auto GetWriteBufferSize() -> size_t;
-  void WriteToReadBuffer(const char *buf, size_t size);
-  void WriteToWriteBuffer(const char *buf, size_t size);
+  auto FindAndPopTill(const std::string &target) -> std::optional<std::string>;
+  auto GetReadBufferSize() const noexcept -> size_t;
+  auto GetWriteBufferSize() const noexcept -> size_t;
+  void WriteToReadBuffer(const unsigned char *buf, size_t size);
+  void WriteToWriteBuffer(const unsigned char *buf, size_t size);
   void WriteToReadBuffer(const std::string &str);
   void WriteToWriteBuffer(const std::string &str);
 
-  auto Read() -> const char *;
-  auto ReadAsString() const -> std::string;
+  auto Read() const noexcept -> const unsigned char *;
+  auto ReadAsString() const noexcept -> std::string;
 
   /* return std::pair<How many bytes read, whether the client exits> */
   auto Recv() -> std::pair<ssize_t, bool>;
   void Send();
-  void ClearReadBuffer();
-  void ClearWriteBuffer();
+  void ClearReadBuffer() noexcept;
+  void ClearWriteBuffer() noexcept;
 
  private:
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;
   std::unique_ptr<Socket> socket_;
-  Looper *looper_;
-  bool in_poller_{false};
   uint32_t events_{};
   uint32_t revents_{};
   std::function<void()> callback_{nullptr};

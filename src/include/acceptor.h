@@ -21,6 +21,8 @@
 
 namespace TURTLE_SERVER {
 
+class Looper;
+
 /**
  * This Acceptor comes with basic functionality for accepting new client
  * connections and add its into the Poller More custom handling could be added
@@ -42,11 +44,13 @@ class Acceptor {
   void SetCustomHandleCallback(
       std::function<void(Connection *)> custom_handle_callback);
 
-  auto GetCustomAcceptCallback() -> std::function<void(Connection *)>;
+  auto GetCustomAcceptCallback() const noexcept
+      -> std::function<void(Connection *)>;
 
-  auto GetCustomHandleCallback() -> std::function<void(Connection *)>;
+  auto GetCustomHandleCallback() const noexcept
+      -> std::function<void(Connection *)>;
 
-  auto GetAcceptorConnection() -> Connection *;
+  auto GetAcceptorConnection() noexcept -> Connection *;
 
  private:
   Looper *looper_;

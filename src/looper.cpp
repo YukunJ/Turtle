@@ -60,6 +60,6 @@ auto Looper::DispatchTask(const std::function<void()> &task)
 
 auto Looper::GetAcceptor() -> Acceptor * { return acceptor_.get(); }
 
-void Looper::Exit() { exit_ = true; }
+void Looper::SetExit() noexcept { exit_ = true; }
 
 }  // namespace TURTLE_SERVER

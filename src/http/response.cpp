@@ -52,7 +52,7 @@ Response::Response(const std::string& status_code, bool should_close,
   }
 }
 
-void Response::Serialize(std::vector<char>& buffer) {  // NOLINT
+void Response::Serialize(std::vector<unsigned char>& buffer) {  // NOLINT
   // construct everything before body
   std::stringstream str_stream;
   str_stream << status_line_ << CRLF;

@@ -8,9 +8,7 @@
 #include <memory>
 
 #include "connection.h"
-#include "looper.h"
 #include "net_address.h"
-#include "poller.h"
 #include "socket.h"
 #include "thread_pool.h"
 
@@ -22,8 +20,7 @@ class EchoClient {
   explicit EchoClient(NetAddress server_address) {
     auto client_socket = std::make_unique<Socket>();
     client_socket->Connect(server_address);
-    client_connection =
-        std::make_unique<Connection>(nullptr, std::move(client_socket));
+    client_connection = std::make_unique<Connection>(std::move(client_socket));
   }
 
   void Begin() {

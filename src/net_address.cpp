@@ -13,16 +13,16 @@
 
 namespace TURTLE_SERVER {
 
-NetAddress::NetAddress(bool is_ipv4) : is_ipv4_(is_ipv4) {
+NetAddress::NetAddress() noexcept {
   memset(&addr_, 0, sizeof(addr_));
   addr_len_ = sizeof(addr_);
 }
 
-NetAddress::NetAddress(const char *ip, uint16_t port, bool is_ipv4)
-    : is_ipv4_(is_ipv4) {
+NetAddress::NetAddress(const char *ip, uint16_t port, Protocol protocol)
+    : protocol_(protocol) {
   memset(&addr_, 0, sizeof(addr_));
   addr_len_ = sizeof(addr_);
-  if (is_ipv4) {
+  if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
     addr_ipv4->sin_family = AF_INET;
     inet_pton(AF_INET, ip, &addr_ipv4->sin_addr.s_addr);
@@ -35,9 +35,15 @@ NetAddress::NetAddress(const char *ip, uint16_t port, bool is_ipv4)
   }
 }
 
-auto NetAddress::GetIp() const -> std::string {
+auto NetAddress::GetProtocol() const noexcept -> Protocol { return protocol_; }
+
+auto NetAddress::YieldAddr() -> struct sockaddr * { return &addr_; }
+
+auto NetAddress::YieldAddrLen() -> socklen_t * { return &addr_len_; }
+
+auto NetAddress::GetIp() const noexcept -> std::string {
   char ip_address[INET6_ADDRSTRLEN];  // long enough for both Ipv4 and Ipv6
-  if (is_ipv4_) {
+  if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
     inet_ntop(AF_INET, &addr_ipv4->sin_addr, ip_address, INET_ADDRSTRLEN);
   } else {
@@ -47,9 +53,9 @@ auto NetAddress::GetIp() const -> std::string {
   return ip_address;
 }
 
-auto NetAddress::GetPort() const -> uint16_t {
+auto NetAddress::GetPort() const noexcept -> uint16_t {
   uint16_t port;
-  if (is_ipv4_) {
+  if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
     port = ntohs(addr_ipv4->sin_port);
   } else {
@@ -59,7 +65,7 @@ auto NetAddress::GetPort() const -> uint16_t {
   return port;
 }
 
-auto NetAddress::ToString() const -> std::string {
+auto NetAddress::ToString() const noexcept -> std::string {
   return GetIp() + std::string(" @ ") + std::to_string(GetPort());
 }
 

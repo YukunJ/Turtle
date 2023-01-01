@@ -54,7 +54,7 @@ class Looper {
 
   auto GetAcceptor() -> Acceptor *;
 
-  void Exit();
+  void SetExit() noexcept;
 
  private:
   ThreadPool *pool_;
