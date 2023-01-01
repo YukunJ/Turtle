@@ -19,8 +19,7 @@ namespace TURTLE_SERVER {
 Acceptor::Acceptor(Looper *looper, NetAddress server_address)
     : looper_(looper) {
   auto acceptor_sock = std::make_unique<Socket>();
-  acceptor_sock->SetReusable();
-  acceptor_sock->Bind(server_address);
+  acceptor_sock->Bind(server_address, true);
   acceptor_sock->Listen();
   acceptor_conn =
       std::make_unique<Connection>(looper_, std::move(acceptor_sock));

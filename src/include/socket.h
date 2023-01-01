@@ -18,6 +18,7 @@
 
 #include <cassert>
 #include <cerrno>
+#include <stdexcept>
 
 #include "net_address.h"
 #include "utils.h"
@@ -31,7 +32,7 @@ namespace TURTLE_SERVER {
  * */
 class Socket {
  public:
-  explicit Socket(bool is_ipv4 = true);
+  Socket();
 
   explicit Socket(int fd);
 
@@ -49,7 +50,7 @@ class Socket {
   void Connect(NetAddress &server_address);  // NOLINT
 
   /* for server, three steps: bind + listen + accept */
-  void Bind(NetAddress &server_address);  // NOLINT
+  void Bind(NetAddress &server_address, bool set_reusable = true);  // NOLINT
 
   void Listen();
 
@@ -60,6 +61,8 @@ class Socket {
   void SetNonBlocking();
 
  private:
+  void CreateByProtocol(Protocol protocol);
+
   int fd_{-1};
 };
 }  // namespace TURTLE_SERVER
