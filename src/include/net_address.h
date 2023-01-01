@@ -20,6 +20,9 @@
 
 namespace TURTLE_SERVER {
 
+/* Network protocol supported */
+enum class Protocol { Ipv4, Ipv6 };
+
 /**
  * This NetAddress class encapsulates the unique identifier of a network host
  * in the form of "IP Address + Port"
@@ -27,17 +30,17 @@ namespace TURTLE_SERVER {
  * */
 class NetAddress {
  public:
-  explicit NetAddress(bool is_ipv4 = true);
+  explicit NetAddress();
 
-  NetAddress(const char *ip, uint16_t port, bool is_ipv4 = true);
+  NetAddress(const char *ip, uint16_t port, Protocol protocol = Protocol::Ipv4);
 
   ~NetAddress() = default;
 
-  auto IsIpv4() const -> bool { return is_ipv4_; }
+  auto GetProtocol() const -> Protocol;
 
-  auto YieldAddr() -> struct sockaddr * { return &addr_; };
+  auto YieldAddr() -> struct sockaddr *;
 
-  auto YieldAddrLen() -> socklen_t * { return &addr_len_; };
+  auto YieldAddrLen() -> socklen_t *;
 
   auto GetIp() const -> std::string;
 
@@ -45,13 +48,13 @@ class NetAddress {
 
   auto ToString() const -> std::string;
 
-  friend std::ostream &operator<<(std::ostream &os, const NetAddress &address);
-
  private:
-  const bool is_ipv4_;
+  const Protocol protocol_{Protocol::Ipv4};
   mutable struct sockaddr addr_ {};
   socklen_t addr_len_;
 };
+
+std::ostream &operator<<(std::ostream &os, const NetAddress &address);
 
 }  // namespace TURTLE_SERVER
 #endif  // SRC_INCLUDE_NET_ADDRESS_H_
