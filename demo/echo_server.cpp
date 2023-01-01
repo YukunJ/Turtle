@@ -20,7 +20,7 @@ class EchoServer : public TurtleServer {
     int from_fd = client_conn->GetFd();
     auto [read, exit] = client_conn->Recv();
     if (exit) {
-      client_conn->GetLooper()->DeleteConnection(from_fd);
+      GetLooper()->DeleteConnection(from_fd);
       // client_conn ptr is destoryed and invalid below here, do not touch it
       // again
       return;

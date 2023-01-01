@@ -90,6 +90,7 @@ TARGET_LINK_LIBRARIES(thread_pool Threads::Threads)
 
 # Build the acceptor
 ADD_LIBRARY(acceptor src/acceptor.cpp)
+TARGET_LINK_LIBRARIES(acceptor looper)
 
 # Build the http utils
 ADD_LIBRARY(http_utils src/http/http_utils.cpp)

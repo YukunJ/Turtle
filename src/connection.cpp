@@ -13,9 +13,8 @@
 
 namespace TURTLE_SERVER {
 
-Connection::Connection(Looper *looper, std::unique_ptr<Socket> socket)
-    : looper_(looper),
-      socket_(std::move(socket)),
+Connection::Connection(std::unique_ptr<Socket> socket)
+    : socket_(std::move(socket)),
       read_buffer_(std::make_unique<Buffer>()),
       write_buffer_(std::make_unique<Buffer>()),
       events_(0),
@@ -33,12 +32,6 @@ void Connection::SetRevents(uint32_t revents) { revents_ = revents; }
 
 auto Connection::GetRevents() const noexcept -> uint32_t { return revents_; }
 
-void Connection::SetInPoller(bool in_poller) noexcept {
-  in_poller_ = in_poller;
-}
-
-auto Connection::InPoller() const noexcept -> bool { return in_poller_; }
-
 void Connection::SetCallback(
     const std::function<void(Connection *)> &callback) {
   callback_ = [callback, this] { return callback(this); };
@@ -47,8 +40,6 @@ void Connection::SetCallback(
 auto Connection::GetCallback() noexcept -> std::function<void()> {
   return callback_;
 }
-
-auto Connection::GetLooper() noexcept -> Looper * { return looper_; }
 
 auto Connection::GetReadBuffer() noexcept -> Buffer * {
   return read_buffer_.get();

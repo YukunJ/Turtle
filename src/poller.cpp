@@ -43,7 +43,6 @@ void Poller::AddConnection(Connection *conn) {
     perror("Poller: epoll_ctl add error");
     exit(EXIT_FAILURE);
   }
-  conn->SetInPoller(true);
 }
 
 auto Poller::Poll(int timeout) -> std::vector<Connection *> {
