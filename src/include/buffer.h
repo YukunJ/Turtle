@@ -16,9 +16,10 @@
 #include <string>
 #include <vector>
 
-#define INITIAL_BUFFER_CAPACITY 1024
-
 namespace TURTLE_SERVER {
+
+/* default initial underlying capacity of Buffer */
+static constexpr size_t INITIAL_BUFFER_CAPACITY = 1024;
 
 /**
  * This Buffer abstracts an underlying dynamic char array
