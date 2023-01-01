@@ -35,7 +35,7 @@ void Buffer::AppendHead(const std::string &new_str_data) {
 auto Buffer::FindAndPop(const std::string &target)
     -> std::optional<std::string> {
   std::optional<std::string> res = std::nullopt;
-  auto curr_content = ToString();
+  auto curr_content = ToStringView();
   auto pos = curr_content.find(target);
   if (pos != std::string::npos) {
     res = curr_content.substr(0, pos + target.size());
@@ -48,8 +48,8 @@ auto Buffer::Size() const -> size_t { return buf_.size(); }
 
 auto Buffer::Data() -> const unsigned char * { return buf_.data(); }
 
-auto Buffer::ToString() const -> std::string {
-  return {buf_.begin(), buf_.end()};
+auto Buffer::ToStringView() const -> std::string_view {
+  return {reinterpret_cast<const char *>(buf_.data()), buf_.size()};
 }
 
 void Buffer::Clear() { buf_.clear(); }

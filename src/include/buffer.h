@@ -14,6 +14,7 @@
 
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "utils.h"
@@ -54,7 +55,7 @@ class Buffer {
 
   auto Data() -> const unsigned char *;
 
-  auto ToString() const -> std::string;
+  auto ToStringView() const -> std::string_view;
 
   void Clear();
 

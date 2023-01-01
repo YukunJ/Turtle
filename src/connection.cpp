@@ -77,7 +77,8 @@ auto Connection::Read() -> const unsigned char * {
 }
 
 auto Connection::ReadAsString() const -> std::string {
-  return read_buffer_->ToString();
+  auto str_view = read_buffer_->ToStringView();
+  return {str_view.begin(), str_view.end()};
 }
 
 auto Connection::Recv() -> std::pair<ssize_t, bool> {
