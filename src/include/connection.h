@@ -51,8 +51,7 @@ class Connection {
   auto GetCallback() noexcept -> std::function<void()>;
 
   /* for Buffer */
-  auto GetReadBuffer() noexcept -> Buffer *;
-  auto GetWriteBuffer() noexcept -> Buffer *;
+  auto FindAndPopTill(const std::string &target) -> std::optional<std::string>;
   auto GetReadBufferSize() const noexcept -> size_t;
   auto GetWriteBufferSize() const noexcept -> size_t;
   void WriteToReadBuffer(const unsigned char *buf, size_t size);

@@ -32,7 +32,7 @@ void Buffer::AppendHead(const std::string &new_str_data) {
              new_str_data.size());
 }
 
-auto Buffer::FindAndPop(const std::string &target)
+auto Buffer::FindAndPopTill(const std::string &target)
     -> std::optional<std::string> {
   std::optional<std::string> res = std::nullopt;
   auto curr_content = ToStringView();

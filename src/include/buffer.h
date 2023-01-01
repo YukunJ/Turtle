@@ -49,7 +49,7 @@ class Buffer {
 
   void AppendHead(const std::string &new_str_data);
 
-  auto FindAndPop(const std::string &target) -> std::optional<std::string>;
+  auto FindAndPopTill(const std::string &target) -> std::optional<std::string>;
 
   auto Size() const noexcept -> size_t;
 

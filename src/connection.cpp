@@ -41,12 +41,9 @@ auto Connection::GetCallback() noexcept -> std::function<void()> {
   return callback_;
 }
 
-auto Connection::GetReadBuffer() noexcept -> Buffer * {
-  return read_buffer_.get();
-}
-
-auto Connection::GetWriteBuffer() noexcept -> Buffer * {
-  return write_buffer_.get();
+auto Connection::FindAndPopTill(const std::string &target)
+    -> std::optional<std::string> {
+  return read_buffer_->FindAndPopTill(target);
 }
 
 auto Connection::GetReadBufferSize() const noexcept -> size_t {

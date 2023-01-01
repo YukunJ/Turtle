@@ -38,7 +38,7 @@ class HttpServer : public TurtleServer {
     // check if there is any complete http request ready
     bool no_more_parse = false;
     std::optional<std::string> request_op =
-        client_conn->GetReadBuffer()->FindAndPop("\r\n\r\n");
+        client_conn->FindAndPopTill("\r\n\r\n");
     while (request_op != std::nullopt) {
       Request request{request_op.value()};
       std::vector<unsigned char> response_buf;
@@ -67,7 +67,7 @@ class HttpServer : public TurtleServer {
       if (no_more_parse) {
         break;
       }
-      request_op = client_conn->GetReadBuffer()->FindAndPop("\r\n\r\n");
+      request_op = client_conn->FindAndPopTill("\r\n\r\n");
     }
     if (no_more_parse) {
       GetLooper()->DeleteConnection(from_fd);
