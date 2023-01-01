@@ -67,7 +67,7 @@ class Connection {
   void WriteToReadBuffer(const std::string &str);
   void WriteToWriteBuffer(const std::string &str);
 
-  auto Read() -> const char *;
+  auto Read() -> const unsigned char *;
   auto ReadAsString() const -> std::string;
 
   /* return std::pair<How many bytes read, whether the client exits> */

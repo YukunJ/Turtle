@@ -44,9 +44,7 @@ auto Buffer::FindAndPop(const std::string &target)
 
 auto Buffer::Size() const -> size_t { return buf_.size(); }
 
-auto Buffer::ToCString() -> char * {
-  return reinterpret_cast<char *>(buf_.data());
-}
+auto Buffer::Data() -> const unsigned char * { return buf_.data(); }
 
 auto Buffer::ToString() const -> std::string {
   return {buf_.begin(), buf_.end()};

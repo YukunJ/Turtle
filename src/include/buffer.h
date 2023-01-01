@@ -44,14 +44,14 @@ class Buffer {
 
   auto Size() const -> size_t;
 
-  auto ToCString() -> char *;
+  auto Data() -> const unsigned char *;
 
   auto ToString() const -> std::string;
 
   void Clear();
 
  private:
-  std::vector<char> buf_;
+  std::vector<unsigned char> buf_;
 };
 
 }  // namespace TURTLE_SERVER
