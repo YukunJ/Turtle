@@ -62,5 +62,5 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
   return events_happen;
 }
 
-auto Poller::GetPollSize() const -> uint64_t { return poll_size_; }
+auto Poller::GetPollSize() const noexcept -> uint64_t { return poll_size_; }
 }  // namespace TURTLE_SERVER

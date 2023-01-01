@@ -41,40 +41,40 @@ class Connection {
 
   NON_COPYABLE(Connection);
 
-  auto GetFd() const -> int;
-  auto GetSocket() -> Socket *;
+  auto GetFd() const noexcept -> int;
+  auto GetSocket() noexcept -> Socket *;
 
   /* for Poller */
   void SetEvents(uint32_t events);
-  auto GetEvents() const -> uint32_t;
+  auto GetEvents() const noexcept -> uint32_t;
   void SetRevents(uint32_t revents);
-  auto GetRevents() const -> uint32_t;
+  auto GetRevents() const noexcept -> uint32_t;
 
-  void SetInPoller(bool in_poller);
-  auto InPoller() const -> bool;
+  void SetInPoller(bool in_poller) noexcept;
+  auto InPoller() const noexcept -> bool;
   void SetCallback(const std::function<void(Connection *)> &callback);
-  auto GetCallback() -> std::function<void()>;
+  auto GetCallback() noexcept -> std::function<void()>;
 
-  auto GetLooper() -> Looper *;
+  auto GetLooper() noexcept -> Looper *;
 
   /* for Buffer */
-  auto GetReadBuffer() -> Buffer *;
-  auto GetWriteBuffer() -> Buffer *;
-  auto GetReadBufferSize() -> size_t;
-  auto GetWriteBufferSize() -> size_t;
+  auto GetReadBuffer() noexcept -> Buffer *;
+  auto GetWriteBuffer() noexcept -> Buffer *;
+  auto GetReadBufferSize() const noexcept -> size_t;
+  auto GetWriteBufferSize() const noexcept -> size_t;
   void WriteToReadBuffer(const unsigned char *buf, size_t size);
   void WriteToWriteBuffer(const unsigned char *buf, size_t size);
   void WriteToReadBuffer(const std::string &str);
   void WriteToWriteBuffer(const std::string &str);
 
-  auto Read() -> const unsigned char *;
-  auto ReadAsString() const -> std::string;
+  auto Read() const noexcept -> const unsigned char *;
+  auto ReadAsString() const noexcept -> std::string;
 
   /* return std::pair<How many bytes read, whether the client exits> */
   auto Recv() -> std::pair<ssize_t, bool>;
   void Send();
-  void ClearReadBuffer();
-  void ClearWriteBuffer();
+  void ClearReadBuffer() noexcept;
+  void ClearWriteBuffer() noexcept;
 
  private:
   std::unique_ptr<Buffer> read_buffer_;

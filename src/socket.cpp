@@ -15,9 +15,9 @@
 
 namespace TURTLE_SERVER {
 
-Socket::Socket() : fd_(-1) {}
+Socket::Socket() noexcept : fd_(-1) {}
 
-Socket::Socket(int fd) : fd_(fd) {}
+Socket::Socket(int fd) noexcept : fd_(fd) {}
 
 Socket::Socket(Socket &&other) noexcept {
   fd_ = other.fd_;
@@ -39,7 +39,7 @@ Socket::~Socket() {
   }
 }
 
-auto Socket::GetFd() const -> int { return fd_; }
+auto Socket::GetFd() const noexcept -> int { return fd_; }
 
 void Socket::Connect(NetAddress &server_address) {
   if (fd_ == -1) {

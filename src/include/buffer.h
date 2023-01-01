@@ -51,13 +51,13 @@ class Buffer {
 
   auto FindAndPop(const std::string &target) -> std::optional<std::string>;
 
-  auto Size() const -> size_t;
+  auto Size() const noexcept -> size_t;
 
-  auto Data() -> const unsigned char *;
+  auto Data() noexcept -> const unsigned char *;
 
-  auto ToStringView() const -> std::string_view;
+  auto ToStringView() const noexcept -> std::string_view;
 
-  void Clear();
+  void Clear() noexcept;
 
  private:
   std::vector<unsigned char> buf_;

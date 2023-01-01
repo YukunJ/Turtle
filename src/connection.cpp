@@ -21,38 +21,48 @@ Connection::Connection(Looper *looper, std::unique_ptr<Socket> socket)
       events_(0),
       revents_(0) {}
 
-auto Connection::GetFd() const -> int { return socket_->GetFd(); }
+auto Connection::GetFd() const noexcept -> int { return socket_->GetFd(); }
 
-auto Connection::GetSocket() -> Socket * { return socket_.get(); }
+auto Connection::GetSocket() noexcept -> Socket * { return socket_.get(); }
 
 void Connection::SetEvents(uint32_t events) { events_ = events; }
 
-auto Connection::GetEvents() const -> uint32_t { return events_; }
+auto Connection::GetEvents() const noexcept -> uint32_t { return events_; }
 
 void Connection::SetRevents(uint32_t revents) { revents_ = revents; }
 
-auto Connection::GetRevents() const -> uint32_t { return revents_; }
+auto Connection::GetRevents() const noexcept -> uint32_t { return revents_; }
 
-void Connection::SetInPoller(bool in_poller) { in_poller_ = in_poller; }
+void Connection::SetInPoller(bool in_poller) noexcept {
+  in_poller_ = in_poller;
+}
 
-auto Connection::InPoller() const -> bool { return in_poller_; }
+auto Connection::InPoller() const noexcept -> bool { return in_poller_; }
 
 void Connection::SetCallback(
     const std::function<void(Connection *)> &callback) {
   callback_ = [callback, this] { return callback(this); };
 }
 
-auto Connection::GetCallback() -> std::function<void()> { return callback_; }
+auto Connection::GetCallback() noexcept -> std::function<void()> {
+  return callback_;
+}
 
-auto Connection::GetLooper() -> Looper * { return looper_; }
+auto Connection::GetLooper() noexcept -> Looper * { return looper_; }
 
-auto Connection::GetReadBuffer() -> Buffer * { return read_buffer_.get(); }
+auto Connection::GetReadBuffer() noexcept -> Buffer * {
+  return read_buffer_.get();
+}
 
-auto Connection::GetWriteBuffer() -> Buffer * { return write_buffer_.get(); }
+auto Connection::GetWriteBuffer() noexcept -> Buffer * {
+  return write_buffer_.get();
+}
 
-auto Connection::GetReadBufferSize() -> size_t { return read_buffer_->Size(); }
+auto Connection::GetReadBufferSize() const noexcept -> size_t {
+  return read_buffer_->Size();
+}
 
-auto Connection::GetWriteBufferSize() -> size_t {
+auto Connection::GetWriteBufferSize() const noexcept -> size_t {
   return write_buffer_->Size();
 }
 
@@ -72,11 +82,11 @@ void Connection::WriteToWriteBuffer(const std::string &str) {
   write_buffer_->Append(str);
 }
 
-auto Connection::Read() -> const unsigned char * {
+auto Connection::Read() const noexcept -> const unsigned char * {
   return read_buffer_->Data();
 }
 
-auto Connection::ReadAsString() const -> std::string {
+auto Connection::ReadAsString() const noexcept -> std::string {
   auto str_view = read_buffer_->ToStringView();
   return {str_view.begin(), str_view.end()};
 }
@@ -131,8 +141,8 @@ void Connection::Send() {
   ClearWriteBuffer();
 }
 
-void Connection::ClearReadBuffer() { read_buffer_->Clear(); }
+void Connection::ClearReadBuffer() noexcept { read_buffer_->Clear(); }
 
-void Connection::ClearWriteBuffer() { write_buffer_->Clear(); }
+void Connection::ClearWriteBuffer() noexcept { write_buffer_->Clear(); }
 
 }  // namespace TURTLE_SERVER

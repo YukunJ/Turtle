@@ -30,23 +30,23 @@ enum class Protocol { Ipv4, Ipv6 };
  * */
 class NetAddress {
  public:
-  explicit NetAddress();
+  NetAddress() noexcept;
 
   NetAddress(const char *ip, uint16_t port, Protocol protocol = Protocol::Ipv4);
 
   ~NetAddress() = default;
 
-  auto GetProtocol() const -> Protocol;
+  auto GetProtocol() const noexcept -> Protocol;
 
   auto YieldAddr() -> struct sockaddr *;
 
   auto YieldAddrLen() -> socklen_t *;
 
-  auto GetIp() const -> std::string;
+  auto GetIp() const noexcept -> std::string;
 
-  auto GetPort() const -> uint16_t;
+  auto GetPort() const noexcept -> uint16_t;
 
-  auto ToString() const -> std::string;
+  auto ToString() const noexcept -> std::string;
 
  private:
   const Protocol protocol_{Protocol::Ipv4};

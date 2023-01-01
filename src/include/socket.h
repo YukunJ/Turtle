@@ -32,9 +32,9 @@ namespace TURTLE_SERVER {
  * */
 class Socket {
  public:
-  Socket();
+  Socket() noexcept;
 
-  explicit Socket(int fd);
+  explicit Socket(int fd) noexcept;
 
   NON_COPYABLE(Socket);
 
@@ -44,7 +44,7 @@ class Socket {
 
   ~Socket();
 
-  auto GetFd() const -> int;
+  auto GetFd() const noexcept -> int;
 
   /* for client, one step: directly connect */
   void Connect(NetAddress &server_address);  // NOLINT

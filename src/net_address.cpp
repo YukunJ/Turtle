@@ -13,7 +13,7 @@
 
 namespace TURTLE_SERVER {
 
-NetAddress::NetAddress() {
+NetAddress::NetAddress() noexcept {
   memset(&addr_, 0, sizeof(addr_));
   addr_len_ = sizeof(addr_);
 }
@@ -35,13 +35,13 @@ NetAddress::NetAddress(const char *ip, uint16_t port, Protocol protocol)
   }
 }
 
-auto NetAddress::GetProtocol() const -> Protocol { return protocol_; }
+auto NetAddress::GetProtocol() const noexcept -> Protocol { return protocol_; }
 
 auto NetAddress::YieldAddr() -> struct sockaddr * { return &addr_; }
 
 auto NetAddress::YieldAddrLen() -> socklen_t * { return &addr_len_; }
 
-auto NetAddress::GetIp() const -> std::string {
+auto NetAddress::GetIp() const noexcept -> std::string {
   char ip_address[INET6_ADDRSTRLEN];  // long enough for both Ipv4 and Ipv6
   if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
@@ -53,7 +53,7 @@ auto NetAddress::GetIp() const -> std::string {
   return ip_address;
 }
 
-auto NetAddress::GetPort() const -> uint16_t {
+auto NetAddress::GetPort() const noexcept -> uint16_t {
   uint16_t port;
   if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
@@ -65,7 +65,7 @@ auto NetAddress::GetPort() const -> uint16_t {
   return port;
 }
 
-auto NetAddress::ToString() const -> std::string {
+auto NetAddress::ToString() const noexcept -> std::string {
   return GetIp() + std::string(" @ ") + std::to_string(GetPort());
 }
 

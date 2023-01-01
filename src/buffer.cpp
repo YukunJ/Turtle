@@ -44,14 +44,14 @@ auto Buffer::FindAndPop(const std::string &target)
   return res;
 }
 
-auto Buffer::Size() const -> size_t { return buf_.size(); }
+auto Buffer::Size() const noexcept -> size_t { return buf_.size(); }
 
-auto Buffer::Data() -> const unsigned char * { return buf_.data(); }
+auto Buffer::Data() noexcept -> const unsigned char * { return buf_.data(); }
 
-auto Buffer::ToStringView() const -> std::string_view {
+auto Buffer::ToStringView() const noexcept -> std::string_view {
   return {reinterpret_cast<const char *>(buf_.data()), buf_.size()};
 }
 
-void Buffer::Clear() { buf_.clear(); }
+void Buffer::Clear() noexcept { buf_.clear(); }
 
 }  // namespace TURTLE_SERVER

@@ -58,15 +58,17 @@ void Acceptor::SetCustomHandleCallback(
   custom_handle_callback_ = std::move(custom_handle_callback);
 }
 
-auto Acceptor::GetCustomAcceptCallback() -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomAcceptCallback() const noexcept
+    -> std::function<void(Connection *)> {
   return custom_accept_callback_;
 }
 
-auto Acceptor::GetCustomHandleCallback() -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomHandleCallback() const noexcept
+    -> std::function<void(Connection *)> {
   return custom_handle_callback_;
 }
 
-auto Acceptor::GetAcceptorConnection() -> Connection * {
+auto Acceptor::GetAcceptorConnection() noexcept -> Connection * {
   return acceptor_conn.get();
 }
 

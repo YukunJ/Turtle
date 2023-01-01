@@ -64,8 +64,8 @@ class TurtleServer {
 
   virtual void Begin() { looper_->Loop(); }
 
-  auto GetPool() -> ThreadPool * { return pool_.get(); }
-  auto GetLooper() -> Looper * { return looper_.get(); }
+  auto GetPool() noexcept -> ThreadPool * { return pool_.get(); }
+  auto GetLooper() noexcept -> Looper * { return looper_.get(); }
 
  private:
   std::unique_ptr<ThreadPool> pool_;
