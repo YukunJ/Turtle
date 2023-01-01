@@ -56,11 +56,11 @@ auto Connection::GetWriteBufferSize() -> size_t {
   return write_buffer_->Size();
 }
 
-void Connection::WriteToReadBuffer(const char *buf, size_t size) {
+void Connection::WriteToReadBuffer(const unsigned char *buf, size_t size) {
   read_buffer_->Append(buf, size);
 }
 
-void Connection::WriteToWriteBuffer(const char *buf, size_t size) {
+void Connection::WriteToWriteBuffer(const unsigned char *buf, size_t size) {
   write_buffer_->Append(buf, size);
 }
 
@@ -84,7 +84,7 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
   // read all available bytes, since Edge-trigger
   int from_fd = GetFd();
   ssize_t read = 0;
-  char buf[TEMP_BUF_SIZE + 1];
+  unsigned char buf[TEMP_BUF_SIZE + 1];
   memset(buf, 0, sizeof(buf));
   while (true) {
     ssize_t curr_read = recv(from_fd, buf, TEMP_BUF_SIZE, 0);

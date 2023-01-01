@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include "utils.h"
+
 namespace TURTLE_SERVER {
 
 /* default initial underlying capacity of Buffer */
@@ -32,11 +34,17 @@ class Buffer {
 
   ~Buffer() = default;
 
-  void Append(const char *new_char_data, size_t data_size);
+  Buffer(const Buffer &other) = default;
+
+  Buffer &operator=(const Buffer &other) = default;
+
+  NON_MOVEABLE(Buffer);
+
+  void Append(const unsigned char *new_char_data, size_t data_size);
 
   void Append(const std::string &new_str_data);
 
-  void AppendHead(const char *new_char_data, size_t data_size);
+  void AppendHead(const unsigned char *new_char_data, size_t data_size);
 
   void AppendHead(const std::string &new_str_data);
 

@@ -40,7 +40,7 @@ class Response {
   Response(const std::string& status_code, bool should_close,
            std::optional<std::string> resource_url);
 
-  void Serialize(std::vector<char>& buffer);  // NOLINT
+  void Serialize(std::vector<unsigned char>& buffer);  // NOLINT
 
  private:
   std::string status_line_;

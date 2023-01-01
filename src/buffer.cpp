@@ -14,20 +14,22 @@ namespace TURTLE_SERVER {
 
 Buffer::Buffer(size_t initial_capacity) { buf_.reserve(initial_capacity); }
 
-void Buffer::Append(const char *new_char_data, size_t data_size) {
+void Buffer::Append(const unsigned char *new_char_data, size_t data_size) {
   buf_.insert(buf_.end(), new_char_data, new_char_data + data_size);
 }
 
 void Buffer::Append(const std::string &new_str_data) {
-  Append(new_str_data.c_str(), new_str_data.size());
+  Append(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
+         new_str_data.size());
 }
 
-void Buffer::AppendHead(const char *new_char_data, size_t data_size) {
+void Buffer::AppendHead(const unsigned char *new_char_data, size_t data_size) {
   buf_.insert(buf_.begin(), new_char_data, new_char_data + data_size);
 }
 
 void Buffer::AppendHead(const std::string &new_str_data) {
-  AppendHead(new_str_data.c_str(), new_str_data.size());
+  AppendHead(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
+             new_str_data.size());
 }
 
 auto Buffer::FindAndPop(const std::string &target)

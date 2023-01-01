@@ -41,7 +41,7 @@ class HttpServer : public TurtleServer {
         client_conn->GetReadBuffer()->FindAndPop("\r\n\r\n");
     while (request_op != std::nullopt) {
       Request request{request_op.value()};
-      std::vector<char> response_buf;
+      std::vector<unsigned char> response_buf;
 
       if (!request.IsValid()) {
         auto response = Response::Make400Response();

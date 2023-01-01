@@ -62,8 +62,8 @@ class Connection {
   auto GetWriteBuffer() -> Buffer *;
   auto GetReadBufferSize() -> size_t;
   auto GetWriteBufferSize() -> size_t;
-  void WriteToReadBuffer(const char *buf, size_t size);
-  void WriteToWriteBuffer(const char *buf, size_t size);
+  void WriteToReadBuffer(const unsigned char *buf, size_t size);
+  void WriteToWriteBuffer(const unsigned char *buf, size_t size);
   void WriteToReadBuffer(const std::string &str);
   void WriteToWriteBuffer(const std::string &str);
 
