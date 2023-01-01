@@ -3,15 +3,21 @@
  * @author Yukun J
  * @expectation this header file should be compatible to compile in C++
  * program on Linux
- * @init_date Dec 27 2022
+ * @init_date Jan 1 2023
  *
- * This is a header-file-only base class for the Turtle web server setup
+ * This is a header-file-only class for the Turtle web server setup
  */
+#include <functional>
 #include <memory>
+#include <stdexcept>
 #include <utility>
 
 #include "acceptor.h"
 #include "connection.h"
+#include "http/header.h"
+#include "http/http_utils.h"
+#include "http/request.h"
+#include "http/response.h"
 #include "looper.h"
 #include "net_address.h"
 #include "poller.h"
@@ -25,9 +31,8 @@
 namespace TURTLE_SERVER {
 
 /**
- * The base class for setting up a web server using the Turtle framework
- * User should design a class that inherits from the TurtleServer base class
- * and implements the two virtual function 'OnHandle' and 'OnAccept'
+ * The class for setting up a web server using the Turtle framework
+ * User should provide the callback functions in OnAccept() and OnHandle()
  * The rest is already taken care of and in most cases users don't need to touch
  * upon
  *
@@ -38,8 +43,8 @@ namespace TURTLE_SERVER {
  * that base BaseAcceptCallback and called after that base, to support any
  * custom business logic upon receiving new client connection
  *
- * OnHandle(): No base version exists. Users should implement this function to
- * achieve the expected behavior
+ * OnHandle(): No base version exists. Users should implement provide a function
+ * to achieve the expected behavior
  */
 class TurtleServer {
  public:
@@ -47,27 +52,36 @@ class TurtleServer {
       : pool_(std::make_unique<ThreadPool>()),
         looper_(std::make_unique<Looper>(pool_.get())) {
     auto acceptor = std::make_unique<Acceptor>(looper_.get(), server_address);
-    acceptor->SetCustomHandleCallback(
-        [this](auto &&PH1) { OnHandle(std::forward<decltype(PH1)>(PH1)); });
-    acceptor->SetCustomAcceptCallback(
-        [this](auto &&PH1) { OnAccept(std::forward<decltype(PH1)>(PH1)); });
     looper_->AddAcceptor(std::move(acceptor));
   }
 
   virtual ~TurtleServer() = default;
 
   /* Not Edge trigger */
-  virtual void OnAccept(Connection *acceptor_conn) = 0;
+  auto OnAccept(std::function<void(Connection *)> on_accept) -> TurtleServer & {
+    looper_->GetAcceptor()->SetCustomAcceptCallback(std::move(on_accept));
+    return *this;
+  }
 
   /* Edge trigger! Read all bytes please */
-  virtual void OnHandle(Connection *client_conn) = 0;
+  auto OnHandle(std::function<void(Connection *)> on_handle) -> TurtleServer & {
+    looper_->GetAcceptor()->SetCustomHandleCallback(std::move(on_handle));
+    on_handle_set_ = true;
+    return *this;
+  }
 
-  virtual void Begin() { looper_->Loop(); }
+  void Begin() {
+    if (!on_handle_set_) {
+      throw std::logic_error(
+          "Please specify OnHandle callback function before starts");
+    }
+    looper_->Loop();
+  }
 
-  auto GetPool() noexcept -> ThreadPool * { return pool_.get(); }
   auto GetLooper() noexcept -> Looper * { return looper_.get(); }
 
  private:
+  bool on_handle_set_{false};
   std::unique_ptr<ThreadPool> pool_;
   std::unique_ptr<Looper> looper_;
 };
