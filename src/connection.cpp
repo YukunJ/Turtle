@@ -72,7 +72,7 @@ void Connection::WriteToWriteBuffer(const std::string &str) {
   write_buffer_->Append(str);
 }
 
-auto Connection::Read() -> const char * { return read_buffer_->buf_.data(); }
+auto Connection::Read() -> const char * { return read_buffer_->ToCString(); }
 
 auto Connection::ReadAsString() const -> std::string {
   return read_buffer_->ToString();
@@ -113,7 +113,7 @@ void Connection::Send() {
   ssize_t curr_write = 0;
   ssize_t write;
   const ssize_t to_write = GetWriteBufferSize();
-  const char *buf = write_buffer_->buf_.data();
+  const char *buf = write_buffer_->ToCString();
   while (curr_write < to_write) {
     if ((write = send(GetFd(), buf + curr_write, to_write - curr_write, 0)) <=
         0) {

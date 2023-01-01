@@ -27,8 +27,6 @@ static constexpr size_t INITIAL_BUFFER_CAPACITY = 1024;
  * NOT thread-safe
  * */
 class Buffer {
-  friend class Connection;
-
  public:
   explicit Buffer(size_t initial_capacity = INITIAL_BUFFER_CAPACITY);
 
