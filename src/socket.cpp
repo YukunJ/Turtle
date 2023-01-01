@@ -28,8 +28,7 @@ Socket &Socket::operator=(Socket &&other) noexcept {
   if (fd_ != -1) {
     close(fd_);
   }
-  fd_ = other.fd_;
-  other.fd_ = -1;
+  std::swap(fd_, other.fd_);
   return *this;
 }
 
