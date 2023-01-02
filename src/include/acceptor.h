@@ -14,14 +14,15 @@
 #include <functional>
 #include <memory>
 
-#include "connection.h"
-#include "looper.h"
-#include "net_address.h"
 #include "utils.h"
 
 namespace TURTLE_SERVER {
 
+class NetAddress;
+
 class Looper;
+
+class Connection;
 
 /**
  * This Acceptor comes with basic functionality for accepting new client

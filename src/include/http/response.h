@@ -12,15 +12,12 @@
 #define SRC_INCLUDE_HTTP_RESPONSE_H_
 
 #include <optional>
-#include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
 
-#include "http/header.h"
-#include "http/http_utils.h"
-
 namespace TURTLE_SERVER::HTTP {
+
+class Header;
 
 /**
  * The HTTP Response class

@@ -14,10 +14,12 @@
 #include <string>
 #include <vector>
 
-#include "http/header.h"
-#include "http/http_utils.h"
 #include "utils.h"
 namespace TURTLE_SERVER::HTTP {
+
+class Header;
+enum class Method;
+enum class Version;
 
 /**
  * The (limited GET-only HTTP 1.1) HTTP Request class

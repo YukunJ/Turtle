@@ -10,7 +10,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)     # Require C++17 support.
 # Define the project meta information
 PROJECT(TurtleServer
         VERSION 2023.02
-        DESCRIPTION "A C++ High Performance Web HTTP Server ever evolving"
+        DESCRIPTION "A C++ High Performance Network Web Server Framework"
         LANGUAGES C CXX
         )
 
@@ -64,61 +64,34 @@ INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 # Build
 ######################################################################################################################
 
-# Build the buffer
-ADD_LIBRARY(buffer src/buffer.cpp)
+# Build the turtle core library
+FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
+TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -Wall -Wextra -pedantic -Werror)
 
-# Build the net address
-ADD_LIBRARY(net_address src/net_address.cpp)
-
-# Build the socket
-ADD_LIBRARY(socket src/socket.cpp)
-TARGET_LINK_LIBRARIES(socket net_address)
-
-# Build the connection
-ADD_LIBRARY(connection src/connection.cpp)
-TARGET_LINK_LIBRARIES(connection buffer)
-
-# Build the poller
-ADD_LIBRARY(poller src/poller.cpp)
-
-# Build the looper
-ADD_LIBRARY(looper src/looper.cpp)
-
-# Build the thread pool
-ADD_LIBRARY(thread_pool src/thread_pool.cpp)
-TARGET_LINK_LIBRARIES(thread_pool Threads::Threads)
-
-# Build the acceptor
-ADD_LIBRARY(acceptor src/acceptor.cpp)
-TARGET_LINK_LIBRARIES(acceptor looper)
-
-# Build the http utils
-ADD_LIBRARY(http_utils src/http/http_utils.cpp)
-
-# Build the http header
-ADD_LIBRARY(header src/http/header.cpp)
-
-# Build the http request
-ADD_LIBRARY(request src/http/request.cpp)
-
-# Build the http response
-ADD_LIBRARY(response src/http/response.cpp)
+# Build the turtle http library
+FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
+ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
+TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the http tester
 ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
-TARGET_LINK_LIBRARIES(http_tester request response header http_utils)
+TARGET_LINK_LIBRARIES(http_tester turtle_http)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
-TARGET_LINK_LIBRARIES(echo_server buffer net_address socket connection poller looper acceptor thread_pool)
+TARGET_LINK_LIBRARIES(echo_server turtle_core)
+TARGET_COMPILE_OPTIONS(echo_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the echo client
 ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
-TARGET_LINK_LIBRARIES(echo_client buffer net_address socket connection poller looper acceptor thread_pool)
+TARGET_LINK_LIBRARIES(echo_client turtle_core)
 
 # Build the http server
 ADD_EXECUTABLE(http_server src/http/http_server.cpp)
-TARGET_LINK_LIBRARIES(http_server request response header http_utils buffer net_address socket connection poller looper acceptor thread_pool)
+TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
+TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
+
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count

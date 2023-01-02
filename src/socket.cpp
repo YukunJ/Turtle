@@ -8,12 +8,20 @@
  * This is an implementation file implementing the Socket, which acts as either
  * the listener or client
  */
-
 #include "socket.h"
 
-#define BACK_LOG 128
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
+#include <cassert>
+#include <cerrno>
+#include <stdexcept>
+
+#include "net_address.h"
 namespace TURTLE_SERVER {
+
+static constexpr int BACK_LOG = 128;
 
 Socket::Socket() noexcept : fd_(-1) {}
 

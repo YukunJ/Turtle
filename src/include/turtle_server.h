@@ -11,8 +11,9 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
-
+/* all header files included */
 #include "acceptor.h"
+#include "buffer.h"
 #include "connection.h"
 #include "http/header.h"
 #include "http/http_utils.h"
