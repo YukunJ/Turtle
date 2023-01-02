@@ -24,10 +24,12 @@
 #include "poller.h"
 #include "thread_pool.h"
 #include "utils.h"
-/* the epoll_wait time in milliseconds */
-#define TIMEOUT 3000
+
 
 namespace TURTLE_SERVER {
+
+/* the epoll_wait time in milliseconds */
+static constexpr int TIMEOUT = 3000;
 
 class Acceptor;
 /**
