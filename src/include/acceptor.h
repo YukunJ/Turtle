@@ -19,9 +19,7 @@
 namespace TURTLE_SERVER {
 
 class NetAddress;
-
 class Looper;
-
 class Connection;
 
 /**
