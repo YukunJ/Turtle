@@ -69,9 +69,9 @@ class Connection {
   void ClearWriteBuffer() noexcept;
 
  private:
+  std::unique_ptr<Socket> socket_;
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;
-  std::unique_ptr<Socket> socket_;
   uint32_t events_{};
   uint32_t revents_{};
   std::function<void()> callback_{nullptr};

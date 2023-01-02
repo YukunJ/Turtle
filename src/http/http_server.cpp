@@ -8,7 +8,8 @@
 #include "turtle_server.h"
 
 namespace TURTLE_SERVER {
-void ProcessHttpRequest(TurtleServer &server,
+
+void ProcessHttpRequest(TurtleServer &server,  // NOLINT
                         const std::string &serving_directory,
                         Connection *client_conn) {
   // edge-trigger, first read all available bytes

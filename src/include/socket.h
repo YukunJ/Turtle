@@ -12,18 +12,13 @@
 #ifndef SRC_INCLUDE_SOCKET_H_
 #define SRC_INCLUDE_SOCKET_H_
 
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <unistd.h>
-
-#include <cassert>
-#include <cerrno>
-#include <stdexcept>
-
-#include "net_address.h"
 #include "utils.h"
 
 namespace TURTLE_SERVER {
+
+class NetAddress;
+
+enum class Protocol;
 
 /**
  * This Socket class encapsulates a socket descriptor

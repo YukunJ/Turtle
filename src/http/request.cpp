@@ -7,9 +7,12 @@
  *
  * This is a header file implementing the HTTP request
  */
-
 #include "http/request.h"
 
+#include <algorithm>
+
+#include "http/header.h"
+#include "http/http_utils.h"
 namespace TURTLE_SERVER::HTTP {
 
 Request::Request(Method method, Version version, std::string resource_url,

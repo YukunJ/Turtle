@@ -9,7 +9,12 @@
  * main control looping for the server
  */
 
-#include <looper.h>
+#include "looper.h"
+
+#include "acceptor.h"
+#include "connection.h"
+#include "poller.h"
+#include "thread_pool.h"
 
 namespace TURTLE_SERVER {
 

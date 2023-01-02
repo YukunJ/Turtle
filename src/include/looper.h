@@ -19,17 +19,21 @@
 #include <memory>
 #include <mutex>  // NOLINT
 
-#include "acceptor.h"
-#include "connection.h"
-#include "poller.h"
-#include "thread_pool.h"
 #include "utils.h"
-/* the epoll_wait time in milliseconds */
-#define TIMEOUT 3000
 
 namespace TURTLE_SERVER {
 
+/* the epoll_wait time in milliseconds */
+static constexpr int TIMEOUT = 3000;
+
+class Poller;
+
+class ThreadPool;
+
+class Connection;
+
 class Acceptor;
+
 /**
  * This Looper acts as the central coordinator between executor (ThreadPool) and
  * event polling (Poller)
@@ -57,8 +61,8 @@ class Looper {
   void SetExit() noexcept;
 
  private:
-  ThreadPool *pool_;
   std::unique_ptr<Poller> poller_;
+  ThreadPool *pool_;
   std::mutex mtx_;
   std::unique_ptr<Acceptor> acceptor_{nullptr};
   std::map<int, std::unique_ptr<Connection>> connections_;

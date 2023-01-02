@@ -72,7 +72,8 @@ $ make linecount
 
 ### Usage
 
-To setup a custom server, user shoudl create an instance of **TurtleServer** and then only needs to provide two callback functions:
+
+To setup a custom server, user should create an instance of **TurtleServer** and then only needs to provide two callback functions:
 1. **OnAccept(Connection \*)**: A function to do extra business logic when accepting a new client connection.
 2. **OnHandle(Connection \*)**: A function to serve an existing client's request.
 

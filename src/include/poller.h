@@ -17,13 +17,14 @@
 #include <memory>
 #include <vector>
 
-#include "connection.h"
 #include "utils.h"
 
-/* the default maximum number of events to be listed on epoll tree */
-#define DEFAULT_EVENTS_LISTENED 1024
-
 namespace TURTLE_SERVER {
+
+/* the default maximum number of events to be listed on epoll tree */
+static constexpr int DEFAULT_EVENTS_LISTENED = 1024;
+
+class Connection;
 
 /**
  * This Poller acts at the socket monitor that actively polling on connections

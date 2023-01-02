@@ -11,6 +11,8 @@
 
 #include "http/header.h"
 
+#include "http/http_utils.h"
+
 namespace TURTLE_SERVER::HTTP {
 
 Header::Header(const std::string &key, const std::string &value)

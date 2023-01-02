@@ -12,6 +12,13 @@
 
 #include "poller.h"
 
+#include <unistd.h>
+
+#include <cassert>
+#include <cstring>
+
+#include "connection.h"
+
 namespace TURTLE_SERVER {
 
 Poller::Poller(uint64_t poll_size) : poll_size_(poll_size) {
