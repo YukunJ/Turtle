@@ -58,10 +58,17 @@ auto Split(const std::string& str, const char* delim) noexcept
 
 auto Join(const std::vector<std::string>& tokens, const char* delim) noexcept
     -> std::string {
-  std::stringstream str_stream;
-  for (const auto& token : tokens) {
-    str_stream << token << delim;
+  if (tokens.empty()) {
+      return {};
   }
+  if (tokens.size() == 1) {
+      return tokens[0];
+  }
+  std::stringstream str_stream;
+  for (size_t i = 0; i < tokens.size() -1 ; i++) {
+      str_stream << tokens[i] << delim;
+  }
+  str_stream << tokens[tokens.size() - 1];
   return str_stream.str();
 }
 

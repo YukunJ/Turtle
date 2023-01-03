@@ -3,7 +3,7 @@
  * @author Yukun J
  * @expectation this header file should be compatible to compile in C++
  * program on Linux
- * @init_date Dec 29 2022
+ * @init_date Jan 3 2023
  *
  * This is a header file for http module's constant enum definitions and utility
  * functions
