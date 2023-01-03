@@ -59,14 +59,14 @@ auto Split(const std::string& str, const char* delim) noexcept
 auto Join(const std::vector<std::string>& tokens, const char* delim) noexcept
     -> std::string {
   if (tokens.empty()) {
-      return {};
+    return {};
   }
   if (tokens.size() == 1) {
-      return tokens[0];
+    return tokens[0];
   }
   std::stringstream str_stream;
-  for (size_t i = 0; i < tokens.size() -1 ; i++) {
-      str_stream << tokens[i] << delim;
+  for (size_t i = 0; i < tokens.size() - 1; i++) {
+    str_stream << tokens[i] << delim;
   }
   str_stream << tokens[tokens.size() - 1];
   return str_stream.str();
@@ -105,12 +105,14 @@ auto CheckFileSize(const std::string& file_path) noexcept -> size_t {
 }
 
 void LoadFile(const std::string& file_path,
-              std::vector<char>& buffer) noexcept {  // NOLINT
+              std::vector<unsigned char>& buffer) noexcept {  // NOLINT
   size_t file_size = CheckFileSize(file_path);
+  size_t buffer_old_size = buffer.size();
   std::ifstream file(file_path);
-  buffer.resize(file_size);
+  buffer.resize(buffer_old_size + file_size);
   assert(file.is_open());
-  file.read(&buffer[0], static_cast<std::streamsize>(file_size));
+  file.read(reinterpret_cast<char*>(&buffer[buffer_old_size]),
+            static_cast<std::streamsize>(file_size));
 }
 
 }  // namespace TURTLE_SERVER::HTTP

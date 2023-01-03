@@ -3,7 +3,7 @@
  * @author Yukun J
  * @expectation this implementation file should be compatible to compile in C++
  * program on Linux
- * @init_date Dec 31 2022
+ * @init_date Jan 3 2023
  *
  * This is an implementation file implementing the HTTP response
  */
@@ -46,12 +46,12 @@ Response::Response(const std::string& status_code, bool should_close,
       HEADER_CONNECTION,
       ((should_close_) ? CONNECTION_CLOSE : CONNECTION_KEEP_ALIVE));
   // if resource is specified and available
-  if (resource_url_.has_value()) {
+  if (resource_url_.has_value() && IsFileExists(resource_url_.value())) {
     size_t content_length = CheckFileSize(resource_url_.value());
     headers_.emplace_back(HEADER_CONTENT_LENGTH,
                           std::to_string(content_length));
-    LoadFile(resource_url_.value(), body_);
   } else {
+    resource_url_ = std::nullopt;
     headers_.emplace_back(HEADER_CONTENT_LENGTH, CONTENT_LENGTH_ZERO);
   }
 }
@@ -66,8 +66,8 @@ void Response::Serialize(std::vector<unsigned char>& buffer) {  // NOLINT
   str_stream << CRLF;
   std::string response_head = str_stream.str();
   buffer.insert(buffer.end(), response_head.begin(), response_head.end());
-  if (!body_.empty()) {
-    buffer.insert(buffer.end(), body_.begin(), body_.end());
+  if (resource_url_.has_value()) {
+    LoadFile(resource_url_.value(), buffer);
   }
 }
 }  // namespace TURTLE_SERVER::HTTP

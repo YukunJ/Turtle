@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "buffer.h"
 #include "socket.h"
@@ -58,6 +59,7 @@ class Connection {
   void WriteToWriteBuffer(const unsigned char *buf, size_t size);
   void WriteToReadBuffer(const std::string &str);
   void WriteToWriteBuffer(const std::string &str);
+  void WriteToWriteBuffer(std::vector<unsigned char> &&other_buf);
 
   auto Read() const noexcept -> const unsigned char *;
   auto ReadAsString() const noexcept -> std::string;

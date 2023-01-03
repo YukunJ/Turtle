@@ -2,7 +2,7 @@
  * @file http_server.cpp
  * @author Yukun J
  * @expectation this is the http server for illustration and test purpose
- * @init_date Jan 1 2023
+ * @init_date Jan 3 2023
  */
 
 #include "turtle_server.h"
@@ -47,7 +47,7 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
       }
     }
     // send out the response
-    client_conn->WriteToWriteBuffer(response_buf.data(), response_buf.size());
+    client_conn->WriteToWriteBuffer(std::move(response_buf));
     client_conn->Send();
     if (no_more_parse) {
       break;
@@ -64,7 +64,7 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
 
 int main(int argc, char *argv[]) {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
-  std::string directory = "../http_dir";  // the default http serving directory
+  std::string directory = "../http_dir/";  // the default http serving directory
   if (argc == 2) {
     directory = argv[1];
   }

@@ -25,13 +25,14 @@ class Header;
  */
 class Response {
  public:
+  /* 200 OK response */
   static auto Make200Response(bool should_close,
                               const std::string& resource_url) -> Response;
-
+  /* 400 Bad Request response, close connection */
   static auto Make400Response() -> Response;
-
+  /* 404 Not Found response, close connection */
   static auto Make404Response() -> Response;
-
+  /* 503 Service Unavailable response, close connection */
   static auto Make503Response() -> Response;
 
   Response(const std::string& status_code, bool should_close,
@@ -44,7 +45,7 @@ class Response {
   bool should_close_;
   std::vector<Header> headers_;
   std::optional<std::string> resource_url_;
-  std::vector<char> body_;
+  std::vector<unsigned char> body_;
 };
 
 }  // namespace TURTLE_SERVER::HTTP

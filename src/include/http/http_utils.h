@@ -103,11 +103,11 @@ auto IsFileExists(const std::string& file_path) noexcept -> bool;
 auto CheckFileSize(const std::string& file_path) noexcept -> size_t;
 
 /**
- * Load the file into a vector of char
+ * Load the file appending to be back of a vector of unsigned char
  * able to contain binary data
  */
 void LoadFile(const std::string& file_path,
-              std::vector<char>& buffer) noexcept;  // NOLINT
+              std::vector<unsigned char>& buffer) noexcept;  // NOLINT
 
 }  // namespace TURTLE_SERVER::HTTP
 

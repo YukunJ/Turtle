@@ -34,13 +34,13 @@ class Request {
   explicit Request(
       const std::string& request_str) noexcept;  // deserialize method
   NON_COPYABLE(Request);
-  auto IsValid() const -> bool;
-  auto ShouldClose() const -> bool;
-  auto GetInvalidReason() const -> std::string;
-  auto GetMethod() const -> Method;
-  auto GetVersion() const -> Version;
-  auto GetResourceUrl() const -> std::string;
-  auto GetHeaders() const -> std::vector<Header>;
+  auto IsValid() const noexcept -> bool;
+  auto ShouldClose() const noexcept -> bool;
+  auto GetInvalidReason() const noexcept -> std::string;
+  auto GetMethod() const noexcept -> Method;
+  auto GetVersion() const noexcept -> Version;
+  auto GetResourceUrl() const noexcept -> std::string;
+  auto GetHeaders() const noexcept -> std::vector<Header>;
   friend std::ostream& operator<<(std::ostream& os, const Request& request);
 
  private:

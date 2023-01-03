@@ -29,6 +29,12 @@ Request::Request(const std::string& request_str) noexcept {
     invalid_reason_ = "Request format is wrong.";
     return;
   }
+  /* the ending of a request should be '\r\n\r\n'
+   * which is split to empty string in the last token */
+  if (!lines.back().empty()) {
+    invalid_reason_ = "Ending of the request is not \r\n\r\n";
+    return;
+  }
   lines.pop_back();
   bool request_line_parse_success = ParseRequestLine(lines[0]);
   if (!request_line_parse_success) {
@@ -47,19 +53,23 @@ Request::Request(const std::string& request_str) noexcept {
   is_valid_ = true;
 }
 
-auto Request::ShouldClose() const -> bool { return should_close_; }
+auto Request::ShouldClose() const noexcept -> bool { return should_close_; }
 
-auto Request::IsValid() const -> bool { return is_valid_; }
+auto Request::IsValid() const noexcept -> bool { return is_valid_; }
 
-auto Request::GetMethod() const -> Method { return method_; }
+auto Request::GetMethod() const noexcept -> Method { return method_; }
 
-auto Request::GetVersion() const -> Version { return version_; }
+auto Request::GetVersion() const noexcept -> Version { return version_; }
 
-auto Request::GetResourceUrl() const -> std::string { return resource_url_; }
+auto Request::GetResourceUrl() const noexcept -> std::string {
+  return resource_url_;
+}
 
-auto Request::GetHeaders() const -> std::vector<Header> { return headers_; }
+auto Request::GetHeaders() const noexcept -> std::vector<Header> {
+  return headers_;
+}
 
-auto Request::GetInvalidReason() const -> std::string {
+auto Request::GetInvalidReason() const noexcept -> std::string {
   return invalid_reason_;
 }
 
@@ -80,13 +90,16 @@ auto Request::ParseRequestLine(const std::string& request_line) -> bool {
     return false;
   }
   // default route to index.html
-  resource_url_ = (tokens[1].at(tokens[1].size() - 1) == '/')
-                      ? tokens[1] + DEFAULT_ROUTE
-                      : tokens[1];
+  resource_url_ =
+      (tokens[1].empty() || tokens[1].at(tokens[1].size() - 1) == '/')
+          ? tokens[1] + DEFAULT_ROUTE
+          : tokens[1];
   return true;
 }
 
 void Request::ScanHeader(const Header& header) {
+  /* currently only scan for whether the connection should be closed after
+   * service */
   auto key = Format(header.GetKey());
   if (key == Format(HEADER_CONNECTION)) {
     auto value = Format(header.GetValue());
