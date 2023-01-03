@@ -43,15 +43,21 @@ int main() {
   if (TURTLE_SERVER::HTTP::Join(split_str2, TURTLE_SERVER::HTTP::CRLF) ==
       str2) {
     std::cout << ".split().join() equals itself" << std::endl;
+  } else {
+    std::cout << ".split().join() not equals itself" << std::endl;
+    std::cout << "The join is [" << std::endl
+              << TURTLE_SERVER::HTTP::Join(split_str2,
+                                           TURTLE_SERVER::HTTP::CRLF)
+              << "]" << std::endl;
   }
 
   /* Trim */
   std::string str_3 = "  Sometimes Life is just so hard! ";
-  TURTLE_SERVER::HTTP::Trim(str_3, " ");
+  str_3 = TURTLE_SERVER::HTTP::Trim(str_3, " ");
   std::cout << "[" << str_3 << "]" << std::endl;
 
   std::string str_evil = "\r\n\r\n\r\n";
-  TURTLE_SERVER::HTTP::Trim(str_evil, TURTLE_SERVER::HTTP::CRLF);
+  str_evil = TURTLE_SERVER::HTTP::Trim(str_evil, TURTLE_SERVER::HTTP::CRLF);
   std::cout << "[" << str_evil << "]" << std::endl;
 
   /* Header */

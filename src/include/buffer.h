@@ -45,6 +45,8 @@ class Buffer {
 
   void Append(const std::string &new_str_data);
 
+  void Append(std::vector<unsigned char> &&other_buffer);
+
   void AppendHead(const unsigned char *new_char_data, size_t data_size);
 
   void AppendHead(const std::string &new_str_data);

@@ -74,6 +74,10 @@ void Connection::WriteToWriteBuffer(const std::string &str) {
   write_buffer_->Append(str);
 }
 
+void Connection::WriteToWriteBuffer(std::vector<unsigned char> &&other_buf) {
+  write_buffer_->Append(std::move(other_buf));
+}
+
 auto Connection::Read() const noexcept -> const unsigned char * {
   return read_buffer_->Data();
 }

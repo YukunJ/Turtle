@@ -23,6 +23,11 @@ void Buffer::Append(const std::string &new_str_data) {
          new_str_data.size());
 }
 
+void Buffer::Append(std::vector<unsigned char> &&other_buffer) {
+  buf_.insert(buf_.end(), std::make_move_iterator(other_buffer.begin()),
+              std::make_move_iterator(other_buffer.end()));
+}
+
 void Buffer::AppendHead(const unsigned char *new_char_data, size_t data_size) {
   buf_.insert(buf_.begin(), new_char_data, new_char_data + data_size);
 }

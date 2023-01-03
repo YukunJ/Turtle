@@ -3,7 +3,7 @@
 -----------------
 ## TURTLE
 
-**Turtle** is a C++17-based lightweight network framework for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET request and response as well.
+**Turtle** is a C++17-based lightweight network framework for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
@@ -13,7 +13,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Apply thread pool management to asynchronously execute requests and avoids high-of-line blocking to a great extent.
 + Achieve low coupling and high extensible framework
 + Allow users to build custom server by only providing 2 callback functions.
-+ Support HTTP GET request & response
++ Support HTTP GET/HEAD request & response
 
 ### System Diagram
 
@@ -121,16 +121,18 @@ $ ./echo_server
 $ ./echo_client
 ```
 
-The HTTP server demo is under `./src/http` folder for your reference as well. It is currently under active revision to improve efficiency and maximize decoupling from the core network part of the **Turtle** library.
+The HTTP server demo is under `./src/http` folder for reference as well. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
 
 ### Future Work
 This repo is under active development and maintainence. New features and fixes are updated periodically as time and skill permit.
 
 The followings are on the **TODO** list:
 
-- [x] Support serving HTTP GET Request & Response
-- [ ] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
+- [x] Support serving HTTP GET/HEAD Request & Response
+- [x] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
+- [ ] Refactor the architecture into multiple Reactor mode to improve concurrency
 - [ ] Add performance testing benchmark
+- [ ] Support MacOS operating system build
 - [ ] Add a Cache layer to improve throughput
 - [ ] Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones

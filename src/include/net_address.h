@@ -49,7 +49,7 @@ class NetAddress {
   auto ToString() const noexcept -> std::string;
 
  private:
-  const Protocol protocol_{Protocol::Ipv4};
+  Protocol protocol_{Protocol::Ipv4};
   mutable struct sockaddr addr_ {};
   socklen_t addr_len_;
 };
