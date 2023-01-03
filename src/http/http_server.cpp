@@ -7,7 +7,7 @@
 
 #include "turtle_server.h"
 
-namespace TURTLE_SERVER {
+namespace TURTLE_SERVER::HTTP {
 
 void ProcessHttpRequest(TurtleServer &server,  // NOLINT
                         const std::string &serving_directory,
@@ -25,23 +25,24 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
   std::optional<std::string> request_op =
       client_conn->FindAndPopTill("\r\n\r\n");
   while (request_op != std::nullopt) {
-    HTTP::Request request{request_op.value()};
+    Request request{request_op.value()};
     std::vector<unsigned char> response_buf;
 
     if (!request.IsValid()) {
-      auto response = HTTP::Response::Make400Response();
+      auto response = Response::Make400Response();
       no_more_parse = true;
       response.Serialize(response_buf);
     } else {
       std::string resource_full_path =
           serving_directory + request.GetResourceUrl();
-      if (!HTTP::IsFileExists(resource_full_path)) {
-        auto response = HTTP::Response::Make404Response();
+      if (!IsFileExists(resource_full_path)) {
+        auto response = Response::Make404Response();
         no_more_parse = true;
         response.Serialize(response_buf);
       } else {
-        auto response = HTTP::Response::Make200Response(request.ShouldClose(),
-                                                        resource_full_path);
+        auto response = Response::Make200Response(request.ShouldClose(),
+                                                  resource_full_path);
+        response.SetShouldTransferContent(request.GetMethod() != Method::HEAD);
         no_more_parse = request.ShouldClose();
         response.Serialize(response_buf);
       }
@@ -60,7 +61,7 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
     return;
   }
 }
-}  // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER::HTTP
 
 int main(int argc, char *argv[]) {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
@@ -71,7 +72,8 @@ int main(int argc, char *argv[]) {
   TURTLE_SERVER::TurtleServer http_server(local_address);
   http_server
       .OnHandle([&](TURTLE_SERVER::Connection *client_conn) {
-        TURTLE_SERVER::ProcessHttpRequest(http_server, directory, client_conn);
+        TURTLE_SERVER::HTTP::ProcessHttpRequest(http_server, directory,
+                                                client_conn);
       })
       .Begin();
   return 0;

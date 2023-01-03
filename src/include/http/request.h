@@ -22,7 +22,7 @@ enum class Method;
 enum class Version;
 
 /**
- * The (limited GET-only HTTP 1.1) HTTP Request class
+ * The (limited GET/HEAD-only HTTP 1.1) HTTP Request class
  * it contains necessary request line features including method, resource url,
  * http version and since we supports http 1.1, it also cares if the client
  * connection should be kept alive

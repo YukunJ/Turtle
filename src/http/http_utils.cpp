@@ -20,9 +20,12 @@
 namespace TURTLE_SERVER::HTTP {
 
 auto ToMethod(const std::string& method_str) noexcept -> Method {
-  auto method_str_fomatted = Format(method_str);
-  if (method_str_fomatted == METHOD_TO_STRING.at(Method::GET)) {
+  auto method_str_formatted = Format(method_str);
+  if (method_str_formatted == METHOD_TO_STRING.at(Method::GET)) {
     return Method::GET;
+  }
+  if (method_str_formatted == METHOD_TO_STRING.at(Method::HEAD)) {
+    return Method::HEAD;
   }
   return Method::UNSUPPORTED;
 }

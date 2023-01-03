@@ -40,14 +40,16 @@ static constexpr char RESPONSE_NOT_FOUND[] = {"404 Not Found"};
 static constexpr char RESPONSE_SERVICE_UNAVAILABLE[] = {
     "503 Service Unavailable"};
 
-/* HTTP Method enum, only support GET method now */
-enum class Method { GET, UNSUPPORTED };
+/* HTTP Method enum, only support GET/HEAD method now */
+enum class Method { GET, HEAD, UNSUPPORTED };
 
 /* HTTP version enum, only support HTTP 1.1 now */
 enum class Version { HTTP_1_1, UNSUPPORTED };
 
 static const std::map<Method, std::string> METHOD_TO_STRING{
-    {Method::GET, "GET"}, {Method::UNSUPPORTED, "UNSUPPORTED"}};
+    {Method::GET, "GET"},
+    {Method::HEAD, "HEAD"},
+    {Method::UNSUPPORTED, "UNSUPPORTED"}};
 
 static const std::map<Version, std::string> VERSION_TO_STRING{
     {Version::HTTP_1_1, "HTTP/1.1"}, {Version::UNSUPPORTED, "UNSUPPORTED"}};
