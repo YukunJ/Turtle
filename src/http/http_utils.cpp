@@ -3,7 +3,7 @@
  * @author Yukun J
  * @expectation this header file should be compatible to compile in C++
  * program on Linux
- * @init_date Dec 29 2022
+ * @init_date Jan 3 2023
  *
  * This is an implementation file for http module's constant enum definitions
  * and utility functions
@@ -11,31 +11,31 @@
 
 #include "http/http_utils.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 namespace TURTLE_SERVER::HTTP {
 
-auto ToMethod(const std::string& method_str) -> Method {
+auto ToMethod(const std::string& method_str) noexcept -> Method {
   auto method_str_fomatted = Format(method_str);
-  if (method_str_fomatted == "GET") {
+  if (method_str_fomatted == METHOD_TO_STRING.at(Method::GET)) {
     return Method::GET;
   }
   return Method::UNSUPPORTED;
 }
 
-auto ToVersion(const std::string& version_str) -> Version {
+auto ToVersion(const std::string& version_str) noexcept -> Version {
   auto version_str_formatted = Format(version_str);
-  if (version_str_formatted == "HTTP/1.1") {
+  if (version_str_formatted == VERSION_TO_STRING.at(Version::HTTP_1_1)) {
     return Version::HTTP_1_1;
   }
   return Version::UNSUPPORTED;
 }
 
-auto Split(const std::string& str, const char* delim)
+auto Split(const std::string& str, const char* delim) noexcept
     -> std::vector<std::string> {
   std::vector<std::string> tokens;
   if (str.empty()) {
@@ -56,7 +56,7 @@ auto Split(const std::string& str, const char* delim)
   return tokens;
 }
 
-auto Join(const std::vector<std::string>& tokens, const char* delim)
+auto Join(const std::vector<std::string>& tokens, const char* delim) noexcept
     -> std::string {
   std::stringstream str_stream;
   for (const auto& token : tokens) {
@@ -65,7 +65,7 @@ auto Join(const std::vector<std::string>& tokens, const char* delim)
   return str_stream.str();
 }
 
-auto Trim(const std::string& str, const char* delim) -> std::string {
+auto Trim(const std::string& str, const char* delim) noexcept -> std::string {
   size_t r_found = str.find_last_not_of(delim);
   if (r_found == std::string::npos) {
     return {};
@@ -74,34 +74,36 @@ auto Trim(const std::string& str, const char* delim) -> std::string {
   return str.substr(l_found, r_found - l_found + 1);
 }
 
-auto ToUpper(std::string str) -> std::string {
-  std::transform(str.begin(), str.end(), str.begin(), [](char c) { return std::toupper(c); });
+auto ToUpper(std::string str) noexcept -> std::string {
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](char c) { return std::toupper(c); });
   return str;
 }
 
-auto Format(const std::string& str) -> std::string {
+auto Format(const std::string& str) noexcept -> std::string {
   return ToUpper(Trim(str));
 }
 
-bool IsDirectoryExists(const std::string& directory_path) {
+auto IsDirectoryExists(const std::string& directory_path) noexcept -> bool {
   return std::filesystem::is_directory(directory_path);
 }
 
-bool IsFileExists(const std::string& file_path) {
+auto IsFileExists(const std::string& file_path) noexcept -> bool {
   return std::filesystem::exists(file_path);
 }
 
-size_t CheckFileSize(const std::string& file_path) {
+auto CheckFileSize(const std::string& file_path) noexcept -> size_t {
+  assert(IsFileExists(file_path));
   return std::filesystem::file_size(file_path);
 }
 
 void LoadFile(const std::string& file_path,
-              std::vector<char>& buffer) {  // NOLINT
+              std::vector<char>& buffer) noexcept {  // NOLINT
   size_t file_size = CheckFileSize(file_path);
   std::ifstream file(file_path);
   buffer.resize(file_size);
   assert(file.is_open());
-  file.read(&buffer[0], file_size);
+  file.read(&buffer[0], static_cast<std::streamsize>(file_size));
 }
 
 }  // namespace TURTLE_SERVER::HTTP

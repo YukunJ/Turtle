@@ -88,11 +88,9 @@ auto Request::ParseRequestLine(const std::string& request_line) -> bool {
 
 void Request::ScanHeader(const Header& header) {
   auto key = Format(header.GetKey());
-  if (key == HEADER_CONNECTION) {
-    auto value = header.GetValue();
-    Trim(value);
-    ToUpper(value);
-    if (value == CONNECTION_KEEP_ALIVE) {
+  if (key == Format(HEADER_CONNECTION)) {
+    auto value = Format(header.GetValue());
+    if (value == Format(CONNECTION_KEEP_ALIVE)) {
       should_close_ = false;
     }
   }
