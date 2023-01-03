@@ -16,21 +16,20 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 namespace TURTLE_SERVER::HTTP {
 
-auto ToMethod(std::string method_str) -> Method {
-  Trim(method_str, SPACE);
-  ToUpper(method_str);
-  if (method_str == "GET") {
+auto ToMethod(const std::string& method_str) -> Method {
+  auto method_str_fomatted = Format(method_str);
+  if (method_str_fomatted == "GET") {
     return Method::GET;
   }
   return Method::UNSUPPORTED;
 }
 
-auto ToVersion(std::string version_str) -> Version {
-  Trim(version_str, SPACE);
-  ToUpper(version_str);
-  if (version_str == "HTTP/1.1") {
+auto ToVersion(const std::string& version_str) -> Version {
+  auto version_str_formatted = Format(version_str);
+  if (version_str_formatted == "HTTP/1.1") {
     return Version::HTTP_1_1;
   }
   return Version::UNSUPPORTED;
@@ -66,21 +65,22 @@ auto Join(const std::vector<std::string>& tokens, const char* delim)
   return str_stream.str();
 }
 
-void Trim(std::string& str, const char* delim) {  // NOLINT
+auto Trim(const std::string& str, const char* delim) -> std::string {
   size_t r_found = str.find_last_not_of(delim);
   if (r_found == std::string::npos) {
-    str.clear();
-    return;
+    return {};
   }
-  str.erase(r_found + 1);
   size_t l_found = str.find_first_not_of(delim);
-  str.erase(0, l_found);
+  return str.substr(l_found, r_found - l_found + 1);
 }
 
-void ToUpper(std::string& str) {  // NOLINT
-  for (auto& c : str) {
-    c = toupper(c);
-  }
+auto ToUpper(std::string str) -> std::string {
+  std::transform(str.begin(), str.end(), str.begin(), [](char c) { return std::toupper(c); });
+  return str;
+}
+
+auto Format(const std::string& str) -> std::string {
+  return ToUpper(Trim(str));
 }
 
 bool IsDirectoryExists(const std::string& directory_path) {

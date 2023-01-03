@@ -48,10 +48,10 @@ static const std::map<Version, std::string> VERSION_TO_STRING{
     {Version::HTTP_1_1, "HTTP/1.1"}, {Version::UNSUPPORTED, "UNSUPPORTED"}};
 
 /* space and case insensitive */
-auto ToMethod(std::string method_str) -> Method;
+auto ToMethod(const std::string& method_str) -> Method;
 
 /* space and case insensitive */
-auto ToVersion(std::string version_str) -> Version;
+auto ToVersion(const std::string& version_str) -> Version;
 
 /**
  * split a string into many sub strings, splitted by the specified delimiter
@@ -66,14 +66,19 @@ auto Join(const std::vector<std::string>& tokens, const char* delim = SPACE)
     -> std::string;
 
 /**
- * Remove the leading and trailing specified delimiter inplace
+ * Remove the leading and trailing specified delimiter (not inplace)
  */
-void Trim(std::string& str, const char* delim = SPACE);  // NOLINT
+auto Trim(const std::string& str, const char* delim = SPACE) -> std::string;
 
 /**
- * Convert each character in a string to upper case inplace
+ * Convert each character in a string to upper case (not inplace)
  */
-void ToUpper(std::string& str);  // NOLINT
+auto ToUpper(std::string str) -> std::string;
+
+/**
+ * Apply Trim + ToUpper to a string and return the formatted version of it
+ */
+auto Format(const std::string&) -> std::string;
 
 /**
  * Check if the path-specified directory exists
