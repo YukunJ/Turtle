@@ -9,6 +9,7 @@
 
 namespace TURTLE_SERVER::HTTP {
 
+
 void ProcessHttpRequest(TurtleServer &server,  // NOLINT
                         const std::string &serving_directory,
                         Connection *client_conn) {
