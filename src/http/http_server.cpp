@@ -64,12 +64,35 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
 }  // namespace TURTLE_SERVER::HTTP
 
 int main(int argc, char *argv[]) {
-  TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
-  std::string directory = "../http_dir/";  // the default http serving directory
-  if (argc == 2) {
-    directory = argv[1];
+  const std::string usage =
+      "Usage: \n"
+      "./http_server [optional: port default=20080] [optional: directory "
+      "default=../http_dir/] \n";
+  if (argc > 3) {
+    std::cout << "argument number error\n";
+    std::cout << usage;
+    exit(EXIT_FAILURE);
   }
-  TURTLE_SERVER::TurtleServer http_server(local_address);
+  TURTLE_SERVER::NetAddress address("0.0.0.0", 20080);
+  std::string directory = "../http_dir/";
+  if (argc >= 2) {
+    auto port = static_cast<uint16_t>(std::strtol(argv[1], nullptr, 10));
+    if (port == 0) {
+      std::cout << "port error\n";
+      std::cout << usage;
+      exit(EXIT_FAILURE);
+    }
+    address = {"0.0.0.0", port};
+    if (argc == 3) {
+      directory = argv[2];
+      if (!TURTLE_SERVER::HTTP::IsDirectoryExists(directory)) {
+        std::cout << "directory error\n";
+        std::cout << usage;
+        exit(EXIT_FAILURE);
+      }
+    }
+  }
+  TURTLE_SERVER::TurtleServer http_server(address);
   http_server
       .OnHandle([&](TURTLE_SERVER::Connection *client_conn) {
         TURTLE_SERVER::HTTP::ProcessHttpRequest(http_server, directory,
