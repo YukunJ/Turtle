@@ -11,11 +11,12 @@
 
 #include "looper.h"
 
+#include <iostream>
+
 #include "acceptor.h"
 #include "connection.h"
 #include "poller.h"
 #include "thread_pool.h"
-
 namespace TURTLE_SERVER {
 
 Looper::Looper(ThreadPool *pool)
@@ -29,6 +30,8 @@ void Looper::Loop() {
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
     for (auto &conn : ready_connections) {
+      std::cout << "Looper at thread " << std::this_thread::get_id()
+                << " execute callback for " << conn->GetFd() << std::endl;
       auto fut = DispatchTask(conn->GetCallback());
       fut.wait();
     }
@@ -46,6 +49,8 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
   poller_->AddConnection(new_conn.get());
   int fd = new_conn->GetFd();
   connections_.insert({fd, std::move(new_conn)});
+  std::cout << "Looper at thread " << std::this_thread::get_id() << " added "
+            << fd << std::endl;
 }
 
 auto Looper::DeleteConnection(int fd) -> bool {
@@ -54,6 +59,8 @@ auto Looper::DeleteConnection(int fd) -> bool {
   if (it == connections_.end()) {
     return false;
   }
+  std::cout << "Looper at thread " << std::this_thread::get_id() << " deleted "
+            << fd << std::endl;
   connections_.erase(it);
   return true;
 }

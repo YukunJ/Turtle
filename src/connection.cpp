@@ -141,4 +141,8 @@ void Connection::ClearReadBuffer() noexcept { read_buffer_->Clear(); }
 
 void Connection::ClearWriteBuffer() noexcept { write_buffer_->Clear(); }
 
+void Connection::SetLooper(Looper *looper) noexcept { owner_looper_ = looper; }
+
+auto Connection::GetLooper() noexcept -> Looper * { return owner_looper_; }
+
 }  // namespace TURTLE_SERVER

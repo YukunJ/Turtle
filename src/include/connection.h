@@ -26,6 +26,8 @@
 
 namespace TURTLE_SERVER {
 
+class Looper;
+
 /**
  * This Connection class encapsulates a TCP client connection
  * It could be set a custom callback function when new messages arrive
@@ -70,7 +72,11 @@ class Connection {
   void ClearReadBuffer() noexcept;
   void ClearWriteBuffer() noexcept;
 
+  void SetLooper(Looper *looper) noexcept;
+  auto GetLooper() noexcept -> Looper *;
+
  private:
+  Looper *owner_looper_{nullptr};
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;

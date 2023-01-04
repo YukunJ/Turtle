@@ -79,8 +79,6 @@ class TurtleServer {
     looper_->Loop();
   }
 
-  auto GetLooper() noexcept -> Looper * { return looper_.get(); }
-
  private:
   bool on_handle_set_{false};
   std::unique_ptr<ThreadPool> pool_;

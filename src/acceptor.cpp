@@ -27,6 +27,7 @@ Acceptor::Acceptor(Looper *looper, NetAddress server_address)
   acceptor_sock->Listen();
   acceptor_conn = std::make_unique<Connection>(std::move(acceptor_sock));
   acceptor_conn->SetEvents(EPOLLIN);  // not edge-trigger for listener
+  acceptor_conn->SetLooper(looper);
   SetCustomAcceptCallback({});
   SetCustomHandleCallback({});
 }
@@ -44,6 +45,7 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   auto client_connection = std::make_unique<Connection>(std::move(client_sock));
   client_connection->SetEvents(EPOLLIN | EPOLLET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
+  client_connection->SetLooper(looper_);
   looper_->AddConnection(std::move(client_connection));
 }
 void Acceptor::SetCustomAcceptCallback(
