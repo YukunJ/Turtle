@@ -14,7 +14,6 @@
 #include <sys/socket.h>
 
 #include <cstring>
-#include <iostream>
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
@@ -101,7 +100,6 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
       memset(buf, 0, sizeof(buf));
     } else if (curr_read == 0) {
       // the client has exit
-      std::cout << "Client exits: " << from_fd << std::endl;
       return {read, true};
     } else if (curr_read == -1 && errno == EINTR) {
       // normal interrupt
@@ -140,5 +138,9 @@ void Connection::Send() {
 void Connection::ClearReadBuffer() noexcept { read_buffer_->Clear(); }
 
 void Connection::ClearWriteBuffer() noexcept { write_buffer_->Clear(); }
+
+void Connection::SetLooper(Looper *looper) noexcept { owner_looper_ = looper; }
+
+auto Connection::GetLooper() noexcept -> Looper * { return owner_looper_; }
 
 }  // namespace TURTLE_SERVER

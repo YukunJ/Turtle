@@ -84,7 +84,9 @@ auto Socket::Accept(NetAddress &client_address) -> int {
   int client_fd = -1;
   if ((client_fd = accept(fd_, client_address.YieldAddr(),
                           client_address.YieldAddrLen())) == -1) {
-    throw std::logic_error("Socket: Accept() error");
+    // under high pressure, accept might fail.
+    // but server should not fail at this time
+    perror("Socket: Accept() failed");
   }
   return client_fd;
 }

@@ -49,4 +49,7 @@ void ThreadPool::Exit() {
   exit_ = true;
   cv_.notify_all();
 }
+
+auto ThreadPool::GetSize() -> size_t { return threads_.size(); }
+
 }  // namespace TURTLE_SERVER

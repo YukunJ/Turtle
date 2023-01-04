@@ -9,15 +9,13 @@
 
 namespace TURTLE_SERVER::HTTP {
 
-
-void ProcessHttpRequest(TurtleServer &server,  // NOLINT
-                        const std::string &serving_directory,
-                        Connection *client_conn) {
+void ProcessHttpRequest(  // NOLINT
+    const std::string &serving_directory, Connection *client_conn) {
   // edge-trigger, first read all available bytes
   int from_fd = client_conn->GetFd();
   auto [read, exit] = client_conn->Recv();
   if (exit) {
-    server.GetLooper()->DeleteConnection(from_fd);
+    client_conn->GetLooper()->DeleteConnection(from_fd);
     // client_conn ptr is invalid below here, do not touch it again
     return;
   }
@@ -57,7 +55,7 @@ void ProcessHttpRequest(TurtleServer &server,  // NOLINT
     request_op = client_conn->FindAndPopTill("\r\n\r\n");
   }
   if (no_more_parse) {
-    server.GetLooper()->DeleteConnection(from_fd);
+    client_conn->GetLooper()->DeleteConnection(from_fd);
     // client_conn ptr is invalid below here, do not touch it again
     return;
   }
@@ -96,8 +94,7 @@ int main(int argc, char *argv[]) {
   TURTLE_SERVER::TurtleServer http_server(address);
   http_server
       .OnHandle([&](TURTLE_SERVER::Connection *client_conn) {
-        TURTLE_SERVER::HTTP::ProcessHttpRequest(http_server, directory,
-                                                client_conn);
+        TURTLE_SERVER::HTTP::ProcessHttpRequest(directory, client_conn);
       })
       .Begin();
   return 0;

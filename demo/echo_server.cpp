@@ -15,7 +15,7 @@ int main() {
         int from_fd = client_conn->GetFd();
         auto [read, exit] = client_conn->Recv();
         if (exit) {
-          echo_server.GetLooper()->DeleteConnection(from_fd);
+          client_conn->GetLooper()->DeleteConnection(from_fd);
           // client_conn ptr is invalid below here, do not touch it again
           return;
         }

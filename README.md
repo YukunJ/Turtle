@@ -3,29 +3,29 @@
 -----------------
 ## TURTLE
 
-**Turtle** is a C++17-based lightweight network framework for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
+**Turtle** is a C++17-based lightweight network library for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
 ### Highlight
 
-+ Adopt non-blocking socket and edge-trigger handling mode to support high concurrency workload.
-+ Apply thread pool management to asynchronously execute requests and avoids high-of-line blocking to a great extent.
-+ Achieve low coupling and high extensible framework
++ Set non-blocking socket and edge-trigger handling mode to support high concurrency workload.
++ Adopt the 'one reactor per thread' philosophy by [Shuo Chen](https://github.com/chenshuo) with thread pool management.
++ Achieve low coupling and high extensible framework.
 + Allow users to build custom server by only providing 2 callback functions.
-+ Support HTTP GET/HEAD request & response
++ Support HTTP GET/HEAD request & response.
 
 ### System Diagram
 
-<img src="image/system_architecture.png" alt="System Architecture" height="500">
+<img src="image/system_architecture.png" alt="System Architecture" height="350">
 
 The above system architecture diagram briefly shows how the **Turtle** framework works on a high level.
 
 1. The basic unit is a **Connection** which contains a **Socket** and a **Buffer** for bytes in-and-out. Users register a **callback** function for each connection.
-2. The system starts with an **Acceptor**, which contains one acceptor connection which is under monitor of the **Poller**. It builds connection for each new client.
-3. The **Poller** does nothing but epoll, and returns a collection of event-ready connections back to the **Looper**.
-4. The **Looper** is the main brain of the system. It registers new client connection into the **Poller**, and upon the **Poller** returns back event-ready connections, it fetches their callback functions and submit those to the **ThreadPool**.
-5. The **ThreadPool** is the executor. It has an FIFO task queuing to execute the callback functions submitted by the **Looper**.
+2. The system starts with an **Acceptor**, which contains one acceptor connection. It builds connection for each new client, and distribute the workload to one of the **Looper**s.
+3. Each **Poller** is associated with exactly one **Looper**. It does nothing but epoll, and returns a collection of event-ready connections back to the **Looper**.
+4. The **Looper** is the main brain of the system. It registers new client connection into the **Poller**, and upon the **Poller** returns back event-ready connections, it fetches their callback functions and execute them.
+5. The **ThreadPool** manages how many **Looper**s are there in the system to avoid over-subscription.
 
 ### Docker
 
@@ -94,7 +94,7 @@ int main() {
         int from_fd = client_conn->GetFd();
         auto [read, exit] = client_conn->Recv();
         if (exit) {
-          echo_server.GetLooper()->DeleteConnection(from_fd);
+          client_conn->GetLooper()->DeleteConnection(from_fd);
           // client_conn ptr is invalid below here, do not touch it again
           return;
         }
@@ -130,7 +130,7 @@ The followings are on the **TODO** list:
 
 - [x] Support serving HTTP GET/HEAD Request & Response
 - [x] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
-- [ ] Refactor the architecture into multiple Reactor mode to improve concurrency
+- [x] Refactor the architecture into multiple Reactor mode to improve concurrency
 - [ ] Add performance testing benchmark
 - [ ] Support MacOS operating system build
 - [ ] Add a Cache layer to improve throughput
