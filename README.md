@@ -17,7 +17,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 
 ### System Diagram
 
-<img src="image/system_architecture.png" alt="System Architecture" height="350">
+<img src="image/system_architecture_new.png" alt="System Architecture New" height="450">
 
 The above system architecture diagram briefly shows how the **Turtle** framework works on a high level.
 
