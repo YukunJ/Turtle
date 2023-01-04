@@ -13,9 +13,9 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include "utils.h"
-
 namespace TURTLE_SERVER {
 
 class NetAddress;
@@ -24,12 +24,13 @@ class Connection;
 
 /**
  * This Acceptor comes with basic functionality for accepting new client
- * connections and add its into the Poller More custom handling could be added
- * as well
+ * connections and distribute its into the different Poller.
+ * More custom handling could be added as well
  * */
 class Acceptor {
  public:
-  explicit Acceptor(Looper *looper, NetAddress server_address);
+  explicit Acceptor(Looper *listener, std::vector<Looper *> reactors,
+                    NetAddress server_address);
 
   ~Acceptor() = default;
 
@@ -52,7 +53,7 @@ class Acceptor {
   auto GetAcceptorConnection() noexcept -> Connection *;
 
  private:
-  Looper *looper_;
+  std::vector<Looper *> reactors_;
   std::unique_ptr<Connection> acceptor_conn;
   std::function<void(Connection *)> custom_accept_callback_{};
   std::function<void(Connection *)> custom_handle_callback_{};

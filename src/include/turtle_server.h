@@ -7,10 +7,12 @@
  *
  * This is a header-file-only class for the Turtle web server setup
  */
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 /* all header files included */
 #include "acceptor.h"
 #include "buffer.h"
@@ -49,24 +51,37 @@ namespace TURTLE_SERVER {
  */
 class TurtleServer {
  public:
-  explicit TurtleServer(NetAddress server_address)
-      : pool_(std::make_unique<ThreadPool>()),
-        looper_(std::make_unique<Looper>(pool_.get())) {
-    auto acceptor = std::make_unique<Acceptor>(looper_.get(), server_address);
-    looper_->AddAcceptor(std::move(acceptor));
+  explicit TurtleServer(NetAddress server_address,
+                        int concurrency = std::thread::hardware_concurrency() -
+                                          1)
+      : pool_(std::make_unique<ThreadPool>(concurrency)),
+        listener_(std::make_unique<Looper>()) {
+    for (size_t i = 0; i < pool_->GetSize(); i++) {
+      reactors_.push_back(std::make_unique<Looper>());
+    }
+    for (auto &reactor : reactors_) {
+      pool_->SubmitTask([capture0 = reactor.get()] { capture0->Loop(); });
+    }
+    std::vector<Looper *> raw_reactors;
+    raw_reactors.reserve(reactors_.size());
+    std::transform(reactors_.begin(), reactors_.end(),
+                   std::back_inserter(raw_reactors),
+                   [](auto &uni_ptr) { return uni_ptr.get(); });
+    acceptor_ = std::make_unique<Acceptor>(listener_.get(), raw_reactors,
+                                           server_address);
   }
 
   virtual ~TurtleServer() = default;
 
   /* Not Edge trigger */
   auto OnAccept(std::function<void(Connection *)> on_accept) -> TurtleServer & {
-    looper_->GetAcceptor()->SetCustomAcceptCallback(std::move(on_accept));
+    acceptor_->SetCustomAcceptCallback(std::move(on_accept));
     return *this;
   }
 
   /* Edge trigger! Read all bytes please */
   auto OnHandle(std::function<void(Connection *)> on_handle) -> TurtleServer & {
-    looper_->GetAcceptor()->SetCustomHandleCallback(std::move(on_handle));
+    acceptor_->SetCustomHandleCallback(std::move(on_handle));
     on_handle_set_ = true;
     return *this;
   }
@@ -76,13 +91,15 @@ class TurtleServer {
       throw std::logic_error(
           "Please specify OnHandle callback function before starts");
     }
-    looper_->Loop();
+    listener_->Loop();
   }
 
  private:
   bool on_handle_set_{false};
+  std::unique_ptr<Acceptor> acceptor_;
+  std::vector<std::unique_ptr<Looper>> reactors_;
   std::unique_ptr<ThreadPool> pool_;
-  std::unique_ptr<Looper> looper_;
+  std::unique_ptr<Looper> listener_;
 };
 }  // namespace TURTLE_SERVER
 

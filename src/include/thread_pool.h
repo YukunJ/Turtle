@@ -25,10 +25,10 @@
 #ifndef SRC_INCLUDE_THREAD_POOL_H_
 #define SRC_INCLUDE_THREAD_POOL_H_
 
-/* The minimum number of threads to exist in the threadpool */
-#define MIN_NUM_THREADS_IN_POOL 2
-
 namespace TURTLE_SERVER {
+
+/* The minimum number of threads to exist in the threadpool */
+static constexpr int MIN_NUM_THREADS_IN_POOL = 2;
 
 /**
  * This ThreadPool manages the thread resources and acts as the executor for
@@ -37,7 +37,8 @@ namespace TURTLE_SERVER {
  * */
 class ThreadPool {
  public:
-  explicit ThreadPool(int size = std::thread::hardware_concurrency());
+  // save one thread for the main
+  explicit ThreadPool(int size = std::thread::hardware_concurrency() - 1);
 
   ~ThreadPool();
 
@@ -47,6 +48,8 @@ class ThreadPool {
   decltype(auto) SubmitTask(F &&new_task, Args &&...args);
 
   void Exit();
+
+  auto GetSize() -> size_t;
 
  private:
   std::vector<std::thread> threads_;
