@@ -67,6 +67,7 @@ INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
+TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
 TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the turtle http library
