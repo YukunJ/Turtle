@@ -90,7 +90,7 @@ $ make benchmark
 
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
-+ **Hardware**: m5.2xlarge instance with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
++ **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
 + **Throughput**: **3.93** MB/second
 + **QPS**: **49.7**k
 
