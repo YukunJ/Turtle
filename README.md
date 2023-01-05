@@ -3,7 +3,7 @@
 -----------------
 ## TURTLE
 
-**Turtle** is a C++17-based lightweight network library for web server. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
+**Turtle** is a C++17-based lightweight network library for web server on Linux. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
@@ -156,7 +156,6 @@ The followings are on the **TODO** list:
 - [x] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
 - [x] Refactor the architecture into multiple Reactor mode to improve concurrency
 - [x] Add performance testing benchmark
-- [ ] Support MacOS operating system build
 - [ ] Add a Cache layer to improve throughput
 - [ ] Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones

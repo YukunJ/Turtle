@@ -14,6 +14,14 @@ PROJECT(TurtleServer
         LANGUAGES C CXX
         )
 
+# Detect the operating system
+MESSAGE("Compiling on the operating system of ${CMAKE_SYSTEM_NAME}")
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    ADD_DEFINITIONS(-DOS_LINUX)
+ELSE()
+    MESSAGE(WARNING "Your operating system ${CMAKE_SYSTEM_NAME} is not supported.")
+ENDIF()
+
 ######################################################################################################################
 # Search Path Specification
 ######################################################################################################################
