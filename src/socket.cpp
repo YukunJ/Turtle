@@ -86,7 +86,6 @@ auto Socket::Accept(NetAddress &client_address) -> int {
                           client_address.YieldAddrLen())) == -1) {
     // under high pressure, accept might fail.
     // but server should not fail at this time
-    perror("Socket: Accept() failed");
   }
   return client_fd;
 }

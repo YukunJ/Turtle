@@ -123,7 +123,15 @@ ADD_CUSTOM_TARGET(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
         )
 
 # "make linecount"
-
 ADD_CUSTOM_TARGET(linecount
         cloc --by-file ${CMAKE_CURRENT_SOURCE_DIR}/src
+        )
+
+# 'make benchmark'
+# will run http_server
+SET(WEBBENCH_DIR ${PROJECT_SOURCE_DIR}/webbench)
+ADD_CUSTOM_TARGET(benchmark
+        WORKING_DIRECTORY ${WEBBENCH_DIR}
+        COMMAND sh ./benchmark.sh
+        DEPENDS http_server
         )
