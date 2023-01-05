@@ -70,6 +70,30 @@ $ make cpplint
 $ make linecount
 ```
 
+### Performance Testing
+
+To test the performance of **Turtle** server under high concurrency, we adopt [Webbench](http://cs.uccs.edu/~cs526/webbench/webbench.htm) as the stress testing tool.
+
+The source code of the Webbench is stored under the `./webbench` directory along with a simple testing shell script. 
+
+We fully automated the process so that you can execute the benchmark test in one command:
+```console
+$ make benchmark
+
+# the above command will
+# 1. build the webbench tool
+# 2. run the http server in the background at default 20080 port, serving the ~1M index file
+# 3. launch the webbench testing with 10500 concurrent clients for 5 seconds
+# 4. report back the result to the console
+# 5. harvest the background http server process and exit
+```
+
+We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
+
++ **Hardware**: m5.2xlarge instance with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
++ **Throughput**: **3.93** MB/second
++ **QPS**: **49.7**k
+
 ### Usage
 
 
