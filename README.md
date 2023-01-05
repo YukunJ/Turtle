@@ -155,7 +155,7 @@ The followings are on the **TODO** list:
 - [x] Support serving HTTP GET/HEAD Request & Response
 - [x] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
 - [x] Refactor the architecture into multiple Reactor mode to improve concurrency
-- [ ] Add performance testing benchmark
+- [x] Add performance testing benchmark
 - [ ] Support MacOS operating system build
 - [ ] Add a Cache layer to improve throughput
 - [ ] Complete unit testing coverage
