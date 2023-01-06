@@ -89,7 +89,7 @@ class Cache {
    * resource_url already cached
    */
   auto TryInsert(const std::string& resource_url,
-                 const std::vector<unsigned char>& source) -> bool;
+                 std::vector<unsigned char>&& source) -> bool;
 
   /**
    * Remove everything in the cache

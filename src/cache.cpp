@@ -82,7 +82,7 @@ auto Cache::TryLoad(const std::string &resource_url,
 }
 
 auto Cache::TryInsert(const std::string &resource_url,
-                      const std::vector<unsigned char> &source) -> bool {
+                      std::vector<unsigned char> &&source) -> bool {
   std::unique_lock<std::mutex> lock(mtx_);
   auto iter = mapping_.find(resource_url);
   if (iter != mapping_.end()) {
@@ -97,7 +97,7 @@ auto Cache::TryInsert(const std::string &resource_url,
   while (!mapping_.empty() && (capacity_ - occupancy_) < source_size) {
     EvictOne();
   }
-  auto node = std::make_shared<CacheNode>(resource_url, source);
+  auto node = std::make_shared<CacheNode>(resource_url, std::move(source));
   AppendToListTail(node);
   occupancy_ += source_size;
   mapping_.emplace(resource_url, node);
