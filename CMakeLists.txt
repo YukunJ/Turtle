@@ -83,6 +83,14 @@ FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
 ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
 TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -Wall -Wextra -pedantic -Werror)
 
+# Build the cache tester
+ADD_EXECUTABLE(cache_tester src/cache_tester.cpp)
+TARGET_LINK_LIBRARIES(cache_tester turtle_core)
+
+# Build the http tester
+ADD_EXECUTABLE(http_tester src/http/http_tester.cpp)
+TARGET_LINK_LIBRARIES(http_tester turtle_http)
+
 # Build the echo server
 ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)

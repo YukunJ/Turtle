@@ -40,8 +40,11 @@ class Response {
 
   void Serialize(std::vector<unsigned char>& buffer);  // NOLINT
 
+  void SetShouldTransferContent(bool should_transfer_content);
+
  private:
   std::string status_line_;
+  bool should_transfer_content_{true};
   bool should_close_;
   std::vector<Header> headers_;
   std::optional<std::string> resource_url_;
