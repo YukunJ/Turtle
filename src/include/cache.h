@@ -18,6 +18,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 namespace TURTLE_SERVER {
 
 /* default cache size 10 MB */
@@ -41,6 +42,8 @@ class Cache {
    * and serves as a node in the doubly-linked list data structure
    */
   class CacheNode {
+    friend class Cache;
+
    public:
     CacheNode() noexcept;
     CacheNode(const std::string& identifier,
@@ -88,7 +91,17 @@ class Cache {
   auto TryInsert(const std::string& resource_url,
                  const std::vector<unsigned char>& source) -> bool;
 
+  /**
+   * Remove everything in the cache
+   */
+  void Clear();
+
  private:
+  /**
+   * Evict out the head cache node to save space
+   */
+  void EvictOne() noexcept;
+
   /**
    * Helper function to remove a node from the doubly-linked list
    * essentially re-wire the prev and next pointers to each other
@@ -104,14 +117,14 @@ class Cache {
   std::mutex mtx_;
   /* map a key (resource name) to the corresponding cache node if exists */
   std::unordered_map<std::string, std::shared_ptr<CacheNode>> mapping_;
-  /* the dummy sentinel header in doubly-linked list */
-  const std::shared_ptr<CacheNode> header_;
-  /* the dummy sentinel tailer in doubly-linked list */
-  const std::shared_ptr<CacheNode> tailer_;
   /* the upper limit of cache storage capacity in bytes */
   const size_t capacity_;
   /* current occupancyin bytes */
   size_t occupancy_{0};
+  /* the dummy sentinel header in doubly-linked list */
+  const std::shared_ptr<CacheNode> header_;
+  /* the dummy sentinel tailer in doubly-linked list */
+  const std::shared_ptr<CacheNode> tailer_;
 };
 
 }  // namespace TURTLE_SERVER

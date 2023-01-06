@@ -10,7 +10,8 @@
 namespace TURTLE_SERVER::HTTP {
 
 void ProcessHttpRequest(  // NOLINT
-    const std::string &serving_directory, Connection *client_conn) {
+    const std::string &serving_directory, std::shared_ptr<Cache> &cache,
+    Connection *client_conn) {
   // edge-trigger, first read all available bytes
   int from_fd = client_conn->GetFd();
   auto [read, exit] = client_conn->Recv();
@@ -41,9 +42,23 @@ void ProcessHttpRequest(  // NOLINT
       } else {
         auto response = Response::Make200Response(request.ShouldClose(),
                                                   resource_full_path);
-        response.SetShouldTransferContent(request.GetMethod() != Method::HEAD);
+        std::vector<unsigned char> cache_buf;
+        auto resource_cached = cache->TryLoad(resource_full_path, cache_buf);
+        response.SetShouldTransferContent(request.GetMethod() != Method::HEAD &&
+                                          !resource_cached);
         no_more_parse = request.ShouldClose();
         response.Serialize(response_buf);
+        if (resource_cached) {
+          std::cout << "Serving from cache\n";
+          // content directly from cache, not disk file I/P
+          response_buf.insert(response_buf.end(), cache_buf.begin(),
+                              cache_buf.end());
+        } else {
+          std::cout << "Serving from Disk File\n";
+          // content not in cache, try store it
+          LoadFile(resource_full_path, cache_buf);
+          cache->TryInsert(resource_full_path, cache_buf);
+        }
       }
     }
     // send out the response
@@ -92,9 +107,10 @@ int main(int argc, char *argv[]) {
     }
   }
   TURTLE_SERVER::TurtleServer http_server(address);
+  auto cache = std::make_shared<TURTLE_SERVER::Cache>();
   http_server
       .OnHandle([&](TURTLE_SERVER::Connection *client_conn) {
-        TURTLE_SERVER::HTTP::ProcessHttpRequest(directory, client_conn);
+        TURTLE_SERVER::HTTP::ProcessHttpRequest(directory, cache, client_conn);
       })
       .Begin();
   return 0;
