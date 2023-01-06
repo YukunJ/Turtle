@@ -16,6 +16,7 @@
 /* all header files included */
 #include "acceptor.h"
 #include "buffer.h"
+#include "cache.h"
 #include "connection.h"
 #include "http/header.h"
 #include "http/http_utils.h"

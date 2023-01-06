@@ -21,6 +21,6 @@
 
 #define NON_COPYABLE_AND_MOVEABLE(class_name) \
   NON_COPYABLE(class_name);                   \
-  NON_MOVEABLE(class_name);
+  NON_MOVEABLE(class_name)
 
 #endif  // SRC_INCLUDE_UTILS_H_
