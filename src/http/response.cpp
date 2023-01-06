@@ -66,13 +66,6 @@ void Response::Serialize(std::vector<unsigned char>& buffer) {  // NOLINT
   str_stream << CRLF;
   std::string response_head = str_stream.str();
   buffer.insert(buffer.end(), response_head.begin(), response_head.end());
-  if (resource_url_.has_value() && should_transfer_content_) {
-    LoadFile(resource_url_.value(), buffer);
-  }
-}
-
-void Response::SetShouldTransferContent(bool should_transfer_content) {
-  should_transfer_content_ = should_transfer_content;
 }
 
 }  // namespace TURTLE_SERVER::HTTP
