@@ -43,21 +43,21 @@ void ProcessHttpRequest(  // NOLINT
       } else {
         auto response = Response::Make200Response(request.ShouldClose(),
                                                   resource_full_path);
-        std::vector<unsigned char> cache_buf;
-        auto resource_cached = cache->TryLoad(resource_full_path, cache_buf);
-        response.SetShouldTransferContent(request.GetMethod() == Method::GET &&
-                                          !resource_cached);
+        bool should_transfer_content = request.GetMethod() != Method::HEAD;
         no_more_parse = request.ShouldClose();
         response.Serialize(response_buf);
-        if (resource_cached) {
-          // content directly from cache, not disk file I/P
-          response_buf.insert(response_buf.end(),
-                              std::make_move_iterator(cache_buf.begin()),
-                              std::make_move_iterator(cache_buf.end()));
-        } else {
-          // content not in cache, try store it
-          LoadFile(resource_full_path, cache_buf);
-          cache->TryInsert(resource_full_path, std::move(cache_buf));
+        if (should_transfer_content) {
+          if (cache->TryLoad(resource_full_path, response_buf)) {
+            // cache hit
+          } else {
+            // load from disk
+            std::vector<unsigned char> cache_buf;
+            LoadFile(resource_full_path, cache_buf);
+            response_buf.insert(response_buf.end(), cache_buf.begin(),
+                                cache_buf.end());
+            // cache it
+            cache->TryInsert(resource_full_path, cache_buf);
+          }
         }
       }
       // send out the response
