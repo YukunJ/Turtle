@@ -142,7 +142,7 @@ int main() {
 }
 ```
 
-这个echo服务端和用户端的demo在`./demo`文件夹中供您参考. 在`build`文件夹路径中, 可以执行以下指令来运行它:
+这个echo[服务端](./demo/echo_server.cpp)和[用户端](./demo/echo_client.cpp)的demo在`./demo`文件夹中供您参考. 在`build`文件夹路径中, 可以执行以下指令来运行它:
 
 ```console
 $ make echo_server
@@ -155,7 +155,7 @@ $ ./echo_server
 $ ./echo_client
 ```
 
-HTTP协议服务端的demo在`./src/http`文件夹中供参考. 一个简单的HTTP协议服务器可以在**Turtle**核心库和HTTP模块扩展库的帮助下在50行内被搭建起来.
+HTTP协议服务端的[demo](./src/http/http_server.cpp)在`./src/http`文件夹中供参考. 一个简单的HTTP协议服务器可以在**Turtle**核心库和HTTP模块扩展库的帮助下在50行内被搭建起来.
 
 
 ### 未来计划

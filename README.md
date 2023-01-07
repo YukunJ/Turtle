@@ -139,7 +139,7 @@ int main() {
   return 0;
 }
 ```
-The demo of this echo server and client is provided under the `./demo` folder for your reference. In the `build` directory, you can execute the following and try it out.
+The demo of this echo [server](./demo/echo_server.cpp) and [client](./demo/echo_client.cpp) is provided under the `./demo` folder for your reference. In the `build` directory, you can execute the following and try it out.
 
 ```console
 $ make echo_server
@@ -152,7 +152,7 @@ $ ./echo_server
 $ ./echo_client
 ```
 
-The HTTP server demo is under `./src/http` folder for reference as well. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
+The HTTP server [demo](./src/http/http_server.cpp) is under `./src/http` folder for reference as well. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
 
 ### Future Work
 This repo is under active development and maintainence. New features and fixes are updated periodically as time and skill permit.
@@ -168,7 +168,7 @@ The followings are on the **TODO** list:
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
 
-We also welcone new feature request. We will review them one by one, and priortize its implementation if applicable. Or direct pull request is also welcomed.
+We also welcome new feature request. We will review them one by one, and priortize its implementation if applicable. Or direct pull request is also welcomed.
 
 ### Reference
 
