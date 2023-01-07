@@ -31,7 +31,6 @@ The above system architecture diagram briefly shows how the **Turtle** framework
 5. The **ThreadPool** manages how many **Looper**s are there in the system to avoid over-subscription.
 6. Optionally there exists a **Cache** layer using LRU policy with tunable storage size parameters.
 
-
 ### Docker
 
 If you are not a Linux system but still want to try out the Turtle for fun, we provide a Vagrant File to provision the Linux Docker.
