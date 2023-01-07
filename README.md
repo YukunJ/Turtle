@@ -3,7 +3,9 @@
 -----------------
 ## TURTLE
 
-**Turtle** is a C++17-based lightweight network library for web server on Linux. It abstracts the tedious manipulations on the Unix socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
+[**中文文档** Chinese Version](./README_CN.md)
+
+**Turtle** is a C++17-based lightweight network library for web server on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
@@ -18,7 +20,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 
 ### System Diagram
 
-<img src="image/system_architecture_new.png" alt="System Architecture New" height="450">
+<img src="image/system_architecture_en.png" alt="System Architecture New" height="450">
 
 The above system architecture diagram briefly shows how the **Turtle** framework works on a high level.
 
@@ -27,7 +29,7 @@ The above system architecture diagram briefly shows how the **Turtle** framework
 3. Each **Poller** is associated with exactly one **Looper**. It does nothing but epoll, and returns a collection of event-ready connections back to the **Looper**.
 4. The **Looper** is the main brain of the system. It registers new client connection into the **Poller**, and upon the **Poller** returns back event-ready connections, it fetches their callback functions and execute them.
 5. The **ThreadPool** manages how many **Looper**s are there in the system to avoid over-subscription.
-6. Optionally there exists a **Cache** layer with tunable storage size parameters.
+6. Optionally there exists a **Cache** layer using LRU policy with tunable storage size parameters.
 
 ### Docker
 
@@ -93,7 +95,6 @@ $ make benchmark
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
 + **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
-+ **Throughput**: **3.93** MB/second (no cache) | **3.99** MB/second (with cache)
 + **QPS**: **49.7**k (no cache) | **50.4**k (with cache)
 
 The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
@@ -158,14 +159,16 @@ This repo is under active development and maintainence. New features and fixes a
 
 The followings are on the **TODO** list:
 
-- [x] Support serving HTTP GET/HEAD Request & Response
-- [x] Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
-- [x] Refactor the architecture into multiple Reactor mode to improve concurrency
-- [x] Add performance testing benchmark
-- [x] Add a Cache layer to reduce server load and increase responsiveness
+- ✅ Support serving HTTP GET/HEAD Request & Response
+- ✅ Revise according to this [code review](https://codereview.stackexchange.com/questions/282220/tiny-network-web-framework-library-in-c) suggestions
+- ✅ Refactor the architecture into multiple Reactor mode to improve concurrency
+- ✅ Add performance testing benchmark
+- ✅ Add a Cache layer to reduce server load and increase responsiveness
 - [ ] Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
+
+We also welcone new feature request. We will review them one by one, and priortize its implementation if applicable. Or direct pull request is also welcomed.
 
 ### Reference
 
