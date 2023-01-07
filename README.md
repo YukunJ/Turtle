@@ -20,7 +20,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 
 ### System Diagram
 
-<img src="image/system_architecture_new.png" alt="System Architecture New" height="450">
+<img src="image/system_architecture_en.png" alt="System Architecture New" height="450">
 
 The above system architecture diagram briefly shows how the **Turtle** framework works on a high level.
 
@@ -29,7 +29,7 @@ The above system architecture diagram briefly shows how the **Turtle** framework
 3. Each **Poller** is associated with exactly one **Looper**. It does nothing but epoll, and returns a collection of event-ready connections back to the **Looper**.
 4. The **Looper** is the main brain of the system. It registers new client connection into the **Poller**, and upon the **Poller** returns back event-ready connections, it fetches their callback functions and execute them.
 5. The **ThreadPool** manages how many **Looper**s are there in the system to avoid over-subscription.
-6. Optionally there exists a **Cache** layer with tunable storage size parameters.
+6. Optionally there exists a **Cache** layer using LRU policy with tunable storage size parameters.
 
 
 ### Docker

@@ -20,7 +20,7 @@
 
 ### 系统架构
 
-<img src="image/system_architecture_new.png" alt="System Architecture New" height="450">
+<img src="image/system_architecture_cn.png" alt="System Architecture New" height="450">
 
 上图是**Turtle**系统架构的一个简单概括性图示.
 
