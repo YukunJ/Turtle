@@ -3,7 +3,7 @@
  * @author Yukun J
  * @expectation this header file should be compatible to compile in C++
  * program on Linux
- * @init_date Jan 3 2023
+ * @init_date Jan 10 2023
  *
  * This is an implementation file for http module's constant enum definitions
  * and utility functions
@@ -36,6 +36,54 @@ auto ToVersion(const std::string& version_str) noexcept -> Version {
     return Version::HTTP_1_1;
   }
   return Version::UNSUPPORTED;
+}
+
+auto ToExtension(const std::string& extension_str) noexcept -> Extension {
+  auto extension_str_formatted = Format(extension_str);
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::HTML)) {
+    return Extension::HTML;
+  }
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::CSS)) {
+    return Extension::CSS;
+  }
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::PNG)) {
+    return Extension::PNG;
+  }
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::JPG)) {
+    return Extension::JPG;
+  }
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::JPEG)) {
+    return Extension::JPEG;
+  }
+  if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::GIF)) {
+    return Extension::GIF;
+  }
+  return Extension::OCTET;
+}
+
+auto ExtensionToMime(const Extension& extension) noexcept -> std::string {
+  if (extension == Extension::HTML) {
+    return MIME_HTML;
+  }
+  if (extension == Extension::CSS) {
+    return MIME_CSS;
+  }
+  if (extension == Extension::PNG) {
+    return MIME_PNG;
+  }
+  if (extension == Extension::JPG) {
+    return MIME_JPG;
+  }
+  if (extension == Extension::JPEG) {
+    return MIME_JPEG;
+  }
+  if (extension == Extension::GIF) {
+    return MIME_GIF;
+  }
+  if (extension == Extension::OCTET) {
+    return MIME_OCTET;
+  }
+  return MIME_OCTET;
 }
 
 auto Split(const std::string& str, const char* delim) noexcept

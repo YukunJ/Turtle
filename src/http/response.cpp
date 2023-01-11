@@ -3,7 +3,7 @@
  * @author Yukun J
  * @expectation this implementation file should be compatible to compile in C++
  * program on Linux
- * @init_date Jan 3 2023
+ * @init_date Jan 10 2023
  *
  * This is an implementation file implementing the HTTP response
  */
@@ -50,6 +50,13 @@ Response::Response(const std::string& status_code, bool should_close,
     size_t content_length = CheckFileSize(resource_url_.value());
     headers_.emplace_back(HEADER_CONTENT_LENGTH,
                           std::to_string(content_length));
+    // parse out the extension
+    auto last_dot = resource_url_.value().find_last_of(DOT);
+    if (last_dot != std::string::npos) {
+      auto extension_raw_str = resource_url_.value().substr(last_dot + 1);
+      auto extension = ToExtension(extension_raw_str);
+      headers_.emplace_back(HEADER_CONTENT_TYPE, ExtensionToMime(extension));
+    }
   } else {
     resource_url_ = std::nullopt;
     headers_.emplace_back(HEADER_CONTENT_LENGTH, CONTENT_LENGTH_ZERO);
