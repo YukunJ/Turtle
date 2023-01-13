@@ -18,11 +18,13 @@
 
 namespace TURTLE_SERVER::HTTP {
 
+static constexpr char PARAMETER_SEPARATOR[] = {"&"};
 static constexpr char SPACE[] = {" "};
 static constexpr char DOT[] = {"."};
 static constexpr char CRLF[] = {"\r\n"};
 static constexpr char COLON[] = {":"};
 static constexpr char DEFAULT_ROUTE[] = {"index.html"};
+static constexpr char CGI_BIN[] = {"cgi-bin"};
 
 /* Common Header and Value */
 static constexpr char HEADER_SERVER[] = {"Server"};
@@ -118,6 +120,12 @@ auto Format(const std::string&) noexcept -> std::string;
  * Check if the path-specified directory exists
  */
 auto IsDirectoryExists(const std::string& directory_path) noexcept -> bool;
+
+/**
+ * Inspect if the request is dynamic CGI
+ * hardcode check if contains the cgi-bin folder in resource url path
+ */
+auto IsCgiRequest(const std::string& resource_url) noexcept -> bool;
 
 /**
  * Check if the path-specified path exists

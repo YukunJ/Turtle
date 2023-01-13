@@ -18,6 +18,7 @@
 #include "buffer.h"
 #include "cache.h"
 #include "connection.h"
+#include "http/cgier.h"
 #include "http/header.h"
 #include "http/http_utils.h"
 #include "http/request.h"
