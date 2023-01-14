@@ -154,6 +154,10 @@ auto IsFileExists(const std::string& file_path) noexcept -> bool {
   return std::filesystem::exists(file_path);
 }
 
+auto DeleteFile(const std::string& file_path) noexcept -> bool {
+  return std::filesystem::remove(file_path);
+}
+
 auto CheckFileSize(const std::string& file_path) noexcept -> size_t {
   assert(IsFileExists(file_path));
   return std::filesystem::file_size(file_path);

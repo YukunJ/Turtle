@@ -37,6 +37,7 @@ class Cgier {
   auto IsValid() const noexcept -> bool;
 
  private:
+  auto BuildArgumentList() -> char**;
   std::string cgi_program_path_;
   std::vector<std::string> cgi_arguments_;
   bool valid_{true};

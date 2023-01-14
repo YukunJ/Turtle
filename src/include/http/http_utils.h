@@ -18,13 +18,17 @@
 
 namespace TURTLE_SERVER::HTTP {
 
+static constexpr int READ_WRITE_PERMISSION = 0600;
+
 static constexpr char PARAMETER_SEPARATOR[] = {"&"};
+static constexpr char UNDERSCORE[] = {"_"};
 static constexpr char SPACE[] = {" "};
 static constexpr char DOT[] = {"."};
 static constexpr char CRLF[] = {"\r\n"};
 static constexpr char COLON[] = {":"};
 static constexpr char DEFAULT_ROUTE[] = {"index.html"};
 static constexpr char CGI_BIN[] = {"cgi-bin"};
+static constexpr char CGI_PREFIX[] = {"cgi_temp"};
 
 /* Common Header and Value */
 static constexpr char HEADER_SERVER[] = {"Server"};
@@ -131,6 +135,11 @@ auto IsCgiRequest(const std::string& resource_url) noexcept -> bool;
  * Check if the path-specified path exists
  */
 auto IsFileExists(const std::string& file_path) noexcept -> bool;
+
+/**
+ * Delete a file if exists
+ */
+auto DeleteFile(const std::string& file_path) noexcept -> bool;
 
 /**
  * Tell the size of a file in bytes.
