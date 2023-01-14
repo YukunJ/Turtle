@@ -16,6 +16,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Achieve low coupling and high extensible framework.
 + Allow users to build custom server by only providing 2 callback functions.
 + Support HTTP GET/HEAD request & response.
++ Support dynamic CGI request & response.
 + Support Caching mechanism.
 
 ### System Diagram
@@ -30,6 +31,8 @@ The above system architecture diagram briefly shows how the **Turtle** framework
 4. The **Looper** is the main brain of the system. It registers new client connection into the **Poller**, and upon the **Poller** returns back event-ready connections, it fetches their callback functions and execute them.
 5. The **ThreadPool** manages how many **Looper**s are there in the system to avoid over-subscription.
 6. Optionally there exists a **Cache** layer using LRU policy with tunable storage size parameters.
+
+The **Turtle** core network part is around 1000 lines of code, and the HTTP+CGI module is another 700 lines.
 
 ### Docker
 
@@ -154,6 +157,14 @@ $ ./echo_client
 
 The HTTP server [demo](./src/http/http_server.cpp) is under `./src/http` folder for reference as well. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
 
+The CGI module is built upon HTTP server and executes in the traditional parent-child cross-process way. After parsing the arguments, the [**Cgier**](./src/include/http/cgier.h) `fork` a child process to execute the cgi program and communicate back the result to parent process through a shared temporary file. 
+
+It assumes the cgi program resides under a `/cgi-bin` folder and arguments are separated by `&`. For example, if there is a remote CGI program `int add(int a, int b)` that adds up two integers. To compute `1+2=3`, The HTTP request line should be
+
+```console
+GET /cgi-bin/add&1&2 HTTP/1.1
+```
+
 ### Future Work
 This repo is under active development and maintainence. New features and fixes are updated periodically as time and skill permit.
 
@@ -164,6 +175,7 @@ The followings are on the **TODO** list:
 - ✅ Refactor the architecture into multiple Reactor mode to improve concurrency
 - ✅ Add performance testing benchmark
 - ✅ Add a Cache layer to reduce server load and increase responsiveness
+- ✅ Enable dynamic CGI request support
 - [ ] Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
