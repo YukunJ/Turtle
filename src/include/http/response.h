@@ -42,6 +42,8 @@ class Response {
 
   void SetShouldTransferContent(bool should_transfer_content);
 
+  void ChangeHeader(const std::string& key, const std::string& new_value);
+
  private:
   std::string status_line_;
   bool should_transfer_content_{true};

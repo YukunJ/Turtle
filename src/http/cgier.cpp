@@ -24,11 +24,10 @@
 #include <thread>  // NOLINT
 
 #include "http/http_utils.h"
-
 namespace TURTLE_SERVER::HTTP {
 
 auto Cgier::ParseCgier(const std::string &resource_url) noexcept -> Cgier {
-  if (resource_url.empty() || IsCgiRequest(resource_url)) {
+  if (resource_url.empty() || !IsCgiRequest(resource_url)) {
     return MakeInvalidCgier();
   }
   // find the first & after the cgi-bin/ to fetch out cgi program path
@@ -103,6 +102,10 @@ auto Cgier::Run() -> std::vector<unsigned char> {
 }
 
 auto Cgier::IsValid() const noexcept -> bool { return valid_; }
+
+auto Cgier::GetPath() const noexcept -> std::string {
+  return cgi_program_path_;
+};
 
 auto Cgier::BuildArgumentList() -> char ** {
   assert(!cgi_program_path_.empty());

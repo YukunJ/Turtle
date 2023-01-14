@@ -35,6 +35,7 @@ class Cgier {
                  const std::vector<std::string>& arguments) noexcept;
   auto Run() -> std::vector<unsigned char>;
   auto IsValid() const noexcept -> bool;
+  auto GetPath() const noexcept -> std::string;
 
  private:
   auto BuildArgumentList() -> char**;
