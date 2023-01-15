@@ -28,7 +28,6 @@ void ProcessHttpRequest(  // NOLINT
   while (request_op != std::nullopt) {
     Request request{request_op.value()};
     std::vector<unsigned char> response_buf;
-
     if (!request.IsValid()) {
       auto response = Response::Make400Response();
       no_more_parse = true;
@@ -36,27 +35,57 @@ void ProcessHttpRequest(  // NOLINT
     } else {
       std::string resource_full_path =
           serving_directory + request.GetResourceUrl();
-      if (!IsFileExists(resource_full_path)) {
-        auto response = Response::Make404Response();
-        no_more_parse = true;
-        response.Serialize(response_buf);
-      } else {
-        auto response = Response::Make200Response(request.ShouldClose(),
-                                                  resource_full_path);
-        std::vector<unsigned char> cache_buf;
-        auto resource_cached = cache->TryLoad(resource_full_path, cache_buf);
-        response.SetShouldTransferContent(request.GetMethod() != Method::HEAD &&
-                                          !resource_cached);
-        no_more_parse = request.ShouldClose();
-        response.Serialize(response_buf);
-        if (resource_cached) {
-          // content directly from cache, not disk file I/P
-          response_buf.insert(response_buf.end(), cache_buf.begin(),
-                              cache_buf.end());
+      if (IsCgiRequest(resource_full_path)) {
+        // dynamic CGI request
+        Cgier cgier = Cgier::ParseCgier(resource_full_path);
+        if (!cgier.IsValid()) {
+          auto response = Response::Make400Response();
+          no_more_parse = true;
+          response.Serialize(response_buf);
         } else {
-          // content not in cache, try store it
-          LoadFile(resource_full_path, cache_buf);
-          cache->TryInsert(resource_full_path, cache_buf);
+          auto cgi_program_path = cgier.GetPath();
+          if (!IsFileExists(cgi_program_path)) {
+            auto response = Response::Make404Response();
+            no_more_parse = true;
+            response.Serialize(response_buf);
+          } else {
+            auto cgi_result = cgier.Run();
+            auto response = Response::Make200Response(request.ShouldClose(),
+                                                      resource_full_path);
+            // #TODO(yukunj): currently this is hot fix, not elegant
+            response.ChangeHeader(HEADER_CONTENT_LENGTH,
+                                  std::to_string(cgi_result.size()));
+            response.SetShouldTransferContent(false);
+            no_more_parse = request.ShouldClose();
+            response.Serialize(response_buf);
+            response_buf.insert(response_buf.end(), cgi_result.begin(),
+                                cgi_result.end());
+          }
+        }
+      } else {
+        // static resource request
+        if (!IsFileExists(resource_full_path)) {
+          auto response = Response::Make404Response();
+          no_more_parse = true;
+          response.Serialize(response_buf);
+        } else {
+          auto response = Response::Make200Response(request.ShouldClose(),
+                                                    resource_full_path);
+          std::vector<unsigned char> cache_buf;
+          auto resource_cached = cache->TryLoad(resource_full_path, cache_buf);
+          response.SetShouldTransferContent(
+              request.GetMethod() != Method::HEAD && !resource_cached);
+          no_more_parse = request.ShouldClose();
+          response.Serialize(response_buf);
+          if (resource_cached) {
+            // content directly from cache, not disk file I/P
+            response_buf.insert(response_buf.end(), cache_buf.begin(),
+                                cache_buf.end());
+          } else {
+            // content not in cache, try store it
+            LoadFile(resource_full_path, cache_buf);
+            cache->TryInsert(resource_full_path, cache_buf);
+          }
         }
       }
     }

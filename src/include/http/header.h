@@ -34,6 +34,7 @@ class Header {
   auto IsValid() const -> bool;
   auto GetKey() const -> std::string;
   auto GetValue() const -> std::string;
+  void SetValue(const std::string& new_value) noexcept;
   auto Serialize() const -> std::string;
 
   friend std::ostream& operator<<(std::ostream& os, const Header& header);

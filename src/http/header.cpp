@@ -52,6 +52,10 @@ auto Header::GetKey() const -> std::string { return key_; }
 
 auto Header::GetValue() const -> std::string { return value_; }
 
+void Header::SetValue(const std::string &new_value) noexcept {
+  value_ = new_value;
+}
+
 auto Header::Serialize() const -> std::string {
   return key_ + COLON + value_ + CRLF;
 }

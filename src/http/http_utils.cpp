@@ -146,8 +146,16 @@ auto IsDirectoryExists(const std::string& directory_path) noexcept -> bool {
   return std::filesystem::is_directory(directory_path);
 }
 
+auto IsCgiRequest(const std::string& resource_url) noexcept -> bool {
+  return resource_url.find(CGI_BIN) != std::string::npos;
+}
+
 auto IsFileExists(const std::string& file_path) noexcept -> bool {
   return std::filesystem::exists(file_path);
+}
+
+auto DeleteFile(const std::string& file_path) noexcept -> bool {
+  return std::filesystem::remove(file_path);
 }
 
 auto CheckFileSize(const std::string& file_path) noexcept -> size_t {

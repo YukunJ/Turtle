@@ -82,4 +82,14 @@ void Response::SetShouldTransferContent(bool should_transfer_content) {
   should_transfer_content_ = should_transfer_content;
 }
 
+void Response::ChangeHeader(const std::string& key,
+                            const std::string& new_value) {
+  for (auto& it : headers_) {
+    if (it.GetKey() == key) {
+      it.SetValue(new_value);
+      break;
+    }
+  }
+}
+
 }  // namespace TURTLE_SERVER::HTTP
