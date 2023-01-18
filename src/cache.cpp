@@ -68,7 +68,7 @@ auto Cache::GetCapacity() const noexcept -> size_t { return capacity_; }
 
 auto Cache::TryLoad(const std::string &resource_url,
                     std::vector<unsigned char> &destination) -> bool {
-  std::unique_lock<std::mutex> lock(mtx_);
+  std::shared_lock<std::shared_mutex> lock(mtx_);
   auto iter = mapping_.find(resource_url);
   if (iter != mapping_.end()) {
     iter->second->Serialize(destination);
@@ -83,7 +83,7 @@ auto Cache::TryLoad(const std::string &resource_url,
 
 auto Cache::TryInsert(const std::string &resource_url,
                       const std::vector<unsigned char> &source) -> bool {
-  std::unique_lock<std::mutex> lock(mtx_);
+  std::unique_lock<std::shared_mutex> lock(mtx_);
   auto iter = mapping_.find(resource_url);
   if (iter != mapping_.end()) {
     // already exists

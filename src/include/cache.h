@@ -14,7 +14,8 @@
 #include <utils.h>
 
 #include <memory>
-#include <mutex>  // NOLINT
+#include <mutex>         // NOLINT
+#include <shared_mutex>  // NOLINT
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -114,7 +115,7 @@ class Cache {
   void AppendToListTail(std::shared_ptr<CacheNode> node) noexcept;
 
   /* concurrency */
-  std::mutex mtx_;
+  std::shared_mutex mtx_;
   /* map a key (resource name) to the corresponding cache node if exists */
   std::unordered_map<std::string, std::shared_ptr<CacheNode>> mapping_;
   /* the upper limit of cache storage capacity in bytes */
