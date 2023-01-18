@@ -50,9 +50,8 @@ void ProcessHttpRequest(  // NOLINT
             response.Serialize(response_buf);
           } else {
             auto cgi_result = cgier.Run();
-            auto response = Response::Make200Response(request.ShouldClose(),
-                                                      resource_full_path);
-            // #TODO(yukunj): currently this is hot fix, not elegant
+            auto response =
+                Response::Make200Response(request.ShouldClose(), std::nullopt);
             response.ChangeHeader(HEADER_CONTENT_LENGTH,
                                   std::to_string(cgi_result.size()));
             response.SetShouldTransferContent(false);
