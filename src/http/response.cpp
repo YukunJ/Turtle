@@ -11,25 +11,27 @@
 #include "http/response.h"
 
 #include <sstream>
+#include <utility>
 
 #include "http/header.h"
 #include "http/http_utils.h"
 namespace TURTLE_SERVER::HTTP {
 
 auto Response::Make200Response(bool should_close,
-                               const std::string& resource_url) -> Response {
-  return {RESPONSE_OK, should_close, resource_url};
+                               std::optional<std::string> resource_url)
+    -> Response {
+  return {RESPONSE_OK, should_close, std::move(resource_url)};
 }
 
-auto Response::Make400Response() -> Response {
+auto Response::Make400Response() noexcept -> Response {
   return {RESPONSE_BAD_REQUEST, true, std::nullopt};
 }
 
-auto Response::Make404Response() -> Response {
+auto Response::Make404Response() noexcept -> Response {
   return {RESPONSE_NOT_FOUND, true, std::nullopt};
 }
 
-auto Response::Make503Response() -> Response {
+auto Response::Make503Response() noexcept -> Response {
   return {RESPONSE_SERVICE_UNAVAILABLE, true, std::nullopt};
 }
 
@@ -78,18 +80,19 @@ void Response::Serialize(std::vector<unsigned char>& buffer) {  // NOLINT
   }
 }
 
-void Response::SetShouldTransferContent(bool should_transfer_content) {
+void Response::SetShouldTransferContent(bool should_transfer_content) noexcept {
   should_transfer_content_ = should_transfer_content;
 }
 
-void Response::ChangeHeader(const std::string& key,
-                            const std::string& new_value) {
+bool Response::ChangeHeader(const std::string& key,
+                            const std::string& new_value) noexcept {
   for (auto& it : headers_) {
     if (it.GetKey() == key) {
       it.SetValue(new_value);
-      break;
+      return true;
     }
   }
+  return false;
 }
 
 }  // namespace TURTLE_SERVER::HTTP
