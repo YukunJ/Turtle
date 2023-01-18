@@ -105,7 +105,7 @@ auto Cgier::IsValid() const noexcept -> bool { return valid_; }
 
 auto Cgier::GetPath() const noexcept -> std::string {
   return cgi_program_path_;
-};
+}
 
 auto Cgier::BuildArgumentList() -> char ** {
   assert(!cgi_program_path_.empty());
