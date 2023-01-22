@@ -103,6 +103,65 @@ $ make benchmark
 
 我们相信在之后, 当数据库连接功能被支持并引入后, **Cache**缓存层的必要性会更加明显.
 
+### API风格
+**Turtle**库中的类在设计时将**解耦**这个重点牢牢挂在心中. 大部分的组件都可以单独或某几个拿出来独立使用, 尤其是**网络核心库**中的部分.
+
+下面我们就从最基本的**Socket**类举一个例子, 假设您只是想借用**Turtle**库来避免套接字建立的繁琐步骤. 首先我们来看一下**Socket**类的主要接口:
+
+```CPP
+/**
+ * 这个Socket类抽象了一个套接字文件符的操作
+ * 它可以用来建立客户端或服务端的连接
+ * 同时支持Ipv4和Ipv6两种协议
+ * */
+class Socket {
+ public:
+  Socket() noexcept;
+  auto GetFd() const noexcept -> int;
+
+  /* 客户端: 只需要一步, 直接connect */
+  void Connect(NetAddress &server_address);
+
+  /* 服务端: 需要三步, bind + listen + 不断accept */
+  void Bind(NetAddress &server_address, bool set_reusable = true);
+
+  /* 进入监听模式 */
+  void Listen();
+
+  /* 阻塞模式接收一个新客户连接, 并记录下来它的地址信息 */
+  auto Accept(NetAddress &client_address) -> int;
+
+ private:
+  int fd_{-1}; 
+};
+```
+
+在有了这样的接口后, 我们可以非常便捷快速地在几行内搭建客户端和服务端的套接字:
+
+```CPP
+#include "net_address.h"
+#include "socket.h"
+
+// 本地Ipv4地址在8080端口
+NetAddress local_address("127.0.0.1", 8080, Protocol::Ipv4);
+
+// 搭建一个客户端
+Socket client_sock;
+client_sock.Connect(local_address);
+
+// 搭建一个服务端
+Socket server_sock;
+server_sock.Bind(local_address);
+server_sock.Listen();
+
+// 接收1个新客户连接请求
+// client_address里将会被填充进新客户的ip地址信息
+NetAddress client_address;
+int client_fd = server_sock.Accept(client_address);
+```
+
+**Turtle**中还有许多类似的便于**解耦**单独使用的组件, 可以查看源码根据需求来使用.
+
 ### 用例展示
 
 为设立一个自定义化的服务器, 用户需要构建一个**TurtleServer**的实例, 然后只需要提供2个回调函数:

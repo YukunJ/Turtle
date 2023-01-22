@@ -104,6 +104,65 @@ The performance improvement from **Cache** might not seem significant. Partly be
 
 Later on, when database connector comes into play, the indispensability of the **Cache** layer will be more obvious.
 
+### API Style
+The classes in the **Turtle** library are designed with the focus of decoupling firmly in mind. Most of the components can be taken out alone or a few together and used independently, especially those components in the **network core** module.
+
+Let's take an example from the most basic **Socket** class, assuming that we just want to borrow the **Turtle** library to avoid the cumbersome steps of **socket** establishment. First, let's take a look at the main interface of the **Socket** class:
+
+```CPP
+/**
+ * This Socket class abstracts the operations on a socket file descriptor
+ * It can be used to build client or server
+ * and is compatible with both Ipv4 and Ipv6
+ * */
+class Socket {
+ public:
+  Socket() noexcept;
+  auto GetFd() const noexcept -> int;
+
+  /* client: one step, directly connect */
+  void Connect(NetAddress &server_address);
+
+  /* server: three steps, bind + listen + accept */
+  void Bind(NetAddress &server_address, bool set_reusable = true);
+
+  /* enter listen mode */
+  void Listen();
+
+  /* accept a new client connection request and record its address info */
+  auto Accept(NetAddress &client_address) -> int;
+
+ private:
+  int fd_{-1}; 
+};
+```
+
+With such an interface, we can quickly and easily build client and server sockets in a few lines:
+
+```CPP
+#include "net_address.h"
+#include "socket.h"
+
+// local Ipv4 address at 8080 port
+NetAddress local_address("127.0.0.1", 8080, Protocol::Ipv4);
+
+// build a client
+Socket client_sock;
+client_sock.Connect(local_address);
+
+// build a server
+Socket server_sock;
+server_sock.Bind(local_address);
+server_sock.Listen();
+
+// accept 1 new client connection request
+// client_address will be filled with new client's ip info
+NetAddress client_address;
+int client_fd = server_sock.Accept(client_address);
+```
+
+There are many other components in **Turtle** that are easy to decouple and use separately. You can view the source code and use them according to needs.
+
 ### Usage
 
 
