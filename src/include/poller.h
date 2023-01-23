@@ -12,7 +12,13 @@
 #ifndef SRC_INCLUDE_POLLER_H_
 #define SRC_INCLUDE_POLLER_H_
 
+#ifdef OS_LINUX  // Linux Epoll
 #include <sys/epoll.h>
+#endif
+
+#ifdef OS_MAC  // Mac KQueue
+#include <sys/event.h>
+#endif
 
 #include <memory>
 #include <vector>
@@ -23,6 +29,16 @@ namespace TURTLE_SERVER {
 
 /* the default maximum number of events to be listed on epoll tree */
 static constexpr int DEFAULT_EVENTS_LISTENED = 1024;
+
+#ifdef OS_LINUX  // Linux Epoll
+static constexpr unsigned POLL_ADD = EPOLL_CTL_ADD;
+static constexpr unsigned POLL_ET = EPOLLET;
+#endif
+
+#ifdef OS_MAC  // Mac KQueue
+static constexpr unsigned POLL_ADD = EV_ADD;
+static constexpr unsigned POLL_ET = EV_CLEAR;
+#endif
 
 class Connection;
 
