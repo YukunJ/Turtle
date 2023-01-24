@@ -11,14 +11,13 @@
  */
 #include "acceptor.h"
 
-#include <sys/epoll.h>
-
 #include <cstdlib>
 #include <utility>
 
 #include "connection.h"
 #include "looper.h"
 #include "net_address.h"
+#include "poller.h"
 #include "socket.h"
 
 namespace TURTLE_SERVER {
@@ -30,7 +29,7 @@ Acceptor::Acceptor(Looper *listener, std::vector<Looper *> reactors,
   acceptor_sock->Bind(server_address, true);
   acceptor_sock->Listen();
   acceptor_conn = std::make_unique<Connection>(std::move(acceptor_sock));
-  acceptor_conn->SetEvents(EPOLLIN);  // not edge-trigger for listener
+  acceptor_conn->SetEvents(POLL_ADD);  // not edge-trigger for listener
   acceptor_conn->SetLooper(listener);
   listener->AddAcceptor(acceptor_conn.get());
   SetCustomAcceptCallback([](Connection *) {});
@@ -50,7 +49,7 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   auto client_sock = std::make_unique<Socket>(accept_fd);
   client_sock->SetNonBlocking();
   auto client_connection = std::make_unique<Connection>(std::move(client_sock));
-  client_connection->SetEvents(EPOLLIN | EPOLLET);  // edge-trigger for client
+  client_connection->SetEvents(POLL_ADD | POLL_ET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
   // randomized distribution. uniform in long term.
   int idx = rand() % reactors_.size();  // NOLINT

@@ -14,11 +14,11 @@ sleep 1
 echo "====##Start the webbench stress testing##====="
 
 cd ../webbench
-./webbench -c 10500 -t 5 http://127.0.0.1:20080/
+./webbench -c $1 -t $2 http://127.0.0.1:20080/
 
 echo "====##Find the process ID of the background-running http server and kill it##===="
 
-ps -fC http_server | awk '{print $2}' | tail -n1 |  xargs kill
+ps -A | grep http_server | grep -v grep | awk '{print $1}' | xargs kill
 
 echo "====##Clean workspace##===="
 

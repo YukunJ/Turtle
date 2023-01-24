@@ -5,7 +5,7 @@
 
 [**中文文档** Chinese Version](./README_CN.md)
 
-**Turtle** is a C++17-based lightweight network library for web server on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
+**Turtle** is a C++17-based lightweight network library for web server mainly on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
 
@@ -18,6 +18,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support HTTP GET/HEAD request & response.
 + Support dynamic CGI request & response.
 + Support Caching mechanism.
++ Compatible building with MacOS using kqueue.
 
 ### System Diagram
 
@@ -87,7 +88,7 @@ We fully automated the process so that you can execute the benchmark test in one
 ```console
 $ make benchmark
 
-# the above command will
+# in Linux the above command will
 # 1. build the webbench tool
 # 2. run the http server in the background at default 20080 port, serving the ~1M index file
 # 3. launch the webbench testing with 10500 concurrent clients for 5 seconds
@@ -235,6 +236,7 @@ The followings are on the **TODO** list:
 - ✅ Add performance testing benchmark
 - ✅ Add a Cache layer to reduce server load and increase responsiveness
 - ✅ Enable dynamic CGI request support
+- ✅ Support MacOS build compatability by kqueue
 - [ ] Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
