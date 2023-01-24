@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 
 #include <cstring>
+#include <iostream>
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
@@ -124,7 +125,8 @@ void Connection::Send() {
   while (curr_write < to_write) {
     if ((write = send(GetFd(), buf + curr_write, to_write - curr_write, 0)) <=
         0) {
-      if (errno != EINTR || errno != EAGAIN) {
+      if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK) {
+        perror("Error in Connection::Send()");
         ClearWriteBuffer();
         return;
       }
