@@ -14,9 +14,7 @@
 
 #ifdef OS_LINUX  // Linux Epoll
 #include <sys/epoll.h>
-#endif
-
-#ifdef OS_MAC  // Mac KQueue
+#elif OS_MAC  // Mac KQueue
 #include <sys/event.h>
 #endif
 
@@ -33,9 +31,7 @@ static constexpr int DEFAULT_EVENTS_LISTENED = 1024;
 #ifdef OS_LINUX  // Linux Epoll
 static constexpr unsigned POLL_ADD = EPOLL_CTL_ADD;
 static constexpr unsigned POLL_ET = EPOLLET;
-#endif
-
-#ifdef OS_MAC  // Mac KQueue
+#elif OS_MAC  // Mac KQueue
 static constexpr unsigned POLL_ADD = EV_ADD;
 static constexpr unsigned POLL_ET = EV_CLEAR;
 #endif
@@ -55,14 +51,19 @@ class Poller {
 
   void AddConnection(Connection *conn);
 
+  // timeout in milliseconds
   auto Poll(int timeout = -1) -> std::vector<Connection *>;
 
   auto GetPollSize() const noexcept -> uint64_t;
 
  private:
   int poll_fd_;
-  struct epoll_event *poll_events_{nullptr};
   uint64_t poll_size_;
+#ifdef OS_LINUX
+  struct epoll_event *poll_events_{nullptr};
+#elif OS_MAC
+  struct kevent *poll_events_{nullptr};
+#endif
 };
 }  // namespace TURTLE_SERVER
 #endif  // SRC_INCLUDE_POLLER_H_
