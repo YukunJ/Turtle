@@ -137,8 +137,17 @@ ADD_CUSTOM_TARGET(linecount
 # 'make benchmark'
 # will run http_server
 SET(WEBBENCH_DIR ${PROJECT_SOURCE_DIR}/webbench)
+
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    SET(CONCURRENCY 10500)  # concurrent client number
+    SET(DURATION 5)  # stress test duration
+ELSEIF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    SET(CONCURRENCY 105)
+    SET(DURATION 10)
+ENDIF()
+
 ADD_CUSTOM_TARGET(benchmark
         WORKING_DIRECTORY ${WEBBENCH_DIR}
-        COMMAND sh ./benchmark.sh
+        COMMAND sh ./benchmark.sh ${CONCURRENCY} ${DURATION}
         DEPENDS http_server
         )
