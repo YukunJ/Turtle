@@ -30,9 +30,11 @@ static constexpr int DEFAULT_EVENTS_LISTENED = 1024;
 
 #ifdef OS_LINUX  // Linux Epoll
 static constexpr unsigned POLL_ADD = EPOLL_CTL_ADD;
+static constexpr unsigned POLL_READ = EPOLLIN;
 static constexpr unsigned POLL_ET = EPOLLET;
 #elif OS_MAC  // Mac KQueue
-static constexpr unsigned POLL_ADD = EV_ADD;
+static constexpr unsigned POLL_ADD = EVFILT_READ;  // a bit awkward but this is how kqueue works
+static constexpr unsigned POLL_READ = EV_ADD;
 static constexpr unsigned POLL_ET = EV_CLEAR;
 #endif
 
