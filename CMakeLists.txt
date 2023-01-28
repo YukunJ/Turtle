@@ -66,8 +66,11 @@ ENDIF ()
 # Includes header file path
 SET(TURTLE_SERVER_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(TURTLE_SERVER_SRC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
+SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
+SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 
 INCLUDE_DIRECTORIES(${TURTLE_SERVER_SRC_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${TURTLE_SERVER_TEST_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 
 ######################################################################################################################
@@ -99,6 +102,30 @@ ADD_EXECUTABLE(http_server src/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
 TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
+######################################################################################################################
+# Test (Catch2)
+######################################################################################################################
+
+# fetch the Catch2 from github
+INCLUDE(FETCHCONTENT)
+
+FETCHCONTENT_DECLARE(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.3.0 # or a later release
+)
+
+FETCHCONTENT_MAKEAVAILABLE(Catch2)
+
+# build and link individual tests with Catch2
+ADD_EXECUTABLE(tests test/test.cpp)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+
+# automatic discover and run all the tests with 'ctest' or 'make test'
+LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+INCLUDE(CTest)
+INCLUDE(Catch)
+CATCH_DISCOVER_tests(tests)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
@@ -120,9 +147,12 @@ FILE(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp"
         )
 
-ADD_CUSTOM_TARGET(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
+ADD_CUSTOM_TARGET(cpplint
+        echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
         ${CPPLINT_BIN}
         --verbose=2 --quiet
         --linelength=120
