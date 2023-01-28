@@ -10,14 +10,14 @@
  * monitored
  */
 
-#include "poller.h"
+#include "core/poller.h"
 
 #include <unistd.h>
 
 #include <cassert>
 #include <cstring>
 
-#include "connection.h"
+#include "core/connection.h"
 
 namespace TURTLE_SERVER {
 

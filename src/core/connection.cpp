@@ -9,7 +9,7 @@
  * supports callback functionality
  */
 
-#include "connection.h"
+#include "core/connection.h"
 
 #include <sys/socket.h>
 

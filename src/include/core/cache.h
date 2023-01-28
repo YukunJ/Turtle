@@ -11,7 +11,7 @@
 #ifndef SRC_INCLUDE_CACHE_H_
 #define SRC_INCLUDE_CACHE_H_
 
-#include <utils.h>
+#include <core/utils.h>
 
 #include <memory>
 #include <mutex>         // NOLINT

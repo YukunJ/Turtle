@@ -9,12 +9,12 @@
  * main control looping for the server
  */
 
-#include "looper.h"
+#include "core/looper.h"
 
-#include "acceptor.h"
-#include "connection.h"
-#include "poller.h"
-#include "thread_pool.h"
+#include "core/acceptor.h"
+#include "core/connection.h"
+#include "core/poller.h"
+#include "core/thread_pool.h"
 namespace TURTLE_SERVER {
 
 Looper::Looper() : poller_(std::make_unique<Poller>()) {}

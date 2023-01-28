@@ -78,7 +78,7 @@ INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 ######################################################################################################################
 
 # Build the turtle core library
-FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
 TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
 TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -Wall -Wextra -pedantic -Werror)
@@ -135,11 +135,10 @@ SET(FORMAT_STYLE google)
 
 # "make format"
 ADD_CUSTOM_TARGET(format
-        find ${PROJECT_SOURCE_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
+        find ${TURTLE_SERVER_SRC_DIR} ${TURTLE_SERVER_TEST_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
         |
         xargs clang-format -style=${FORMAT_STYLE} -i
 )
-
 
 # "make cpplint"
 FILE(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
