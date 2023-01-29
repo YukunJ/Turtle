@@ -8,13 +8,15 @@
  * This is the unit test file for core/Buffer class
  */
 
-#include <core/buffer.h>
+#include "core/buffer.h"
 
-#include <catch2/catch_test_macros.hpp>
 #include <cstring>
 
+#include "catch2/catch_test_macros.hpp"
+
 /* for convenience reason */
-using namespace TURTLE_SERVER;
+using TURTLE_SERVER::Buffer;
+using TURTLE_SERVER::INITIAL_BUFFER_CAPACITY;
 
 TEST_CASE("[core/buffer]") {
   Buffer buf(INITIAL_BUFFER_CAPACITY);
@@ -26,7 +28,7 @@ TEST_CASE("[core/buffer]") {
     const char msg2[2014] = "Farewell from end~";
     buf.AppendHead(msg1);
     buf.Append(msg2);
-    strcat((char *)msg1, (const char *)msg2);
+    snprintf((char *)msg1 + strlen(msg1), strlen(msg2) + 1, "%s", msg2);
     CHECK(std::strncmp((char *)buf.Data(), msg1, std::strlen(msg1)) == 0);
     buf.Clear();
     CHECK(buf.Size() == 0);

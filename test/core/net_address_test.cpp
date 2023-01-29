@@ -8,12 +8,13 @@
  * This is the unit test file for core/NetAddress class
  */
 
-#include <core/net_address.h>
+#include "core/net_address.h"
 
-#include <catch2/catch_test_macros.hpp>
+#include "catch2/catch_test_macros.hpp"
 
 /* for convenience reason */
-using namespace TURTLE_SERVER;
+using TURTLE_SERVER::NetAddress;
+using TURTLE_SERVER::Protocol;
 
 TEST_CASE("[core/net_address]") {
   SECTION("Ipv4 net address") {

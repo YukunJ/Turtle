@@ -125,12 +125,16 @@ target_link_libraries(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
 target_link_libraries(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
+ADD_EXECUTABLE(socket_test ${TURTLE_SERVER_TEST_DIR}/core/socket_test.cpp)
+target_link_libraries(socket_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
 INCLUDE(Catch)
 CATCH_DISCOVER_TESTS(buffer_test)
 CATCH_DISCOVER_TESTS(net_address_test)
+CATCH_DISCOVER_TESTS(socket_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
@@ -160,7 +164,7 @@ ADD_CUSTOM_TARGET(cpplint
         ${CPPLINT_BIN}
         --verbose=2 --quiet
         --linelength=120
-        --filter=-legal/copyright,-build/include_subdir,-readability/casting
+        --filter=-legal/copyright,-build/include_subdir,-readability/casting,-readability/check
         )
 
 # "make linecount"
