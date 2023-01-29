@@ -9,8 +9,8 @@
  * which actively does epolling on a collection of socket descriptors to be
  * monitored
  */
-#ifndef SRC_INCLUDE_POLLER_H_
-#define SRC_INCLUDE_POLLER_H_
+#ifndef SRC_INCLUDE_CORE_POLLER_H_
+#define SRC_INCLUDE_CORE_POLLER_H_
 
 #ifdef OS_LINUX  // Linux Epoll
 #include <sys/epoll.h>
@@ -69,4 +69,4 @@ class Poller {
 #endif
 };
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_POLLER_H_
+#endif  // SRC_INCLUDE_CORE_POLLER_H_

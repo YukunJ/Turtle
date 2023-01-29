@@ -30,8 +30,8 @@
 #include "http/request.h"
 #include "http/response.h"
 
-#ifndef SRC_INCLUDE_TURTLE_SERVER_H_
-#define SRC_INCLUDE_TURTLE_SERVER_H_
+#ifndef SRC_INCLUDE_CORE_TURTLE_SERVER_H_
+#define SRC_INCLUDE_CORE_TURTLE_SERVER_H_
 
 namespace TURTLE_SERVER {
 
@@ -105,4 +105,4 @@ class TurtleServer {
 };
 }  // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_TURTLE_SERVER_H_
+#endif  // SRC_INCLUDE_CORE_TURTLE_SERVER_H_

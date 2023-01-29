@@ -9,8 +9,8 @@
  * callback functionality
  */
 
-#ifndef SRC_INCLUDE_CONNECTION_H_
-#define SRC_INCLUDE_CONNECTION_H_
+#ifndef SRC_INCLUDE_CORE_CONNECTION_H_
+#define SRC_INCLUDE_CORE_CONNECTION_H_
 
 #include <functional>
 #include <memory>
@@ -86,4 +86,4 @@ class Connection {
 };
 
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CONNECTION_H_
+#endif  // SRC_INCLUDE_CORE_CONNECTION_H_

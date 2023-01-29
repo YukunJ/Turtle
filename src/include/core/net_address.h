@@ -9,8 +9,8 @@
  * of an IP address and a port
  */
 
-#ifndef SRC_INCLUDE_NET_ADDRESS_H_
-#define SRC_INCLUDE_NET_ADDRESS_H_
+#ifndef SRC_INCLUDE_CORE_NET_ADDRESS_H_
+#define SRC_INCLUDE_CORE_NET_ADDRESS_H_
 
 #include <arpa/inet.h>
 
@@ -57,4 +57,4 @@ class NetAddress {
 std::ostream &operator<<(std::ostream &os, const NetAddress &address);
 
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_NET_ADDRESS_H_
+#endif  // SRC_INCLUDE_CORE_NET_ADDRESS_H_

@@ -9,8 +9,8 @@
  * listener or client
  */
 
-#ifndef SRC_INCLUDE_SOCKET_H_
-#define SRC_INCLUDE_SOCKET_H_
+#ifndef SRC_INCLUDE_CORE_SOCKET_H_
+#define SRC_INCLUDE_CORE_SOCKET_H_
 
 #include "core/utils.h"
 
@@ -55,10 +55,12 @@ class Socket {
 
   void SetNonBlocking();
 
+  auto GetAttrs() -> int;
+
  private:
   void CreateByProtocol(Protocol protocol);
 
   int fd_{-1};
 };
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_SOCKET_H_
+#endif  // SRC_INCLUDE_CORE_SOCKET_H_
