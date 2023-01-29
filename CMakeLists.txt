@@ -68,6 +68,7 @@ SET(TURTLE_SERVER_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(TURTLE_SERVER_SRC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
 SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
+SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 
 INCLUDE_DIRECTORIES(${TURTLE_SERVER_SRC_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${TURTLE_SERVER_TEST_INCLUDE_DIR})
@@ -89,16 +90,16 @@ ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
 TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the echo server
-ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
+ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)
 TARGET_COMPILE_OPTIONS(echo_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the echo client
-ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
+ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client turtle_core)
 
 # Build the http server
-ADD_EXECUTABLE(http_server src/http/http_server.cpp)
+ADD_EXECUTABLE(http_server ${TURTLE_SERVER_SRC_DIR}/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
 TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
@@ -118,14 +119,18 @@ FETCHCONTENT_DECLARE(
 FETCHCONTENT_MAKEAVAILABLE(Catch2)
 
 # build and link individual tests with Catch2
-ADD_EXECUTABLE(buffer_test test/buffer_test.cpp)
+ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
 target_link_libraries(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
+target_link_libraries(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
 INCLUDE(Catch)
-CATCH_DISCOVER_tests(buffer_test)
+CATCH_DISCOVER_TESTS(buffer_test)
+CATCH_DISCOVER_TESTS(net_address_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
