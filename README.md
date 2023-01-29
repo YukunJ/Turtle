@@ -141,8 +141,8 @@ class Socket {
 With such an interface, we can quickly and easily build client and server sockets in a few lines:
 
 ```CPP
-#include "net_address.h"
-#include "socket.h"
+#include "core/net_address.h"
+#include "core/socket.h"
 
 // local Ipv4 address at 8080 port
 NetAddress local_address("127.0.0.1", 8080, Protocol::Ipv4);
@@ -178,7 +178,7 @@ The function provided in **OnAccept(Connection \*)** by users will be augmented 
 Let's walk through an example of traditional echo server in less than 20 lines:
 
 ```CPP
-#include "turtle_server.h"
+#include "core/turtle_server.h"
 
 int main() {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
