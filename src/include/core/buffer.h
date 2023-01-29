@@ -55,6 +55,8 @@ class Buffer {
 
   auto Size() const noexcept -> size_t;
 
+  auto Capacity() const noexcept -> size_t;
+
   auto Data() noexcept -> const unsigned char *;
 
   auto ToStringView() const noexcept -> std::string_view;

@@ -118,14 +118,14 @@ FETCHCONTENT_DECLARE(
 FETCHCONTENT_MAKEAVAILABLE(Catch2)
 
 # build and link individual tests with Catch2
-ADD_EXECUTABLE(tests test/test.cpp)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+ADD_EXECUTABLE(buffer_test test/buffer_test.cpp)
+target_link_libraries(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
 INCLUDE(Catch)
-CATCH_DISCOVER_tests(tests)
+CATCH_DISCOVER_tests(buffer_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count

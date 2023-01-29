@@ -51,6 +51,8 @@ auto Buffer::FindAndPopTill(const std::string &target)
 
 auto Buffer::Size() const noexcept -> size_t { return buf_.size(); }
 
+auto Buffer::Capacity() const noexcept -> size_t { return buf_.capacity(); }
+
 auto Buffer::Data() noexcept -> const unsigned char * { return buf_.data(); }
 
 auto Buffer::ToStringView() const noexcept -> std::string_view {
