@@ -14,7 +14,6 @@
 #include <sys/socket.h>
 
 #include <cstring>
-#include <iostream>
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)

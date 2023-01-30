@@ -128,6 +128,9 @@ target_link_libraries(net_address_test PRIVATE Catch2::Catch2WithMain turtle_cor
 ADD_EXECUTABLE(socket_test ${TURTLE_SERVER_TEST_DIR}/core/socket_test.cpp)
 target_link_libraries(socket_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
+ADD_EXECUTABLE(connection_test ${TURTLE_SERVER_TEST_DIR}/core/connection_test.cpp)
+target_link_libraries(connection_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
 ADD_EXECUTABLE(thread_pool_test ${TURTLE_SERVER_TEST_DIR}/core/thread_pool_test.cpp)
 target_link_libraries(thread_pool_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
@@ -138,7 +141,9 @@ INCLUDE(Catch)
 CATCH_DISCOVER_TESTS(buffer_test)
 CATCH_DISCOVER_TESTS(net_address_test)
 CATCH_DISCOVER_TESTS(socket_test)
+CATCH_DISCOVER_TESTS(connection_test)
 CATCH_DISCOVER_TESTS(thread_pool_test)
+
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
