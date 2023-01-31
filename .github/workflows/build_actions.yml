@@ -1,0 +1,15 @@
+name: Turtle Build & Test
+run-name: ${{ github.actor }} new push/pull_request build and test Turtle
+on: [push, pull_request]
+jobs:
+  Build & Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v3
+      - name: Install Environment
+        run: sh ./setup/setup.sh
+      - name: Build Turtle
+        run: mkdir build && cd build && cmake.. && make
+      - name: Test Turtle
+        run: make test
