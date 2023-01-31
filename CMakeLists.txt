@@ -134,6 +134,9 @@ target_link_libraries(connection_test PRIVATE Catch2::Catch2WithMain turtle_core
 ADD_EXECUTABLE(poller_test ${TURTLE_SERVER_TEST_DIR}/core/poller_test.cpp)
 target_link_libraries(poller_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
+ADD_EXECUTABLE(looper_test ${TURTLE_SERVER_TEST_DIR}/core/looper_test.cpp)
+target_link_libraries(looper_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
 ADD_EXECUTABLE(thread_pool_test ${TURTLE_SERVER_TEST_DIR}/core/thread_pool_test.cpp)
 target_link_libraries(thread_pool_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
@@ -146,6 +149,7 @@ CATCH_DISCOVER_TESTS(net_address_test)
 CATCH_DISCOVER_TESTS(socket_test)
 CATCH_DISCOVER_TESTS(connection_test)
 CATCH_DISCOVER_TESTS(poller_test)
+CATCH_DISCOVER_TESTS(looper_test)
 CATCH_DISCOVER_TESTS(thread_pool_test)
 
 
