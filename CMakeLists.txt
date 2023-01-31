@@ -108,7 +108,7 @@ TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
 ######################################################################################################################
 
 # fetch the Catch2 from github
-Include(FetchContent)
+INCLUDE(FetchContent)
 
 FetchContent_Declare(
         Catch2
@@ -120,25 +120,25 @@ FetchContent_MakeAvailable(Catch2)
 
 # build and link individual tests with Catch2
 ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
-target_link_libraries(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
-target_link_libraries(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(socket_test ${TURTLE_SERVER_TEST_DIR}/core/socket_test.cpp)
-target_link_libraries(socket_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(socket_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(connection_test ${TURTLE_SERVER_TEST_DIR}/core/connection_test.cpp)
-target_link_libraries(connection_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(connection_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(poller_test ${TURTLE_SERVER_TEST_DIR}/core/poller_test.cpp)
-target_link_libraries(poller_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(poller_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(looper_test ${TURTLE_SERVER_TEST_DIR}/core/looper_test.cpp)
-target_link_libraries(looper_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(looper_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(thread_pool_test ${TURTLE_SERVER_TEST_DIR}/core/thread_pool_test.cpp)
-target_link_libraries(thread_pool_test PRIVATE Catch2::Catch2WithMain turtle_core)
+TARGET_LINK_LIBRARIES(thread_pool_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)

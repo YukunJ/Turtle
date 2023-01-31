@@ -11,7 +11,5 @@ jobs:
         run: sh ./setup/setup.sh
       - name: Show CMake Version
         run: cmake --version
-      - name: Build Turtle
-        run: mkdir build && cd build && cmake .. && make
-      - name: Test Turtle
-        run: make test
+      - name: Build and Test Turtle
+        run: mkdir build && cd build && cmake .. && make && make test
