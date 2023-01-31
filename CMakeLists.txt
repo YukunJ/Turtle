@@ -122,6 +122,9 @@ FetchContent_MakeAvailable(Catch2)
 ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
 TARGET_LINK_LIBRARIES(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
+ADD_EXECUTABLE(cache_test ${TURTLE_SERVER_TEST_DIR}/core/cache_test.cpp)
+TARGET_LINK_LIBRARIES(cache_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
 ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
 TARGET_LINK_LIBRARIES(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
@@ -148,6 +151,7 @@ LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
 INCLUDE(Catch)
 CATCH_DISCOVER_TESTS(buffer_test)
+CATCH_DISCOVER_TESTS(cache_test)
 CATCH_DISCOVER_TESTS(net_address_test)
 CATCH_DISCOVER_TESTS(socket_test)
 CATCH_DISCOVER_TESTS(connection_test)
