@@ -108,15 +108,15 @@ TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
 ######################################################################################################################
 
 # fetch the Catch2 from github
-INCLUDE(FETCHCONTENT)
+Include(FetchContent)
 
-FETCHCONTENT_DECLARE(
+FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
         GIT_TAG        v3.3.0 # or a later release
 )
 
-FETCHCONTENT_MAKEAVAILABLE(Catch2)
+FetchContent_MakeAvailable(Catch2)
 
 # build and link individual tests with Catch2
 ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
