@@ -10,6 +10,6 @@ jobs:
       - name: Install Environment
         run: sh ./setup/setup.sh
       - name: Build Turtle
-        run: mkdir build && cd build && cmake.. && make
+        run: mkdir build && cd build && cmake .. && make
       - name: Test Turtle
         run: make test
