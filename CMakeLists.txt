@@ -1,7 +1,7 @@
 ######################################################################################################################
 # Setup
 ######################################################################################################################
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)    # define the minimum required version of CMake to be used
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)    # define the minimum required version of CMake to be used
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # For clang-tidy.
 SET(BUILD_SHARED_LIBS OFF)              # We expect external libraries to be linked statically.
 SET(CMAKE_CXX_STANDARD 17)              # Compile as C++17. GoogleTest requires at least C++14
