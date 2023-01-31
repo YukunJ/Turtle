@@ -2,7 +2,7 @@ name: Turtle Build & Test
 run-name: ${{ github.actor }} new push/pull_request build and test Turtle
 on: [push, pull_request]
 jobs:
-  Build & Test:
+  BuildAndTest:
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repository Code
