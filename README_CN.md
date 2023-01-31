@@ -1,6 +1,7 @@
 <img src="image/ninja.jpeg" alt="TurtleChat Logo" height="250">
 
 -----------------
+[![Build & Test](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml/badge.svg?branch=main)](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml)
 ## TURTLE
 
 [**English Version** 英文文档](./README.md)
