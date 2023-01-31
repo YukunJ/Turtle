@@ -52,6 +52,7 @@ TEST_CASE("[core/poller]") {
         client_socket.Connect(local_host);
         char message[] = "Hello from client!";
         send(client_socket.GetFd(), message, strlen(message), 0);
+        sleep(2);
       });
     }
 
@@ -71,7 +72,7 @@ TEST_CASE("[core/poller]") {
     for (int i = 0; i < client_num; i++) {
       poller.AddConnection(client_conns[i].get());
     }
-
+    sleep(1);
     auto ready_conns = poller.Poll();
     CHECK(ready_conns.size() == client_num);
 

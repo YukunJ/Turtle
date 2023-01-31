@@ -1,4 +1,4 @@
-name: Turtle Build & Test
+name: Build & Test
 run-name: ${{ github.actor }} new push/pull_request build and test Turtle
 on: [push, pull_request]
 jobs:
