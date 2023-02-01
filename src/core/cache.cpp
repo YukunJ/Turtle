@@ -7,7 +7,7 @@
  *
  * This is an implementation file implementing LRU Cache
  */
-#include "cache.h"
+#include "core/cache.h"
 
 #include <cassert>
 #include <chrono>  // NOLINT

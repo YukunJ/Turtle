@@ -1,7 +1,7 @@
 ######################################################################################################################
 # Setup
 ######################################################################################################################
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)    # define the minimum required version of CMake to be used
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)    # define the minimum required version of CMake to be used
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)   # For clang-tidy.
 SET(BUILD_SHARED_LIBS OFF)              # We expect external libraries to be linked statically.
 SET(CMAKE_CXX_STANDARD 17)              # Compile as C++17. GoogleTest requires at least C++14
@@ -66,8 +66,12 @@ ENDIF ()
 # Includes header file path
 SET(TURTLE_SERVER_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(TURTLE_SERVER_SRC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
+SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
+SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
+SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 
 INCLUDE_DIRECTORIES(${TURTLE_SERVER_SRC_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${TURTLE_SERVER_TEST_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 
 ######################################################################################################################
@@ -75,7 +79,7 @@ INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
 ######################################################################################################################
 
 # Build the turtle core library
-FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
 TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
 TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -Wall -Wextra -pedantic -Werror)
@@ -86,19 +90,75 @@ ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
 TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the echo server
-ADD_EXECUTABLE(echo_server demo/echo_server.cpp)
+ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)
 TARGET_COMPILE_OPTIONS(echo_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
 # Build the echo client
-ADD_EXECUTABLE(echo_client demo/echo_client.cpp)
+ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client turtle_core)
 
 # Build the http server
-ADD_EXECUTABLE(http_server src/http/http_server.cpp)
+ADD_EXECUTABLE(http_server ${TURTLE_SERVER_SRC_DIR}/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
 TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
 
+######################################################################################################################
+# Test (Catch2)
+######################################################################################################################
+
+# fetch the Catch2 from github
+INCLUDE(FetchContent)
+
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.3.0 # or a later release
+)
+
+FetchContent_MakeAvailable(Catch2)
+
+# build and link individual tests with Catch2
+ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
+TARGET_LINK_LIBRARIES(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(cache_test ${TURTLE_SERVER_TEST_DIR}/core/cache_test.cpp)
+TARGET_LINK_LIBRARIES(cache_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
+TARGET_LINK_LIBRARIES(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(socket_test ${TURTLE_SERVER_TEST_DIR}/core/socket_test.cpp)
+TARGET_LINK_LIBRARIES(socket_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(connection_test ${TURTLE_SERVER_TEST_DIR}/core/connection_test.cpp)
+TARGET_LINK_LIBRARIES(connection_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(poller_test ${TURTLE_SERVER_TEST_DIR}/core/poller_test.cpp)
+TARGET_LINK_LIBRARIES(poller_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(looper_test ${TURTLE_SERVER_TEST_DIR}/core/looper_test.cpp)
+TARGET_LINK_LIBRARIES(looper_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(acceptor_test ${TURTLE_SERVER_TEST_DIR}/core/acceptor_test.cpp)
+TARGET_LINK_LIBRARIES(acceptor_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(thread_pool_test ${TURTLE_SERVER_TEST_DIR}/core/thread_pool_test.cpp)
+TARGET_LINK_LIBRARIES(thread_pool_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+# automatic discover and run all the tests with 'ctest' or 'make test'
+LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+INCLUDE(CTest)
+INCLUDE(Catch)
+CATCH_DISCOVER_TESTS(buffer_test)
+CATCH_DISCOVER_TESTS(cache_test)
+CATCH_DISCOVER_TESTS(net_address_test)
+CATCH_DISCOVER_TESTS(socket_test)
+CATCH_DISCOVER_TESTS(connection_test)
+CATCH_DISCOVER_TESTS(poller_test)
+CATCH_DISCOVER_TESTS(looper_test)
+CATCH_DISCOVER_TESTS(acceptor_test)
+CATCH_DISCOVER_TESTS(thread_pool_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
@@ -108,11 +168,10 @@ SET(FORMAT_STYLE google)
 
 # "make format"
 ADD_CUSTOM_TARGET(format
-        find ${PROJECT_SOURCE_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
+        find ${TURTLE_SERVER_SRC_DIR} ${TURTLE_SERVER_TEST_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
         |
         xargs clang-format -style=${FORMAT_STYLE} -i
 )
-
 
 # "make cpplint"
 FILE(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
@@ -120,13 +179,16 @@ FILE(GLOB_RECURSE TURTLE_SERVER_LINT_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/demo/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp"
         )
 
-ADD_CUSTOM_TARGET(cpplint echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
+ADD_CUSTOM_TARGET(cpplint
+        echo '${TURTLE_SERVER_LINT_FILES}' | xargs -n12 -P8
         ${CPPLINT_BIN}
         --verbose=2 --quiet
         --linelength=120
-        --filter=-legal/copyright,-build/include_subdir,-readability/casting
+        --filter=-legal/copyright,-build/include_subdir,-readability/casting,-readability/check
         )
 
 # "make linecount"

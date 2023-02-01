@@ -9,8 +9,8 @@
  * callback functionality
  */
 
-#ifndef SRC_INCLUDE_CONNECTION_H_
-#define SRC_INCLUDE_CONNECTION_H_
+#ifndef SRC_INCLUDE_CORE_CONNECTION_H_
+#define SRC_INCLUDE_CORE_CONNECTION_H_
 
 #include <functional>
 #include <memory>
@@ -18,9 +18,9 @@
 #include <utility>
 #include <vector>
 
-#include "buffer.h"
-#include "socket.h"
-#include "utils.h"
+#include "core/buffer.h"
+#include "core/socket.h"
+#include "core/utils.h"
 
 #define TEMP_BUF_SIZE 2048
 
@@ -86,4 +86,4 @@ class Connection {
 };
 
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CONNECTION_H_
+#endif  // SRC_INCLUDE_CORE_CONNECTION_H_

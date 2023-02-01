@@ -11,10 +11,10 @@
 #include <fstream>
 #include <memory>
 
-#include "connection.h"
-#include "net_address.h"
-#include "socket.h"
-#include "thread_pool.h"
+#include "core/connection.h"
+#include "core/net_address.h"
+#include "core/socket.h"
+#include "core/thread_pool.h"
 
 #define BUF_SIZE 2048
 

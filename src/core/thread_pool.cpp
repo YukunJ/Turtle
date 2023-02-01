@@ -9,7 +9,7 @@
  * and serving the concurrent client requests
  */
 
-#include "thread_pool.h"
+#include "core/thread_pool.h"
 
 namespace TURTLE_SERVER {
 

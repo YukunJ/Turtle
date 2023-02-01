@@ -9,7 +9,7 @@
  * pop-out bytes in order
  */
 
-#include "buffer.h"
+#include "core/buffer.h"
 namespace TURTLE_SERVER {
 
 Buffer::Buffer(size_t initial_capacity) { buf_.reserve(initial_capacity); }
@@ -50,6 +50,8 @@ auto Buffer::FindAndPopTill(const std::string &target)
 }
 
 auto Buffer::Size() const noexcept -> size_t { return buf_.size(); }
+
+auto Buffer::Capacity() const noexcept -> size_t { return buf_.capacity(); }
 
 auto Buffer::Data() noexcept -> const unsigned char * { return buf_.data(); }
 

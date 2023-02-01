@@ -9,15 +9,15 @@
  * bytes in order
  */
 
-#ifndef SRC_INCLUDE_BUFFER_H_
-#define SRC_INCLUDE_BUFFER_H_
+#ifndef SRC_INCLUDE_CORE_BUFFER_H_
+#define SRC_INCLUDE_CORE_BUFFER_H_
 
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include "utils.h"
+#include "core/utils.h"
 
 namespace TURTLE_SERVER {
 
@@ -55,6 +55,8 @@ class Buffer {
 
   auto Size() const noexcept -> size_t;
 
+  auto Capacity() const noexcept -> size_t;
+
   auto Data() noexcept -> const unsigned char *;
 
   auto ToStringView() const noexcept -> std::string_view;
@@ -66,4 +68,4 @@ class Buffer {
 };
 
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_BUFFER_H_
+#endif  // SRC_INCLUDE_CORE_BUFFER_H_

@@ -21,9 +21,9 @@
 #include <utility>
 #include <vector>
 
-#include "utils.h"
-#ifndef SRC_INCLUDE_THREAD_POOL_H_
-#define SRC_INCLUDE_THREAD_POOL_H_
+#include "core/utils.h"
+#ifndef SRC_INCLUDE_CORE_THREAD_POOL_H_
+#define SRC_INCLUDE_CORE_THREAD_POOL_H_
 
 namespace TURTLE_SERVER {
 
@@ -79,4 +79,4 @@ decltype(auto) ThreadPool::SubmitTask(F &&new_task, Args &&...args) {
 }
 }  // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_THREAD_POOL_H_
+#endif  // SRC_INCLUDE_CORE_THREAD_POOL_H_

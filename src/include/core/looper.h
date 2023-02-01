@@ -9,8 +9,8 @@
  * control looping for the server
  */
 
-#ifndef SRC_INCLUDE_LOOPER_H_
-#define SRC_INCLUDE_LOOPER_H_
+#ifndef SRC_INCLUDE_CORE_LOOPER_H_
+#define SRC_INCLUDE_CORE_LOOPER_H_
 
 #include <atomic>
 #include <functional>
@@ -19,7 +19,7 @@
 #include <memory>
 #include <mutex>  // NOLINT
 
-#include "utils.h"
+#include "core/utils.h"
 
 namespace TURTLE_SERVER {
 
@@ -63,4 +63,4 @@ class Looper {
   bool exit_{false};
 };
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_LOOPER_H_
+#endif  // SRC_INCLUDE_CORE_LOOPER_H_

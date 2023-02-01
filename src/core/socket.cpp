@@ -8,17 +8,16 @@
  * This is an implementation file implementing the Socket, which acts as either
  * the listener or client
  */
-#include "socket.h"
+#include "core/socket.h"
 
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 #include <cassert>
-#include <cerrno>
 #include <stdexcept>
 
-#include "net_address.h"
+#include "core/net_address.h"
 namespace TURTLE_SERVER {
 
 static constexpr int BACK_LOG = 128;
@@ -104,6 +103,11 @@ void Socket::SetNonBlocking() {
   if (fcntl(fd_, F_SETFL, fcntl(fd_, F_GETFL) | O_NONBLOCK) == -1) {
     throw std::logic_error("Socket: SetNonBlocking() error");
   }
+}
+
+auto Socket::GetAttrs() -> int {
+  assert(fd_ != -1 && "cannot GetAttrs() with an invalid fd");
+  return fcntl(fd_, F_GETFL);
 }
 
 void Socket::CreateByProtocol(Protocol protocol) {

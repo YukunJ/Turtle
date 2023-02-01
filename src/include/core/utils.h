@@ -8,8 +8,8 @@
  * This is a header file only helper for some macro definitions
  */
 
-#ifndef SRC_INCLUDE_UTILS_H_
-#define SRC_INCLUDE_UTILS_H_
+#ifndef SRC_INCLUDE_CORE_UTILS_H_
+#define SRC_INCLUDE_CORE_UTILS_H_
 
 #define NON_COPYABLE(class_name)           \
   class_name(const class_name &) = delete; \
@@ -23,4 +23,4 @@
   NON_COPYABLE(class_name);                   \
   NON_MOVEABLE(class_name)
 
-#endif  // SRC_INCLUDE_UTILS_H_
+#endif  // SRC_INCLUDE_CORE_UTILS_H_

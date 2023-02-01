@@ -8,10 +8,10 @@
  * This is a header file implementing the LRU Cache
  */
 
-#ifndef SRC_INCLUDE_CACHE_H_
-#define SRC_INCLUDE_CACHE_H_
+#ifndef SRC_INCLUDE_CORE_CACHE_H_
+#define SRC_INCLUDE_CORE_CACHE_H_
 
-#include <utils.h>
+#include <core/utils.h>
 
 #include <memory>
 #include <mutex>         // NOLINT
@@ -130,4 +130,4 @@ class Cache {
 
 }  // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_CACHE_H_
+#endif  // SRC_INCLUDE_CORE_CACHE_H_

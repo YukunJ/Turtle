@@ -10,14 +10,14 @@
  * monitored
  */
 
-#include "poller.h"
+#include "core/poller.h"
 
 #include <unistd.h>
 
 #include <cassert>
 #include <cstring>
 
-#include "connection.h"
+#include "core/connection.h"
 
 namespace TURTLE_SERVER {
 
@@ -69,7 +69,8 @@ void Poller::AddConnection(Connection *conn) {
   assert(conn->GetFd() != -1 && "cannot AddConnection() with an invalid fd");
   struct kevent event[1];
   memset(event, 0, sizeof(event));
-  EV_SET(&event[0], conn->GetFd(), POLL_ADD, conn->GetEvents(), 0, 0, conn);  // read-trigger-only
+  EV_SET(&event[0], conn->GetFd(), POLL_ADD, conn->GetEvents(), 0, 0,
+         conn);  // read-trigger-only
   assert(kevent(poll_fd_, event, 1, nullptr, 0, nullptr) != -1 &&
          "kevent add channel fails");
 }

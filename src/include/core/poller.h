@@ -9,8 +9,8 @@
  * which actively does epolling on a collection of socket descriptors to be
  * monitored
  */
-#ifndef SRC_INCLUDE_POLLER_H_
-#define SRC_INCLUDE_POLLER_H_
+#ifndef SRC_INCLUDE_CORE_POLLER_H_
+#define SRC_INCLUDE_CORE_POLLER_H_
 
 #ifdef OS_LINUX  // Linux Epoll
 #include <sys/epoll.h>
@@ -21,7 +21,7 @@
 #include <memory>
 #include <vector>
 
-#include "utils.h"
+#include "core/utils.h"
 
 namespace TURTLE_SERVER {
 
@@ -33,7 +33,8 @@ static constexpr unsigned POLL_ADD = EPOLL_CTL_ADD;
 static constexpr unsigned POLL_READ = EPOLLIN;
 static constexpr unsigned POLL_ET = EPOLLET;
 #elif OS_MAC  // Mac KQueue
-static constexpr unsigned POLL_ADD = EVFILT_READ;  // a bit awkward but this is how kqueue works
+static constexpr unsigned POLL_ADD =
+    EVFILT_READ;  // a bit awkward but this is how kqueue works
 static constexpr unsigned POLL_READ = EV_ADD;
 static constexpr unsigned POLL_ET = EV_CLEAR;
 #endif
@@ -68,4 +69,4 @@ class Poller {
 #endif
 };
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_POLLER_H_
+#endif  // SRC_INCLUDE_CORE_POLLER_H_

@@ -8,14 +8,14 @@
  * This is a header file implementing the Acceptor that accepts all the incoming
  * new client connections and set up customer handle functions for new clients
  */
-#ifndef SRC_INCLUDE_ACCEPTOR_H_
-#define SRC_INCLUDE_ACCEPTOR_H_
+#ifndef SRC_INCLUDE_CORE_ACCEPTOR_H_
+#define SRC_INCLUDE_CORE_ACCEPTOR_H_
 
 #include <functional>
 #include <memory>
 #include <vector>
 
-#include "utils.h"
+#include "core/utils.h"
 namespace TURTLE_SERVER {
 
 class NetAddress;
@@ -61,4 +61,4 @@ class Acceptor {
 
 }  // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_ACCEPTOR_H_
+#endif  // SRC_INCLUDE_CORE_ACCEPTOR_H_
