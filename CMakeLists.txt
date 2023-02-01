@@ -152,6 +152,9 @@ TARGET_LINK_LIBRARIES(header_test PRIVATE Catch2::Catch2WithMain turtle_core tur
 ADD_EXECUTABLE(request_test ${TURTLE_SERVER_TEST_DIR}/http/request_test.cpp)
 TARGET_LINK_LIBRARIES(request_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
 
+ADD_EXECUTABLE(response_test ${TURTLE_SERVER_TEST_DIR}/http/response_test.cpp)
+TARGET_LINK_LIBRARIES(response_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
+
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
@@ -169,6 +172,7 @@ CATCH_DISCOVER_TESTS(thread_pool_test)
 # HTTP Module
 CATCH_DISCOVER_TESTS(header_test)
 CATCH_DISCOVER_TESTS(request_test)
+CATCH_DISCOVER_TESTS(response_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count

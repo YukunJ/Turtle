@@ -84,6 +84,8 @@ void Response::SetShouldTransferContent(bool should_transfer_content) noexcept {
   should_transfer_content_ = should_transfer_content;
 }
 
+auto Response::GetHeaders() -> std::vector<Header> { return headers_; }
+
 bool Response::ChangeHeader(const std::string& key,
                             const std::string& new_value) noexcept {
   for (auto& it : headers_) {
