@@ -21,6 +21,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support dynamic CGI request & response.
 + Support Caching mechanism.
 + Compatible building with MacOS using kqueue.
++ Unit test coverage by [Catch2](https://github.com/catchorg/Catch2) framework.
 
 ### System Diagram
 
@@ -239,7 +240,7 @@ The followings are on the **TODO** list:
 - ✅ Add a Cache layer to reduce server load and increase responsiveness
 - ✅ Enable dynamic CGI request support
 - ✅ Support MacOS build compatability by kqueue
-- [ ] Complete unit testing coverage
+- ✅ Complete unit testing coverage
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
 

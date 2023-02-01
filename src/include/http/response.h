@@ -43,6 +43,8 @@ class Response {
 
   void SetShouldTransferContent(bool should_transfer_content) noexcept;
 
+  auto GetHeaders() -> std::vector<Header>;
+
   bool ChangeHeader(const std::string& key,
                     const std::string& new_value) noexcept;
 
