@@ -166,6 +166,7 @@ ADD_EXECUTABLE(helloworld ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/helloworld.c)
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
 INCLUDE(Catch)
+
 # Core Module
 CATCH_DISCOVER_TESTS(buffer_test)
 CATCH_DISCOVER_TESTS(cache_test)
@@ -176,6 +177,7 @@ CATCH_DISCOVER_TESTS(poller_test)
 CATCH_DISCOVER_TESTS(looper_test)
 CATCH_DISCOVER_TESTS(acceptor_test)
 CATCH_DISCOVER_TESTS(thread_pool_test)
+
 # HTTP Module
 CATCH_DISCOVER_TESTS(header_test)
 CATCH_DISCOVER_TESTS(request_test)
