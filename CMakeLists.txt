@@ -155,6 +155,13 @@ TARGET_LINK_LIBRARIES(request_test PRIVATE Catch2::Catch2WithMain turtle_core tu
 ADD_EXECUTABLE(response_test ${TURTLE_SERVER_TEST_DIR}/http/response_test.cpp)
 TARGET_LINK_LIBRARIES(response_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
 
+ADD_EXECUTABLE(cgier_test ${TURTLE_SERVER_TEST_DIR}/http/cgier_test.cpp)
+TARGET_LINK_LIBRARIES(cgier_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
+
+# helper program to test cgi module, used the `cgi_test`
+ADD_EXECUTABLE(add ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/add.c)
+ADD_EXECUTABLE(helloworld ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/helloworld.c)
+
 # automatic discover and run all the tests with 'ctest' or 'make test'
 LIST(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 INCLUDE(CTest)
@@ -173,6 +180,7 @@ CATCH_DISCOVER_TESTS(thread_pool_test)
 CATCH_DISCOVER_TESTS(header_test)
 CATCH_DISCOVER_TESTS(request_test)
 CATCH_DISCOVER_TESTS(response_test)
+CATCH_DISCOVER_TESTS(cgier_test)
 
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
