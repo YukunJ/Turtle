@@ -39,7 +39,7 @@
 
 ### Docker
 
-如果您不在Linux系统上, 但仍希望能尝试**Turtle**库, 我们提供Vagrant文件来部署一个Linux Docker.
+如果您不在Linux系统上, 但仍希望能在Linux环境下尝试**Turtle**库, 我们提供Vagrant文件来部署一个Linux Docker. 现在**Turtle**兼容在Linux和MacOS上的构建.
 
 1. 安装 [**Vagrant**](https://www.vagrantup.com/downloads)和[**Docker**](https://docs.docker.com/desktop/). 对MacOS用户, 您可以使用homebrew来安装Vagrant, 不过请不要使用homebrew来安装Docker. 请使用上面的链接下载Mac Docker桌面版.
 

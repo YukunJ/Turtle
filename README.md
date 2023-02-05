@@ -40,7 +40,7 @@ The **Turtle** core network part is around 1000 lines of code, and the HTTP+CGI 
 
 ### Docker
 
-If you are not a Linux system but still want to try out the Turtle for fun, we provide a Vagrant File to provision the Linux Docker.
+If you are not a Linux system but still want to try out the **Turtle** on Linux for fun, we provide a Vagrant File to provision the Linux Docker. Notice as of current, **Turtle** is compatible with Linux and MacOS for build.
 
 1. Install [Vagrant](https://www.vagrantup.com/downloads) and [Docker](https://docs.docker.com/desktop/). For macOS, you may use homebrew to install Vagrant but **do not** use homebrew to install Docker. Instead, download Docker Desktop from the link above.
 
