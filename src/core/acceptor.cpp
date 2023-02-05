@@ -62,7 +62,7 @@ void Acceptor::SetCustomAcceptCallback(
   custom_accept_callback_ = std::move(custom_accept_callback);
   acceptor_conn->SetCallback([this](auto &&PH1) {
     BaseAcceptCallback(std::forward<decltype(PH1)>(PH1));
-    GetCustomAcceptCallback()(std::forward<decltype(PH1)>(PH1));
+    custom_accept_callback_(std::forward<decltype(PH1)>(PH1));
   });
 }
 
