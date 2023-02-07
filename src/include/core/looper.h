@@ -15,7 +15,7 @@
 #include <atomic>
 #include <functional>
 #include <future>  // NOLINT
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <mutex>  // NOLINT
 
@@ -59,7 +59,7 @@ class Looper {
  private:
   std::unique_ptr<Poller> poller_;
   std::mutex mtx_;
-  std::map<int, std::unique_ptr<Connection>> connections_;
+  std::unordered_map<int, std::unique_ptr<Connection>> connections_;
   bool exit_{false};
 };
 }  // namespace TURTLE_SERVER
