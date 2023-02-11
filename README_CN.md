@@ -241,6 +241,7 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 - ✅ 支持动态CGI请求的处理回复
 - ✅ 通过kqueue来支持MacOS操作系统的构建兼容性
 - ✅ 完成单元测试的覆盖
+- [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
 - [ ] 支持定时器功能来删除不活跃的用户连接
 - [ ] 支持数据库连接功能
 

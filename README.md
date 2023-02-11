@@ -241,6 +241,7 @@ The followings are on the **TODO** list:
 - ✅ Enable dynamic CGI request support
 - ✅ Support MacOS build compatability by kqueue
 - ✅ Complete unit testing coverage
+- [ ] review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
 
