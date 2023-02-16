@@ -29,7 +29,7 @@ class Connection;
  * */
 class Acceptor {
  public:
-  explicit Acceptor(Looper *listener, std::vector<Looper *> reactors,
+  Acceptor(Looper *listener, std::vector<Looper *> reactors,
                     NetAddress server_address);
 
   ~Acceptor() = default;
