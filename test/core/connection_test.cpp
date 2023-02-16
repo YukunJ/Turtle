@@ -15,7 +15,7 @@
 #include <cstring>
 #include <memory>
 #include <string>
-#include <thread>  // NOLINT
+#include <thread> // NOLINT
 
 #include "catch2/catch_test_macros.hpp"
 #include "core/net_address.h"
@@ -47,17 +47,17 @@ TEST_CASE("[core/connection]") {
   }
 
   SECTION("connection's callback setup and invoke") {
-    server_conn.SetCallback([](Connection*) -> void {});
+    server_conn.SetCallback([](Connection *) -> void {});
     int i = 0;
     server_conn.SetCallback(
-        [&target = i](Connection*) -> void { target += 1; });
+        [&target = i](Connection *) -> void { target += 1; });
     server_conn.GetCallback()();
     CHECK(i == 1);
   }
 
   SECTION("through connection to send and recv messages") {
-    const char* client_message = "hello from client";
-    const char* server_message = "hello from server";
+    const char *client_message = "hello from client";
+    const char *server_message = "hello from server";
     std::thread client_thread([&]() {
       // build a client connecting with server
       auto client_sock = std::make_unique<Socket>();

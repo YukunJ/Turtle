@@ -213,6 +213,8 @@ ADD_CUSTOM_TARGET(format ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_format.py
         ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/clang_format_exclusions.txt
         --source_dirs
         ${TURTLE_SERVER_SRC_DIR}
+        --source_dirs
+        ${TURTLE_SERVER_TEST_DIR}
         --fix
         --quiet
 )

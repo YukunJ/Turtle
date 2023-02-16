@@ -11,7 +11,7 @@
 
 #include <fcntl.h>
 
-#include <thread>  // NOLINT
+#include <thread> // NOLINT
 
 #include "catch2/catch_test_macros.hpp"
 #include "core/net_address.h"

@@ -26,7 +26,7 @@ TEST_CASE("[http/response]") {
     Response response{RESPONSE_OK, false, std::string("nonexistent-file.txt")};
     auto headers = response.GetHeaders();
     bool find = false;
-    for (auto& h : headers) {
+    for (auto &h : headers) {
       if (h.GetKey() == HEADER_CONTENT_LENGTH) {
         find = true;
       }
@@ -37,7 +37,7 @@ TEST_CASE("[http/response]") {
     find = false;
     std::string value;
     headers = response.GetHeaders();
-    for (auto& h : headers) {
+    for (auto &h : headers) {
       if (h.GetKey() == HEADER_CONTENT_LENGTH) {
         find = true;
         value = h.GetValue();

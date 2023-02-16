@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 #include <memory>
-#include <thread>  // NOLINT
+#include <thread> // NOLINT
 #include <vector>
 
 #include "catch2/catch_test_macros.hpp"
