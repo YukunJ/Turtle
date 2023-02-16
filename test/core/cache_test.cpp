@@ -26,8 +26,7 @@ TEST_CASE("[core/cache]") {
   REQUIRE(cache.GetOccupancy() == 0);
   REQUIRE(cache.GetCapacity() == capacity);
 
-  SECTION(
-      "cache should be able to cache data up to capacity, and start evict") {
+  SECTION("cache should be able to cache data up to capacity, and start evict") {
     for (int i = 1; i <= capacity / data_size; i++) {
       std::string url = "url" + std::to_string(i);
       bool cache_success = cache.TryInsert(url, data);

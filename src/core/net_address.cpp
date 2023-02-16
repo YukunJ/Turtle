@@ -69,7 +69,7 @@ auto NetAddress::ToString() const noexcept -> std::string {
   return GetIp() + std::string(" @ ") + std::to_string(GetPort());
 }
 
-std::ostream &operator<<(std::ostream &os, const NetAddress &address) {
+auto operator<<(std::ostream &os, const NetAddress &address) -> std::ostream & {
   os << address.ToString();
   return os;
 }

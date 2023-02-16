@@ -54,7 +54,7 @@ namespace TURTLE_SERVER {
 class TurtleServer {
  public:
   explicit TurtleServer(NetAddress server_address,
-                        int concurrency = std::thread::hardware_concurrency() -
+                        int concurrency = static_cast<int>(std::thread::hardware_concurrency()) -
                                           1)
       : pool_(std::make_unique<ThreadPool>(concurrency)),
         listener_(std::make_unique<Looper>()) {

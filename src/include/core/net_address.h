@@ -54,7 +54,7 @@ class NetAddress {
   socklen_t addr_len_;
 };
 
-std::ostream &operator<<(std::ostream &os, const NetAddress &address);
+auto operator<<(std::ostream &os, const NetAddress &address) -> std::ostream &;
 
 }  // namespace TURTLE_SERVER
 #endif  // SRC_INCLUDE_CORE_NET_ADDRESS_H_

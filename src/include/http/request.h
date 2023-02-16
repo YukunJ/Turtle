@@ -30,9 +30,9 @@ enum class Version;
 class Request {
  public:
   Request(Method method, Version version, std::string resource_url,
-          const std::vector<Header>& headers) noexcept;
+          const std::vector<Header> &headers) noexcept;
   explicit Request(
-      const std::string& request_str) noexcept;  // deserialize method
+      const std::string &request_str) noexcept;  // deserialize method
   NON_COPYABLE(Request);
   auto IsValid() const noexcept -> bool;
   auto ShouldClose() const noexcept -> bool;
@@ -41,11 +41,11 @@ class Request {
   auto GetVersion() const noexcept -> Version;
   auto GetResourceUrl() const noexcept -> std::string;
   auto GetHeaders() const noexcept -> std::vector<Header>;
-  friend std::ostream& operator<<(std::ostream& os, const Request& request);
+  friend auto operator<<(std::ostream &os, const Request &request) -> std::ostream &;
 
  private:
-  auto ParseRequestLine(const std::string& request_line) -> bool;
-  void ScanHeader(const Header& header);
+  auto ParseRequestLine(const std::string &request_line) -> bool;
+  void ScanHeader(const Header &header);
   Method method_;
   Version version_;
   std::string resource_url_;

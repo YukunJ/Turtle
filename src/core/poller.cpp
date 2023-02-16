@@ -108,7 +108,7 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
     exit(EXIT_FAILURE);
   }
   for (int i = 0; i < ready; i++) {
-    Connection *ready_connection =
+    auto *ready_connection =
         reinterpret_cast<Connection *>(poll_events_[i].udata);
     ready_connection->SetRevents(poll_events_[i].filter);
     events_happen.emplace_back(ready_connection);
