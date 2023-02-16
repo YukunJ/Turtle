@@ -9,9 +9,9 @@
 
 namespace TURTLE_SERVER::HTTP {
 
-void ProcessHttpRequest(  // NOLINT
+void ProcessHttpRequest( // NOLINT
     const std::string &serving_directory,
-    std::shared_ptr<Cache> &cache,  // NOLINT
+    std::shared_ptr<Cache> &cache, // NOLINT
     Connection *client_conn) {
   // edge-trigger, first read all available bytes
   int from_fd = client_conn->GetFd();

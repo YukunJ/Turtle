@@ -72,8 +72,7 @@ TEST_CASE("[core/acceptor]") {
       futs.push_back(std::move(fut));
     }
 
-    auto runner =
-        std::async(std::launch::async, [&]() { single_reactor->Loop(); });
+    auto runner = std::async(std::launch::async, [&]() { single_reactor->Loop(); });
     futs.push_back(std::move(runner));
     sleep(2);
     single_reactor->SetExit();  // terminate the looper

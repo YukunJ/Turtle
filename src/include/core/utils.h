@@ -11,16 +11,16 @@
 #ifndef SRC_INCLUDE_CORE_UTILS_H_
 #define SRC_INCLUDE_CORE_UTILS_H_
 
-#define NON_COPYABLE(class_name)           \
-  class_name(const class_name &) = delete; \
+#define NON_COPYABLE(class_name)                                               \
+  class_name(const class_name &) = delete;                                     \
   class_name &operator=(const class_name &) = delete
 
-#define NON_MOVEABLE(class_name)      \
-  class_name(class_name &&) = delete; \
+#define NON_MOVEABLE(class_name)                                               \
+  class_name(class_name &&) = delete;                                          \
   class_name &operator=(class_name &&) = delete
 
-#define NON_COPYABLE_AND_MOVEABLE(class_name) \
-  NON_COPYABLE(class_name);                   \
+#define NON_COPYABLE_AND_MOVEABLE(class_name)                                  \
+  NON_COPYABLE(class_name);                                                    \
   NON_MOVEABLE(class_name)
 
 #endif  // SRC_INCLUDE_CORE_UTILS_H_

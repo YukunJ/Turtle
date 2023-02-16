@@ -22,9 +22,9 @@
 #include "core/socket.h"
 #include "core/utils.h"
 
-#define TEMP_BUF_SIZE 2048
-
 namespace TURTLE_SERVER {
+
+constexpr static int TEMP_BUF_SIZE = 2048;
 
 class Looper;
 
@@ -80,8 +80,8 @@ class Connection {
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;
-  uint32_t events_{};
-  uint32_t revents_{};
+  uint32_t events_{0};
+  uint32_t revents_{0};
   std::function<void()> callback_{nullptr};
 };
 

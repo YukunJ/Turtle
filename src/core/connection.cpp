@@ -17,11 +17,8 @@
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
-    : socket_(std::move(socket)),
-      read_buffer_(std::make_unique<Buffer>()),
-      write_buffer_(std::make_unique<Buffer>()),
-      events_(0),
-      revents_(0) {}
+    : socket_(std::move(socket)), read_buffer_(std::make_unique<Buffer>()),
+      write_buffer_(std::make_unique<Buffer>()) {}
 
 auto Connection::GetFd() const noexcept -> int { return socket_->GetFd(); }
 
@@ -122,8 +119,8 @@ void Connection::Send() {
   const ssize_t to_write = GetWriteBufferSize();
   const unsigned char *buf = write_buffer_->Data();
   while (curr_write < to_write) {
-    if ((write = send(GetFd(), buf + curr_write, to_write - curr_write, 0)) <=
-        0) {
+    write = send(GetFd(), buf + curr_write, to_write - curr_write, 0);
+    if (write <= 0) {
       if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK) {
         perror("Error in Connection::Send()");
         ClearWriteBuffer();

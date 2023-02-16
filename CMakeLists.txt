@@ -40,7 +40,7 @@ set(TURTLE_SERVER_CLANG_SEARCH_PATH "/usr/local/bin" "/usr/bin" "/usr/local/opt/
 IF (NOT DEFINED CLANG_FORMAT_BIN)
     # attempt to find the binary if user did not specify
     FIND_PROGRAM(CLANG_FORMAT_BIN
-            NAMES clang-format clang-format-8
+            NAMES clang-format clang-format-14
             HINTS ${TURTLE_SERVER_CLANG_SEARCH_PATH})
 ENDIF ()
 IF ("${CLANG_FORMAT_BIN}" STREQUAL "CLANG_FORMAT_BIN-NOTFOUND")
@@ -59,6 +59,19 @@ ELSE ()
     MESSAGE(STATUS "TurtleServer/main found cpplint at ${CPPLINT_BIN}")
 ENDIF ()
 
+# clang-tidy
+IF (NOT DEFINED CLANG_TIDY_BIN)
+FIND_PROGRAM(CLANG_TIDY_BIN
+        NAMES clang-tidy clang-tidy-14
+        HINTS ${TURTLE_SERVER_CLANG_SEARCH_PATH})
+ENDIF ()
+IF ("${CLANG_TIDY_BIN}" STREQUAL "CLANG_TIDY_BIN-NOTFOUND")
+    MESSAGE(WARNING "TurtleServer/main couldn't find clang-tidy.")
+ELSE ()
+    SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+    MESSAGE(STATUS "TurtleServer/main found clang-tidy at ${CLANG_TIDY_BIN}")
+ENDIF ()
+
 ######################################################################################################################
 # Include
 ######################################################################################################################
@@ -70,39 +83,55 @@ SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 
-INCLUDE_DIRECTORIES(${TURTLE_SERVER_SRC_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${TURTLE_SERVER_TEST_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
-
 ######################################################################################################################
 # Build
 ######################################################################################################################
+SET(CMAKE_COMPILER_FLAG -O3 -Wall -Wextra -pedantic -Werror)
 
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
 TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
-TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(turtle_core PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_core
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the turtle http library
 FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
 ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
-TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(turtle_http PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_http
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)
-TARGET_COMPILE_OPTIONS(echo_server PRIVATE -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(echo_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        echo_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the echo client
 ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client turtle_core)
+TARGET_INCLUDE_DIRECTORIES(
+        echo_client
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the http server
 ADD_EXECUTABLE(http_server ${TURTLE_SERVER_SRC_DIR}/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
-TARGET_COMPILE_OPTIONS(http_server PRIVATE -Wall -Wextra -pedantic -Werror)
-
+TARGET_COMPILE_OPTIONS(http_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        http_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 ######################################################################################################################
 # Test (Catch2)
 ######################################################################################################################
@@ -191,10 +220,15 @@ CATCH_DISCOVER_TESTS(cgier_test)
 SET(FORMAT_STYLE google)
 
 # "make format"
-ADD_CUSTOM_TARGET(format
-        find ${TURTLE_SERVER_SRC_DIR} ${TURTLE_SERVER_TEST_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
-        |
-        xargs clang-format -style=${FORMAT_STYLE} -i
+ADD_CUSTOM_TARGET(format ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_format.py
+        ${CLANG_FORMAT_BIN}
+        ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/clang_format_exclusions.txt
+        --source_dirs
+        ${TURTLE_SERVER_SRC_DIR}
+        --source_dirs
+        ${TURTLE_SERVER_TEST_DIR}
+        --fix
+        --quiet
 )
 
 # "make cpplint"
@@ -215,10 +249,19 @@ ADD_CUSTOM_TARGET(cpplint
         --filter=-legal/copyright,-build/include_subdir,-readability/casting,-readability/check
         )
 
+# "make tidy"
+ADD_CUSTOM_TARGET(tidy ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_tidy.py
+        -clang-tidy-binary ${CLANG_TIDY_BIN}
+        ${TURTLE_SERVER_SRC_DIR}
+        -p ${CMAKE_BINARY_DIR}
+)
+
 # "make linecount"
 ADD_CUSTOM_TARGET(linecount
-        cloc --by-file ${CMAKE_CURRENT_SOURCE_DIR}/src
+        cloc --by-file ${TURTLE_SERVER_SRC_DIR}
         )
+
+
 
 # 'make benchmark'
 # will run http_server

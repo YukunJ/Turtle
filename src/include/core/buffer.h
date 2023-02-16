@@ -37,7 +37,7 @@ class Buffer {
 
   Buffer(const Buffer &other) = default;
 
-  Buffer &operator=(const Buffer &other) = default;
+  auto operator=(const Buffer &other) -> Buffer & = default;
 
   NON_MOVEABLE(Buffer);
 

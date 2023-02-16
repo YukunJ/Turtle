@@ -2,6 +2,10 @@
 
 -----------------
 [![Build & Test](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml/badge.svg?branch=main)](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml)
+<a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
+<a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
 ## TURTLE
 
 [**English Version** 英文文档](./README.md)
@@ -100,7 +104,7 @@ $ make benchmark
 我们在Amazon EC2云服务器上进行了性能测试. 具体如下:
 
 + **硬件配置**: **m5.2xlarge**云服务器, 使用**Ubuntu 20.04 LTS**操作系统, 拥有**8**vCPUs, **32**GiB内存, **50**GiB根硬盘存储.
-+ **QPS**: **49.7**k (无缓存) | **50.4**k (激活缓存)
++ **QPS**: **58.6**k (无缓存) | **59.0**k (激活缓存)
 
 **Cache**缓存层所带来的性能提升或许不是很明显. 部分由于磁盘I/O现在也变得更快了, 从磁盘中加载一个1MB大小的index文件的代价或许小于在**Cache**上的互斥操作.
 
@@ -241,6 +245,7 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 - ✅ 支持动态CGI请求的处理回复
 - ✅ 通过kqueue来支持MacOS操作系统的构建兼容性
 - ✅ 完成单元测试的覆盖
+- [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
 - [ ] 支持定时器功能来删除不活跃的用户连接
 - [ ] 支持数据库连接功能
 

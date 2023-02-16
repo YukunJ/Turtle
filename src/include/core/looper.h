@@ -14,10 +14,10 @@
 
 #include <atomic>
 #include <functional>
-#include <future>  // NOLINT
-#include <unordered_map>
+#include <future> // NOLINT
+#include <map>
 #include <memory>
-#include <mutex>  // NOLINT
+#include <mutex> // NOLINT
 
 #include "core/utils.h"
 
@@ -63,4 +63,4 @@ class Looper {
   bool exit_{false};
 };
 }  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CORE_LOOPER_H_
+#endif   // SRC_INCLUDE_CORE_LOOPER_H_

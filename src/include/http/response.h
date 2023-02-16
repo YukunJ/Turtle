@@ -36,17 +36,17 @@ class Response {
   /* 503 Service Unavailable response, close connection */
   static auto Make503Response() noexcept -> Response;
 
-  Response(const std::string& status_code, bool should_close,
+  Response(const std::string &status_code, bool should_close,
            std::optional<std::string> resource_url);
 
-  void Serialize(std::vector<unsigned char>& buffer);  // NOLINT
+  void Serialize(std::vector<unsigned char> &buffer);  // NOLINT
 
   void SetShouldTransferContent(bool should_transfer_content) noexcept;
 
   auto GetHeaders() -> std::vector<Header>;
 
-  bool ChangeHeader(const std::string& key,
-                    const std::string& new_value) noexcept;
+  auto ChangeHeader(const std::string &key,
+                    const std::string &new_value) noexcept -> bool;
 
  private:
   std::string status_line_;

@@ -52,7 +52,7 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   client_connection->SetEvents(POLL_READ | POLL_ET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
   // randomized distribution. uniform in long term.
-  int idx = rand() % reactors_.size();  // NOLINT
+  int idx = rand() % reactors_.size(); // NOLINT
   client_connection->SetLooper(reactors_[idx]);
   reactors_[idx]->AddConnection(std::move(client_connection));
 }

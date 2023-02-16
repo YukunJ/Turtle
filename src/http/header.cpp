@@ -35,11 +35,10 @@ Header::Header(const std::string &line) {
 }
 
 Header::Header(Header &&other) noexcept
-    : key_(std::move(other.key_)),
-      value_(std::move(other.value_)),
+    : key_(std::move(other.key_)), value_(std::move(other.value_)),
       valid_(other.valid_) {}
 
-Header &Header::operator=(Header &&other) noexcept {
+auto Header::operator=(Header &&other) noexcept -> Header & {
   key_ = std::move(other.key_);
   value_ = std::move(other.value_);
   valid_ = other.valid_;
@@ -60,7 +59,7 @@ auto Header::Serialize() const -> std::string {
   return key_ + COLON + value_ + CRLF;
 }
 
-std::ostream &operator<<(std::ostream &os, const Header &header) {
+auto operator<<(std::ostream &os, const Header &header) -> std::ostream & {
   os << "HTTP Header contains:" << std::endl;
   os << "Key: " << header.GetKey() << std::endl;
   os << "Value: " << header.GetValue() << std::endl;

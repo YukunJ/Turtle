@@ -26,9 +26,8 @@ TEST_CASE("[http/response]") {
     int a = 1;
     int b = 2;
     int c = a + b;
-    std::string expected_str = "cgi program add(" + std::to_string(a) + ", " +
-                               std::to_string(b) + ") = " + std::to_string(c) +
-                               "\n";
+    std::string expected_str =
+        "cgi program add(" + std::to_string(a) + ", " + std::to_string(b) + ") = " + std::to_string(c) + "\n";
     Cgier cgier(program, {std::to_string(a), std::to_string(b)});
     auto result = cgier.Run();
     std::string ret_str = std::string(result.begin(), result.end());

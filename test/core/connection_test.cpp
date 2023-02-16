@@ -47,17 +47,16 @@ TEST_CASE("[core/connection]") {
   }
 
   SECTION("connection's callback setup and invoke") {
-    server_conn.SetCallback([](Connection*) -> void {});
+    server_conn.SetCallback([](Connection *) -> void {});
     int i = 0;
-    server_conn.SetCallback(
-        [&target = i](Connection*) -> void { target += 1; });
+    server_conn.SetCallback([&target = i](Connection *) -> void { target += 1; });
     server_conn.GetCallback()();
     CHECK(i == 1);
   }
 
   SECTION("through connection to send and recv messages") {
-    const char* client_message = "hello from client";
-    const char* server_message = "hello from server";
+    const char *client_message = "hello from client";
+    const char *server_message = "hello from server";
     std::thread client_thread([&]() {
       // build a client connecting with server
       auto client_sock = std::make_unique<Socket>();
@@ -75,8 +74,7 @@ TEST_CASE("[core/connection]") {
 
     client_thread.detach();
     NetAddress client_address;
-    auto connected_sock = std::make_unique<Socket>(
-        server_conn.GetSocket()->Accept(client_address));
+    auto connected_sock = std::make_unique<Socket>(server_conn.GetSocket()->Accept(client_address));
     connected_sock->SetNonBlocking();
     CHECK(connected_sock->GetFd() != -1);
     Connection connected_conn(std::move(connected_sock));

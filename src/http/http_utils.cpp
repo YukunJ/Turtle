@@ -19,7 +19,7 @@
 #include <sstream>
 namespace TURTLE_SERVER::HTTP {
 
-auto ToMethod(const std::string& method_str) noexcept -> Method {
+auto ToMethod(const std::string &method_str) noexcept -> Method {
   auto method_str_formatted = Format(method_str);
   if (method_str_formatted == METHOD_TO_STRING.at(Method::GET)) {
     return Method::GET;
@@ -30,7 +30,7 @@ auto ToMethod(const std::string& method_str) noexcept -> Method {
   return Method::UNSUPPORTED;
 }
 
-auto ToVersion(const std::string& version_str) noexcept -> Version {
+auto ToVersion(const std::string &version_str) noexcept -> Version {
   auto version_str_formatted = Format(version_str);
   if (version_str_formatted == VERSION_TO_STRING.at(Version::HTTP_1_1)) {
     return Version::HTTP_1_1;
@@ -38,7 +38,7 @@ auto ToVersion(const std::string& version_str) noexcept -> Version {
   return Version::UNSUPPORTED;
 }
 
-auto ToExtension(const std::string& extension_str) noexcept -> Extension {
+auto ToExtension(const std::string &extension_str) noexcept -> Extension {
   auto extension_str_formatted = Format(extension_str);
   if (extension_str_formatted == EXTENSION_TO_STRING.at(Extension::HTML)) {
     return Extension::HTML;
@@ -61,7 +61,7 @@ auto ToExtension(const std::string& extension_str) noexcept -> Extension {
   return Extension::OCTET;
 }
 
-auto ExtensionToMime(const Extension& extension) noexcept -> std::string {
+auto ExtensionToMime(const Extension &extension) noexcept -> std::string {
   if (extension == Extension::HTML) {
     return MIME_HTML;
   }
@@ -86,7 +86,7 @@ auto ExtensionToMime(const Extension& extension) noexcept -> std::string {
   return MIME_OCTET;
 }
 
-auto Split(const std::string& str, const char* delim) noexcept
+auto Split(const std::string &str, const char *delim) noexcept
     -> std::vector<std::string> {
   std::vector<std::string> tokens;
   if (str.empty()) {
@@ -107,7 +107,7 @@ auto Split(const std::string& str, const char* delim) noexcept
   return tokens;
 }
 
-auto Join(const std::vector<std::string>& tokens, const char* delim) noexcept
+auto Join(const std::vector<std::string> &tokens, const char *delim) noexcept
     -> std::string {
   if (tokens.empty()) {
     return {};
@@ -123,7 +123,7 @@ auto Join(const std::vector<std::string>& tokens, const char* delim) noexcept
   return str_stream.str();
 }
 
-auto Trim(const std::string& str, const char* delim) noexcept -> std::string {
+auto Trim(const std::string &str, const char *delim) noexcept -> std::string {
   size_t r_found = str.find_last_not_of(delim);
   if (r_found == std::string::npos) {
     return {};
@@ -138,39 +138,39 @@ auto ToUpper(std::string str) noexcept -> std::string {
   return str;
 }
 
-auto Format(const std::string& str) noexcept -> std::string {
+auto Format(const std::string &str) noexcept -> std::string {
   return ToUpper(Trim(str));
 }
 
-auto IsDirectoryExists(const std::string& directory_path) noexcept -> bool {
+auto IsDirectoryExists(const std::string &directory_path) noexcept -> bool {
   return std::filesystem::is_directory(directory_path);
 }
 
-auto IsCgiRequest(const std::string& resource_url) noexcept -> bool {
+auto IsCgiRequest(const std::string &resource_url) noexcept -> bool {
   return resource_url.find(CGI_BIN) != std::string::npos;
 }
 
-auto IsFileExists(const std::string& file_path) noexcept -> bool {
+auto IsFileExists(const std::string &file_path) noexcept -> bool {
   return std::filesystem::exists(file_path);
 }
 
-auto DeleteFile(const std::string& file_path) noexcept -> bool {
+auto DeleteFile(const std::string &file_path) noexcept -> bool {
   return std::filesystem::remove(file_path);
 }
 
-auto CheckFileSize(const std::string& file_path) noexcept -> size_t {
+auto CheckFileSize(const std::string &file_path) noexcept -> size_t {
   assert(IsFileExists(file_path));
   return std::filesystem::file_size(file_path);
 }
 
-void LoadFile(const std::string& file_path,
-              std::vector<unsigned char>& buffer) noexcept {  // NOLINT
+void LoadFile(const std::string &file_path,
+              std::vector<unsigned char> &buffer) noexcept { // NOLINT
   size_t file_size = CheckFileSize(file_path);
   size_t buffer_old_size = buffer.size();
   std::ifstream file(file_path);
   buffer.resize(buffer_old_size + file_size);
   assert(file.is_open());
-  file.read(reinterpret_cast<char*>(&buffer[buffer_old_size]),
+  file.read(reinterpret_cast<char *>(&buffer[buffer_old_size]),
             static_cast<std::streamsize>(file_size));
 }
 

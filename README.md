@@ -2,7 +2,12 @@
 
 
 -----------------
+
 [![Build & Test](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml/badge.svg?branch=main)](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml)
+<a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
+<a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
 ## TURTLE
 
 [**中文文档** Chinese Version](./README_CN.md)
@@ -102,7 +107,7 @@ $ make benchmark
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
 + **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
-+ **QPS**: **49.7**k (no cache) | **50.4**k (with cache)
++ **QPS**: **58.6**k (no cache) | **59.0**k (with cache)
 
 The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
 
@@ -241,6 +246,7 @@ The followings are on the **TODO** list:
 - ✅ Enable dynamic CGI request support
 - ✅ Support MacOS build compatability by kqueue
 - ✅ Complete unit testing coverage
+- [ ] review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
 

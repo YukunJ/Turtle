@@ -11,13 +11,13 @@
 
 #include <algorithm>
 #include <atomic>
-#include <condition_variable>  // NOLINT
+#include <condition_variable> // NOLINT
 #include <functional>
-#include <future>  // NOLINT
+#include <future> // NOLINT
 #include <memory>
-#include <mutex>  // NOLINT
+#include <mutex> // NOLINT
 #include <queue>
-#include <thread>  // NOLINT
+#include <thread> // NOLINT
 #include <utility>
 #include <vector>
 
@@ -60,7 +60,7 @@ class ThreadPool {
 };
 
 template <typename F, typename... Args>
-decltype(auto) ThreadPool::SubmitTask(F &&new_task, Args &&...args) {
+auto ThreadPool::SubmitTask(F &&new_task, Args &&...args) -> decltype(auto) {
   using return_type = std::invoke_result_t<F, Args...>;
   if (exit_) {
     throw std::runtime_error(

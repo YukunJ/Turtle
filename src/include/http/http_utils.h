@@ -81,33 +81,33 @@ static const std::map<Extension, std::string> EXTENSION_TO_STRING{
     {Extension::OCTET, "OCTET"}};
 
 /* space and case insensitive */
-auto ToMethod(const std::string& method_str) noexcept -> Method;
+auto ToMethod(const std::string &method_str) noexcept -> Method;
 
 /* space and case insensitive */
-auto ToVersion(const std::string& version_str) noexcept -> Version;
+auto ToVersion(const std::string &version_str) noexcept -> Version;
 
 /* space and case insensitive */
-auto ToExtension(const std::string& extension_str) noexcept -> Extension;
+auto ToExtension(const std::string &extension_str) noexcept -> Extension;
 
 /* space and case insensitive */
-auto ExtensionToMime(const Extension& extension) noexcept -> std::string;
+auto ExtensionToMime(const Extension &extension) noexcept -> std::string;
 
 /**
  * split a string into many sub strings, splitted by the specified delimiter
  */
-auto Split(const std::string& str, const char* delim = SPACE) noexcept
+auto Split(const std::string &str, const char *delim = SPACE) noexcept
     -> std::vector<std::string>;
 
 /**
  * concatenate a collection of strings using the specified delimiter
  */
-auto Join(const std::vector<std::string>& tokens,
-          const char* delim = SPACE) noexcept -> std::string;
+auto Join(const std::vector<std::string> &tokens,
+          const char *delim = SPACE) noexcept -> std::string;
 
 /**
  * Remove the leading and trailing specified delimiter (not inplace)
  */
-auto Trim(const std::string& str, const char* delim = SPACE) noexcept
+auto Trim(const std::string &str, const char *delim = SPACE) noexcept
     -> std::string;
 
 /**
@@ -118,41 +118,41 @@ auto ToUpper(std::string str) noexcept -> std::string;
 /**
  * Apply Trim + ToUpper to a string and return the formatted version of it
  */
-auto Format(const std::string&) noexcept -> std::string;
+auto Format(const std::string &) noexcept -> std::string;
 
 /**
  * Check if the path-specified directory exists
  */
-auto IsDirectoryExists(const std::string& directory_path) noexcept -> bool;
+auto IsDirectoryExists(const std::string &directory_path) noexcept -> bool;
 
 /**
  * Inspect if the request is dynamic CGI
  * hardcode check if contains the cgi-bin folder in resource url path
  */
-auto IsCgiRequest(const std::string& resource_url) noexcept -> bool;
+auto IsCgiRequest(const std::string &resource_url) noexcept -> bool;
 
 /**
  * Check if the path-specified path exists
  */
-auto IsFileExists(const std::string& file_path) noexcept -> bool;
+auto IsFileExists(const std::string &file_path) noexcept -> bool;
 
 /**
  * Delete a file if exists
  */
-auto DeleteFile(const std::string& file_path) noexcept -> bool;
+auto DeleteFile(const std::string &file_path) noexcept -> bool;
 
 /**
  * Tell the size of a file in bytes.
  * Assume this file already exists and is verified
  */
-auto CheckFileSize(const std::string& file_path) noexcept -> size_t;
+auto CheckFileSize(const std::string &file_path) noexcept -> size_t;
 
 /**
  * Load the file appending to be back of a vector of unsigned char
  * able to contain binary data
  */
-void LoadFile(const std::string& file_path,
-              std::vector<unsigned char>& buffer) noexcept;  // NOLINT
+void LoadFile(const std::string &file_path,
+              std::vector<unsigned char> &buffer) noexcept;  // NOLINT
 
 }  // namespace TURTLE_SERVER::HTTP
 

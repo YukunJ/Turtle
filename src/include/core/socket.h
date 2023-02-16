@@ -27,7 +27,7 @@ enum class Protocol;
  * */
 class Socket {
  public:
-  Socket() noexcept;
+  Socket() noexcept = default;
 
   explicit Socket(int fd) noexcept;
 
@@ -35,7 +35,7 @@ class Socket {
 
   Socket(Socket &&other) noexcept;
 
-  Socket &operator=(Socket &&other) noexcept;
+  auto operator=(Socket &&other) noexcept -> Socket &;
 
   ~Socket();
 

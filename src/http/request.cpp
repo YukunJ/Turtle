@@ -16,14 +16,12 @@
 namespace TURTLE_SERVER::HTTP {
 
 Request::Request(Method method, Version version, std::string resource_url,
-                 const std::vector<Header>& headers) noexcept
-    : method_(method),
-      version_(version),
-      resource_url_(std::move(resource_url)),
-      headers_(headers),
+                 const std::vector<Header> &headers) noexcept
+    : method_(method), version_(version),
+      resource_url_(std::move(resource_url)), headers_(headers),
       is_valid_(true) {}
 
-Request::Request(const std::string& request_str) noexcept {
+Request::Request(const std::string &request_str) noexcept {
   auto lines = Split(request_str, CRLF);
   if (lines.size() < 2 || !lines.back().empty()) {
     invalid_reason_ = "Request format is wrong.";
@@ -41,7 +39,7 @@ Request::Request(const std::string& request_str) noexcept {
     return;
   }
   lines.erase(lines.begin());
-  for (const auto& line : lines) {
+  for (const auto &line : lines) {
     Header header{line};
     if (!header.IsValid()) {
       invalid_reason_ = "Fail to parse header line: " + line;
@@ -73,7 +71,7 @@ auto Request::GetInvalidReason() const noexcept -> std::string {
   return invalid_reason_;
 }
 
-auto Request::ParseRequestLine(const std::string& request_line) -> bool {
+auto Request::ParseRequestLine(const std::string &request_line) -> bool {
   auto tokens = Split(request_line, SPACE);
   if (tokens.size() != 3) {
     invalid_reason_ = "Invalid first request headline: " + request_line;
@@ -97,7 +95,7 @@ auto Request::ParseRequestLine(const std::string& request_line) -> bool {
   return true;
 }
 
-void Request::ScanHeader(const Header& header) {
+void Request::ScanHeader(const Header &header) {
   /* currently only scan for whether the connection should be closed after
    * service */
   auto key = Format(header.GetKey());
@@ -109,7 +107,7 @@ void Request::ScanHeader(const Header& header) {
   }
 }
 
-std::ostream& operator<<(std::ostream& os, const Request& request) {
+auto operator<<(std::ostream &os, const Request &request) -> std::ostream & {
   if (!request.IsValid()) {
     os << "Request is not invalid." << std::endl;
     os << "Reason: " << request.invalid_reason_ << std::endl;
