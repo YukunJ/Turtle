@@ -83,39 +83,55 @@ SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 
-INCLUDE_DIRECTORIES(${TURTLE_SERVER_SRC_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${TURTLE_SERVER_TEST_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(BEFORE src) # This is needed for gtest.
-
 ######################################################################################################################
 # Build
 ######################################################################################################################
+SET(CMAKE_COMPILER_FLAG -O3 -Wall -Wextra -pedantic -Werror)
 
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
 TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
-TARGET_COMPILE_OPTIONS(turtle_core PRIVATE -O3 -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(turtle_core PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_core
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the turtle http library
 FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
 ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
-TARGET_COMPILE_OPTIONS(turtle_http PRIVATE -O3 -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(turtle_http PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_http
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)
-TARGET_COMPILE_OPTIONS(echo_server PRIVATE -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(echo_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        echo_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the echo client
 ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client turtle_core)
+TARGET_INCLUDE_DIRECTORIES(
+        echo_client
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the http server
 ADD_EXECUTABLE(http_server ${TURTLE_SERVER_SRC_DIR}/http/http_server.cpp)
 TARGET_LINK_LIBRARIES(http_server turtle_core turtle_http)
-TARGET_COMPILE_OPTIONS(http_server PRIVATE -O3 -Wall -Wextra -pedantic -Werror)
-
+TARGET_COMPILE_OPTIONS(http_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        http_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 ######################################################################################################################
 # Test (Catch2)
 ######################################################################################################################
