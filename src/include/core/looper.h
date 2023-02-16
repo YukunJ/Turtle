@@ -14,10 +14,10 @@
 
 #include <atomic>
 #include <functional>
-#include <future>  // NOLINT
+#include <future> // NOLINT
 #include <map>
 #include <memory>
-#include <mutex>  // NOLINT
+#include <mutex> // NOLINT
 
 #include "core/utils.h"
 
@@ -39,7 +39,7 @@ class Acceptor;
  * adopt the philosophy of 'one looper per thread'
  * */
 class Looper {
- public:
+public:
   Looper();
 
   ~Looper() = default;
@@ -56,11 +56,11 @@ class Looper {
 
   void SetExit() noexcept;
 
- private:
+private:
   std::unique_ptr<Poller> poller_;
   std::mutex mtx_;
   std::map<int, std::unique_ptr<Connection>> connections_;
   bool exit_{false};
 };
-}  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CORE_LOOPER_H_
+} // namespace TURTLE_SERVER
+#endif // SRC_INCLUDE_CORE_LOOPER_H_

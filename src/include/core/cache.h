@@ -14,8 +14,8 @@
 #include <core/utils.h>
 
 #include <memory>
-#include <mutex>         // NOLINT
-#include <shared_mutex>  // NOLINT
+#include <mutex>        // NOLINT
+#include <shared_mutex> // NOLINT
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -36,7 +36,7 @@ auto GetTimeUtc() noexcept -> uint64_t;
  * are closer to the tail, i.e. with newer timestamp
  */
 class Cache {
- public:
+public:
   /**
    * Helper class inside the Cache
    * It represents a single file cached in the form of an unsigned char vector
@@ -45,26 +45,26 @@ class Cache {
   class CacheNode {
     friend class Cache;
 
-   public:
+  public:
     CacheNode() noexcept;
-    CacheNode(const std::string& identifier,
-              const std::vector<unsigned char>& data);
-    void SetIdentifier(const std::string& identifier);
-    void SetData(const std::vector<unsigned char>& data);
-    void Serialize(std::vector<unsigned char>& destination);  // NOLINT
+    CacheNode(const std::string &identifier,
+              const std::vector<unsigned char> &data);
+    void SetIdentifier(const std::string &identifier);
+    void SetData(const std::vector<unsigned char> &data);
+    void Serialize(std::vector<unsigned char> &destination); // NOLINT
     auto Size() const noexcept -> size_t;
     void UpdateTimestamp() noexcept;
     auto GetTimestamp() const noexcept -> uint64_t;
 
-   private:
+  private:
     /* the resource identifier for this node */
     std::string identifier_;
     /* may contain binary data */
     std::vector<unsigned char> data_;
     /* the timestamp of last access in milliseconds */
     uint64_t last_access_{0};
-    CacheNode* prev_{nullptr};
-    CacheNode* next_{nullptr};
+    CacheNode *prev_{nullptr};
+    CacheNode *next_{nullptr};
   };
 
   explicit Cache(size_t capacity = DEFAULT_CACHE_CAPACITY) noexcept;
@@ -80,8 +80,8 @@ class Cache {
    * populate the destination buffer and return true
    * if not exists, return false
    */
-  auto TryLoad(const std::string& resource_url,
-               std::vector<unsigned char>& destination) -> bool;  // NOLINT
+  auto TryLoad(const std::string &resource_url,
+               std::vector<unsigned char> &destination) -> bool; // NOLINT
 
   /**
    * Given the resource_url and content, try to insert it into the cache
@@ -89,15 +89,15 @@ class Cache {
    * failure reason could be that the content is too big or identical
    * resource_url already cached
    */
-  auto TryInsert(const std::string& resource_url,
-                 const std::vector<unsigned char>& source) -> bool;
+  auto TryInsert(const std::string &resource_url,
+                 const std::vector<unsigned char> &source) -> bool;
 
   /**
    * Remove everything in the cache
    */
   void Clear();
 
- private:
+private:
   /**
    * Evict out the head cache node to save space
    */
@@ -128,6 +128,6 @@ class Cache {
   const std::shared_ptr<CacheNode> tailer_;
 };
 
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_CORE_CACHE_H_
+#endif // SRC_INCLUDE_CORE_CACHE_H_

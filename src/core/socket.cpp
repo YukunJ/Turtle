@@ -120,4 +120,4 @@ void Socket::CreateByProtocol(Protocol protocol) {
     throw std::logic_error("Socket: socket() error");
   }
 }
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER

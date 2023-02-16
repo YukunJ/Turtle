@@ -26,7 +26,7 @@ enum class Protocol;
  * This class is compatible with both IPv4 and IPv6
  * */
 class Socket {
- public:
+public:
   Socket() noexcept;
 
   explicit Socket(int fd) noexcept;
@@ -42,14 +42,14 @@ class Socket {
   auto GetFd() const noexcept -> int;
 
   /* for client, one step: directly connect */
-  void Connect(NetAddress &server_address);  // NOLINT
+  void Connect(NetAddress &server_address); // NOLINT
 
   /* for server, three steps: bind + listen + accept */
-  void Bind(NetAddress &server_address, bool set_reusable = true);  // NOLINT
+  void Bind(NetAddress &server_address, bool set_reusable = true); // NOLINT
 
   void Listen();
 
-  auto Accept(NetAddress &client_address) -> int;  // NOLINT
+  auto Accept(NetAddress &client_address) -> int; // NOLINT
 
   void SetReusable();
 
@@ -57,10 +57,10 @@ class Socket {
 
   auto GetAttrs() -> int;
 
- private:
+private:
   void CreateByProtocol(Protocol protocol);
 
   int fd_{-1};
 };
-}  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CORE_SOCKET_H_
+} // namespace TURTLE_SERVER
+#endif // SRC_INCLUDE_CORE_SOCKET_H_

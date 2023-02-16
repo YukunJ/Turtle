@@ -21,30 +21,30 @@ namespace TURTLE_SERVER::HTTP {
  * The HTTP Header in the form of string "key : value"
  */
 class Header {
- public:
-  Header(const std::string& key, const std::string& value);
-  Header(std::string&& key, std::string&& value);
-  explicit Header(const std::string& line);  // deserialize method
-  Header(const Header& other) = default;
-  Header(Header&& other) noexcept;
-  Header& operator=(const Header& other) = default;
-  Header& operator=(Header&& other) noexcept;
+public:
+  Header(const std::string &key, const std::string &value);
+  Header(std::string &&key, std::string &&value);
+  explicit Header(const std::string &line); // deserialize method
+  Header(const Header &other) = default;
+  Header(Header &&other) noexcept;
+  Header &operator=(const Header &other) = default;
+  Header &operator=(Header &&other) noexcept;
   ~Header() = default;
 
   auto IsValid() const -> bool;
   auto GetKey() const -> std::string;
   auto GetValue() const -> std::string;
-  void SetValue(const std::string& new_value) noexcept;
+  void SetValue(const std::string &new_value) noexcept;
   auto Serialize() const -> std::string;
 
-  friend std::ostream& operator<<(std::ostream& os, const Header& header);
+  friend std::ostream &operator<<(std::ostream &os, const Header &header);
 
- private:
+private:
   std::string key_;
   std::string value_;
   bool valid_{true};
 };
 
-}  // namespace TURTLE_SERVER::HTTP
+} // namespace TURTLE_SERVER::HTTP
 
-#endif  // SRC_INCLUDE_HTTP_HEADER_H_
+#endif // SRC_INCLUDE_HTTP_HEADER_H_

@@ -35,7 +35,7 @@ class Looper;
  * so that Poller could manipulate and epoll based on this Connection class
  * */
 class Connection {
- public:
+public:
   explicit Connection(std::unique_ptr<Socket> socket);
   ~Connection() = default;
 
@@ -75,7 +75,7 @@ class Connection {
   void SetLooper(Looper *looper) noexcept;
   auto GetLooper() noexcept -> Looper *;
 
- private:
+private:
   Looper *owner_looper_{nullptr};
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Buffer> read_buffer_;
@@ -85,5 +85,5 @@ class Connection {
   std::function<void()> callback_{nullptr};
 };
 
-}  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CORE_CONNECTION_H_
+} // namespace TURTLE_SERVER
+#endif // SRC_INCLUDE_CORE_CONNECTION_H_

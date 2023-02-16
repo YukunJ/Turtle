@@ -52,7 +52,7 @@ namespace TURTLE_SERVER {
  * to achieve the expected behavior
  */
 class TurtleServer {
- public:
+public:
   explicit TurtleServer(NetAddress server_address,
                         int concurrency = std::thread::hardware_concurrency() -
                                           1)
@@ -96,13 +96,13 @@ class TurtleServer {
     listener_->Loop();
   }
 
- private:
+private:
   bool on_handle_set_{false};
   std::unique_ptr<Acceptor> acceptor_;
   std::vector<std::unique_ptr<Looper>> reactors_;
   std::unique_ptr<ThreadPool> pool_;
   std::unique_ptr<Looper> listener_;
 };
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER
 
-#endif  // SRC_INCLUDE_CORE_TURTLE_SERVER_H_
+#endif // SRC_INCLUDE_CORE_TURTLE_SERVER_H_

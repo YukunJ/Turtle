@@ -35,7 +35,7 @@ auto Response::Make503Response() noexcept -> Response {
   return {RESPONSE_SERVICE_UNAVAILABLE, true, std::nullopt};
 }
 
-Response::Response(const std::string& status_code, bool should_close,
+Response::Response(const std::string &status_code, bool should_close,
                    std::optional<std::string> resource_url)
     : should_close_(should_close), resource_url_(std::move(resource_url)) {
   // construct the status line
@@ -65,11 +65,11 @@ Response::Response(const std::string& status_code, bool should_close,
   }
 }
 
-void Response::Serialize(std::vector<unsigned char>& buffer) {  // NOLINT
+void Response::Serialize(std::vector<unsigned char> &buffer) { // NOLINT
   // construct everything before body
   std::stringstream str_stream;
   str_stream << status_line_ << CRLF;
-  for (const auto& header : headers_) {
+  for (const auto &header : headers_) {
     str_stream << header.Serialize();
   }
   str_stream << CRLF;
@@ -86,9 +86,9 @@ void Response::SetShouldTransferContent(bool should_transfer_content) noexcept {
 
 auto Response::GetHeaders() -> std::vector<Header> { return headers_; }
 
-bool Response::ChangeHeader(const std::string& key,
-                            const std::string& new_value) noexcept {
-  for (auto& it : headers_) {
+bool Response::ChangeHeader(const std::string &key,
+                            const std::string &new_value) noexcept {
+  for (auto &it : headers_) {
     if (it.GetKey() == key) {
       it.SetValue(new_value);
       return true;
@@ -97,4 +97,4 @@ bool Response::ChangeHeader(const std::string& key,
   return false;
 }
 
-}  // namespace TURTLE_SERVER::HTTP
+} // namespace TURTLE_SERVER::HTTP

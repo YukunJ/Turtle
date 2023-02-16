@@ -28,11 +28,11 @@ enum class Version;
  * connection should be kept alive
  */
 class Request {
- public:
+public:
   Request(Method method, Version version, std::string resource_url,
-          const std::vector<Header>& headers) noexcept;
+          const std::vector<Header> &headers) noexcept;
   explicit Request(
-      const std::string& request_str) noexcept;  // deserialize method
+      const std::string &request_str) noexcept; // deserialize method
   NON_COPYABLE(Request);
   auto IsValid() const noexcept -> bool;
   auto ShouldClose() const noexcept -> bool;
@@ -41,11 +41,11 @@ class Request {
   auto GetVersion() const noexcept -> Version;
   auto GetResourceUrl() const noexcept -> std::string;
   auto GetHeaders() const noexcept -> std::vector<Header>;
-  friend std::ostream& operator<<(std::ostream& os, const Request& request);
+  friend std::ostream &operator<<(std::ostream &os, const Request &request);
 
- private:
-  auto ParseRequestLine(const std::string& request_line) -> bool;
-  void ScanHeader(const Header& header);
+private:
+  auto ParseRequestLine(const std::string &request_line) -> bool;
+  void ScanHeader(const Header &header);
   Method method_;
   Version version_;
   std::string resource_url_;
@@ -54,6 +54,6 @@ class Request {
   bool is_valid_{false};
   std::string invalid_reason_;
 };
-}  // namespace TURTLE_SERVER::HTTP
+} // namespace TURTLE_SERVER::HTTP
 
-#endif  // SRC_INCLUDE_HTTP_REQUEST_H_
+#endif // SRC_INCLUDE_HTTP_REQUEST_H_

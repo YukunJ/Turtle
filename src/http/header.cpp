@@ -35,8 +35,7 @@ Header::Header(const std::string &line) {
 }
 
 Header::Header(Header &&other) noexcept
-    : key_(std::move(other.key_)),
-      value_(std::move(other.value_)),
+    : key_(std::move(other.key_)), value_(std::move(other.value_)),
       valid_(other.valid_) {}
 
 Header &Header::operator=(Header &&other) noexcept {
@@ -69,4 +68,4 @@ std::ostream &operator<<(std::ostream &os, const Header &header) {
   return os;
 }
 
-}  // namespace TURTLE_SERVER::HTTP
+} // namespace TURTLE_SERVER::HTTP

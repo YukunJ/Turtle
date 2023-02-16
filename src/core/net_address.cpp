@@ -42,7 +42,7 @@ auto NetAddress::YieldAddr() -> struct sockaddr * { return &addr_; }
 auto NetAddress::YieldAddrLen() -> socklen_t * { return &addr_len_; }
 
 auto NetAddress::GetIp() const noexcept -> std::string {
-  char ip_address[INET6_ADDRSTRLEN];  // long enough for both Ipv4 and Ipv6
+  char ip_address[INET6_ADDRSTRLEN]; // long enough for both Ipv4 and Ipv6
   if (protocol_ == Protocol::Ipv4) {
     auto addr_ipv4 = reinterpret_cast<struct sockaddr_in *>(&addr_);
     inet_ntop(AF_INET, &addr_ipv4->sin_addr, ip_address, INET_ADDRSTRLEN);
@@ -73,4 +73,4 @@ std::ostream &operator<<(std::ostream &os, const NetAddress &address) {
   os << address.ToString();
   return os;
 }
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER

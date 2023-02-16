@@ -30,7 +30,7 @@ static constexpr size_t INITIAL_BUFFER_CAPACITY = 1024;
  * NOT thread-safe
  * */
 class Buffer {
- public:
+public:
   explicit Buffer(size_t initial_capacity = INITIAL_BUFFER_CAPACITY);
 
   ~Buffer() = default;
@@ -63,9 +63,9 @@ class Buffer {
 
   void Clear() noexcept;
 
- private:
+private:
   std::vector<unsigned char> buf_;
 };
 
-}  // namespace TURTLE_SERVER
-#endif  // SRC_INCLUDE_CORE_BUFFER_H_
+} // namespace TURTLE_SERVER
+#endif // SRC_INCLUDE_CORE_BUFFER_H_

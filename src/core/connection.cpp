@@ -17,11 +17,8 @@
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
-    : socket_(std::move(socket)),
-      read_buffer_(std::make_unique<Buffer>()),
-      write_buffer_(std::make_unique<Buffer>()),
-      events_(0),
-      revents_(0) {}
+    : socket_(std::move(socket)), read_buffer_(std::make_unique<Buffer>()),
+      write_buffer_(std::make_unique<Buffer>()), events_(0), revents_(0) {}
 
 auto Connection::GetFd() const noexcept -> int { return socket_->GetFd(); }
 
@@ -144,4 +141,4 @@ void Connection::SetLooper(Looper *looper) noexcept { owner_looper_ = looper; }
 
 auto Connection::GetLooper() noexcept -> Looper * { return owner_looper_; }
 
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER

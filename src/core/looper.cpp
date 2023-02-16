@@ -52,4 +52,4 @@ auto Looper::DeleteConnection(int fd) -> bool {
 
 void Looper::SetExit() noexcept { exit_ = true; }
 
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER

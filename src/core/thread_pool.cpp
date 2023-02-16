@@ -25,7 +25,7 @@ ThreadPool::ThreadPool(int size) {
           std::unique_lock<std::mutex> lock(mtx_);
           cv_.wait(lock, [this]() { return exit_ || !tasks_.empty(); });
           if (exit_ && tasks_.empty()) {
-            return;  // thread life ends
+            return; // thread life ends
           }
           next_task = tasks_.front();
           tasks_.pop();
@@ -52,4 +52,4 @@ void ThreadPool::Exit() {
 
 auto ThreadPool::GetSize() -> size_t { return threads_.size(); }
 
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER

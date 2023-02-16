@@ -10,7 +10,7 @@
 #include "core/cache.h"
 
 #include <cassert>
-#include <chrono>  // NOLINT
+#include <chrono> // NOLINT
 namespace TURTLE_SERVER {
 
 auto GetTimeUtc() noexcept -> uint64_t {
@@ -55,8 +55,7 @@ auto Cache::CacheNode::GetTimestamp() const noexcept -> uint64_t {
 }
 
 Cache::Cache(size_t capacity) noexcept
-    : capacity_(capacity),
-      header_(std::make_unique<CacheNode>()),
+    : capacity_(capacity), header_(std::make_unique<CacheNode>()),
       tailer_(std::make_unique<CacheNode>()) {
   header_->next_ = tailer_.get();
   tailer_->prev_ = header_.get();
@@ -137,4 +136,4 @@ void Cache::AppendToListTail(std::shared_ptr<CacheNode> node) noexcept {
   node_ptr->prev_ = node_prev;
   node_ptr->next_ = tailer_.get();
 }
-}  // namespace TURTLE_SERVER
+} // namespace TURTLE_SERVER
