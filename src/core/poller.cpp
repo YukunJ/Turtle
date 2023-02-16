@@ -70,7 +70,7 @@ void Poller::AddConnection(Connection *conn) {
   struct kevent event[1];
   memset(event, 0, sizeof(event));
   EV_SET(&event[0], conn->GetFd(), POLL_ADD, conn->GetEvents(), 0, 0,
-         conn); // read-trigger-only
+         conn);  // read-trigger-only
   assert(kevent(poll_fd_, event, 1, nullptr, 0, nullptr) != -1 &&
          "kevent add channel fails");
 }
@@ -97,7 +97,7 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
   std::vector<Connection *> events_happen;
   struct timespec t {};
   memset(&t, 0, sizeof(struct timespec));
-  timeout = std::max(0, timeout); // -1 is promoted to be no-wait
+  timeout = std::max(0, timeout);  // -1 is promoted to be no-wait
   t.tv_sec = timeout / 1000;
   t.tv_nsec = (timeout % 1000) * 1000 * 1000;
 
@@ -108,7 +108,7 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
     exit(EXIT_FAILURE);
   }
   for (int i = 0; i < ready; i++) {
-    Connection *ready_connection =
+    auto *ready_connection =
         reinterpret_cast<Connection *>(poll_events_[i].udata);
     ready_connection->SetRevents(poll_events_[i].filter);
     events_happen.emplace_back(ready_connection);
@@ -118,4 +118,4 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
 #endif
 
 auto Poller::GetPollSize() const noexcept -> uint64_t { return poll_size_; }
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER

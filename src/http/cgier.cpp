@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
-#include <thread> // NOLINT
+#include <thread>  // NOLINT
 
 #include "http/http_utils.h"
 namespace TURTLE_SERVER::HTTP {
@@ -82,7 +82,8 @@ auto Cgier::Run() -> std::vector<unsigned char> {
     if (execve(cgi_program_path_.c_str(), cgi_argv, nullptr) < 0) {
       // only reach here when execve fails
       perror("fail to execve()");
-      exit(1); // exit child process
+      FreeArgumentList(cgi_argv);
+      exit(1);  // exit child process
     }
   } else {
     // parent
@@ -118,8 +119,15 @@ auto Cgier::BuildArgumentList() -> char ** {
     memcpy(cgi_argv[i + 1], cgi_arguments_[i].c_str(),
            cgi_arguments_[i].size());
   }
-  cgi_argv[cgi_arguments_.size() + 1] = nullptr; // indicate the end of arg list
+  cgi_argv[cgi_arguments_.size() + 1] = nullptr;  // indicate the end of arg list
   return cgi_argv;
 }
 
-} // namespace TURTLE_SERVER::HTTP
+void Cgier::FreeArgumentList(char** arg_list) {
+  for (int i = 0; i < static_cast<int>(cgi_arguments_.size()) + 2; i++) {
+      free(arg_list[i]);
+  }
+  free(arg_list);
+}
+
+}  // namespace TURTLE_SERVER::HTTP

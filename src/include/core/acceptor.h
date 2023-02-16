@@ -28,7 +28,7 @@ class Connection;
  * More custom handling could be added as well
  * */
 class Acceptor {
-public:
+ public:
   explicit Acceptor(Looper *listener, std::vector<Looper *> reactors,
                     NetAddress server_address);
 
@@ -52,13 +52,13 @@ public:
 
   auto GetAcceptorConnection() noexcept -> Connection *;
 
-private:
+ private:
   std::vector<Looper *> reactors_;
   std::unique_ptr<Connection> acceptor_conn;
   std::function<void(Connection *)> custom_accept_callback_{};
   std::function<void(Connection *)> custom_handle_callback_{};
 };
 
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER
 
-#endif // SRC_INCLUDE_CORE_ACCEPTOR_H_
+#endif  // SRC_INCLUDE_CORE_ACCEPTOR_H_

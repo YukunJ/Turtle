@@ -22,9 +22,9 @@
 #include "core/socket.h"
 #include "core/utils.h"
 
-#define TEMP_BUF_SIZE 2048
-
 namespace TURTLE_SERVER {
+
+constexpr static int TEMP_BUF_SIZE = 2048;
 
 class Looper;
 
@@ -35,7 +35,7 @@ class Looper;
  * so that Poller could manipulate and epoll based on this Connection class
  * */
 class Connection {
-public:
+ public:
   explicit Connection(std::unique_ptr<Socket> socket);
   ~Connection() = default;
 
@@ -75,15 +75,15 @@ public:
   void SetLooper(Looper *looper) noexcept;
   auto GetLooper() noexcept -> Looper *;
 
-private:
+ private:
   Looper *owner_looper_{nullptr};
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Buffer> read_buffer_;
   std::unique_ptr<Buffer> write_buffer_;
-  uint32_t events_{};
-  uint32_t revents_{};
+  uint32_t events_{0};
+  uint32_t revents_{0};
   std::function<void()> callback_{nullptr};
 };
 
-} // namespace TURTLE_SERVER
-#endif // SRC_INCLUDE_CORE_CONNECTION_H_
+}  // namespace TURTLE_SERVER
+#endif  // SRC_INCLUDE_CORE_CONNECTION_H_

@@ -174,4 +174,4 @@ void LoadFile(const std::string &file_path,
             static_cast<std::streamsize>(file_size));
 }
 
-} // namespace TURTLE_SERVER::HTTP
+}  // namespace TURTLE_SERVER::HTTP

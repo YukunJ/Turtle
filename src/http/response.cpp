@@ -86,8 +86,8 @@ void Response::SetShouldTransferContent(bool should_transfer_content) noexcept {
 
 auto Response::GetHeaders() -> std::vector<Header> { return headers_; }
 
-bool Response::ChangeHeader(const std::string &key,
-                            const std::string &new_value) noexcept {
+auto Response::ChangeHeader(const std::string &key,
+                            const std::string &new_value) noexcept -> bool {
   for (auto &it : headers_) {
     if (it.GetKey() == key) {
       it.SetValue(new_value);
@@ -97,4 +97,4 @@ bool Response::ChangeHeader(const std::string &key,
   return false;
 }
 
-} // namespace TURTLE_SERVER::HTTP
+}  // namespace TURTLE_SERVER::HTTP

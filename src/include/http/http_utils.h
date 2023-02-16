@@ -152,8 +152,8 @@ auto CheckFileSize(const std::string &file_path) noexcept -> size_t;
  * able to contain binary data
  */
 void LoadFile(const std::string &file_path,
-              std::vector<unsigned char> &buffer) noexcept; // NOLINT
+              std::vector<unsigned char> &buffer) noexcept;  // NOLINT
 
-} // namespace TURTLE_SERVER::HTTP
+}  // namespace TURTLE_SERVER::HTTP
 
-#endif // SRC_INCLUDE_HTTP_HTTP_UTILS_H_
+#endif  // SRC_INCLUDE_HTTP_HTTP_UTILS_H_

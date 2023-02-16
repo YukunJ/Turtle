@@ -15,7 +15,7 @@
 #include <cstring>
 #include <memory>
 #include <string>
-#include <thread> // NOLINT
+#include <thread>  // NOLINT
 
 #include "catch2/catch_test_macros.hpp"
 #include "core/net_address.h"
@@ -49,8 +49,7 @@ TEST_CASE("[core/connection]") {
   SECTION("connection's callback setup and invoke") {
     server_conn.SetCallback([](Connection *) -> void {});
     int i = 0;
-    server_conn.SetCallback(
-        [&target = i](Connection *) -> void { target += 1; });
+    server_conn.SetCallback([&target = i](Connection *) -> void { target += 1; });
     server_conn.GetCallback()();
     CHECK(i == 1);
   }
@@ -75,8 +74,7 @@ TEST_CASE("[core/connection]") {
 
     client_thread.detach();
     NetAddress client_address;
-    auto connected_sock = std::make_unique<Socket>(
-        server_conn.GetSocket()->Accept(client_address));
+    auto connected_sock = std::make_unique<Socket>(server_conn.GetSocket()->Accept(client_address));
     connected_sock->SetNonBlocking();
     CHECK(connected_sock->GetFd() != -1);
     Connection connected_conn(std::move(connected_sock));

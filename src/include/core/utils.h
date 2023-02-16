@@ -23,4 +23,4 @@
   NON_COPYABLE(class_name);                                                    \
   NON_MOVEABLE(class_name)
 
-#endif // SRC_INCLUDE_CORE_UTILS_H_
+#endif  // SRC_INCLUDE_CORE_UTILS_H_

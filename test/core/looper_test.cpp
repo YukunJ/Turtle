@@ -15,7 +15,7 @@
 #include <atomic>
 #include <memory>
 #include <numeric>
-#include <thread> // NOLINT
+#include <thread>  // NOLINT
 #include <vector>
 
 #include "catch2/catch_test_macros.hpp"
@@ -59,14 +59,12 @@ TEST_CASE("[core/looper]") {
     std::vector<int> reach(client_num, 0);
     for (int i = 0; i < client_num; i++) {
       NetAddress client_address;
-      auto client_sock =
-          std::make_unique<Socket>(server_sock.Accept(client_address));
+      auto client_sock = std::make_unique<Socket>(server_sock.Accept(client_address));
       CHECK(client_sock->GetFd() != -1);
       client_sock->SetNonBlocking();
       auto client_conn = std::make_unique<Connection>(std::move(client_sock));
       client_conn->SetEvents(POLL_READ);
-      client_conn->SetCallback(
-          [&reach = reach, index = i](Connection *conn) { reach[index] = 1; });
+      client_conn->SetCallback([&reach = reach, index = i](Connection *conn) { reach[index] = 1; });
       looper.AddConnection(std::move(client_conn));
     }
 

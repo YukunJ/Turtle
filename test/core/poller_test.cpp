@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 #include <memory>
-#include <thread> // NOLINT
+#include <thread>  // NOLINT
 #include <vector>
 
 #include "catch2/catch_test_macros.hpp"
@@ -60,11 +60,9 @@ TEST_CASE("[core/poller]") {
     std::vector<std::shared_ptr<Connection>> client_conns;
     for (int i = 0; i < client_num; i++) {
       NetAddress client_address;
-      auto client_sock =
-          std::make_unique<Socket>(server_sock.Accept(client_address));
+      auto client_sock = std::make_unique<Socket>(server_sock.Accept(client_address));
       CHECK(client_sock->GetFd() != -1);
-      client_conns.push_back(
-          std::make_shared<Connection>(std::move(client_sock)));
+      client_conns.push_back(std::make_shared<Connection>(std::move(client_sock)));
       client_conns[i]->SetEvents(POLL_READ);
     }
 

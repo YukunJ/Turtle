@@ -68,6 +68,7 @@ ENDIF ()
 IF ("${CLANG_TIDY_BIN}" STREQUAL "CLANG_TIDY_BIN-NOTFOUND")
     MESSAGE(WARNING "TurtleServer/main couldn't find clang-tidy.")
 ELSE ()
+    SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
     MESSAGE(STATUS "TurtleServer/main found clang-tidy at ${CLANG_TIDY_BIN}")
 ENDIF ()
 
@@ -203,11 +204,6 @@ CATCH_DISCOVER_TESTS(cgier_test)
 SET(FORMAT_STYLE google)
 
 # "make format"
-#ADD_CUSTOM_TARGET(format
-#        find ${TURTLE_SERVER_SRC_DIR} ${TURTLE_SERVER_TEST_DIR} -name "*.cpp" -o -name "*.h" | sed 's| |\\ |g'
-#        |
-#        xargs clang-format -style=${FORMAT_STYLE} -i
-#)
 ADD_CUSTOM_TARGET(format ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_format.py
         ${CLANG_FORMAT_BIN}
         ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/clang_format_exclusions.txt
@@ -237,10 +233,19 @@ ADD_CUSTOM_TARGET(cpplint
         --filter=-legal/copyright,-build/include_subdir,-readability/casting,-readability/check
         )
 
+# "make tidy"
+ADD_CUSTOM_TARGET(tidy ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_tidy.py
+        -clang-tidy-binary ${CLANG_TIDY_BIN}
+        ${TURTLE_SERVER_SRC_DIR}
+        -p ${CMAKE_BINARY_DIR}
+)
+
 # "make linecount"
 ADD_CUSTOM_TARGET(linecount
-        cloc --by-file ${CMAKE_CURRENT_SOURCE_DIR}/src
+        cloc --by-file ${TURTLE_SERVER_SRC_DIR}
         )
+
+
 
 # 'make benchmark'
 # will run http_server

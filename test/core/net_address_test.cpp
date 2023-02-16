@@ -26,13 +26,10 @@ TEST_CASE("[core/net_address]") {
   }
 
   SECTION("Ipv6 net address") {
-    NetAddress address_ipv6("2001:db8:3333:4444:5555:6666:7777:8888", 40080,
-                            Protocol::Ipv6);
+    NetAddress address_ipv6("2001:db8:3333:4444:5555:6666:7777:8888", 40080, Protocol::Ipv6);
     REQUIRE(address_ipv6.GetProtocol() == Protocol::Ipv6);
-    REQUIRE(address_ipv6.GetIp() ==
-            std::string("2001:db8:3333:4444:5555:6666:7777:8888"));
+    REQUIRE(address_ipv6.GetIp() == std::string("2001:db8:3333:4444:5555:6666:7777:8888"));
     REQUIRE(address_ipv6.GetPort() == 40080);
-    REQUIRE(address_ipv6.ToString() ==
-            std::string("2001:db8:3333:4444:5555:6666:7777:8888 @ 40080"));
+    REQUIRE(address_ipv6.ToString() == std::string("2001:db8:3333:4444:5555:6666:7777:8888 @ 40080"));
   }
 }

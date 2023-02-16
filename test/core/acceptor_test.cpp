@@ -11,7 +11,7 @@
 
 #include <unistd.h>
 
-#include <future> // NOLINT
+#include <future>  // NOLINT
 #include <memory>
 #include <vector>
 
@@ -48,8 +48,9 @@ TEST_CASE("[core/acceptor]") {
 
   REQUIRE(acceptor.GetAcceptorConnection()->GetFd() != -1);
 
-  SECTION("Acceptor should be able to accept new clients and set callback for "
-          "them") {
+  SECTION(
+      "Acceptor should be able to accept new clients and set callback for "
+      "them") {
     int client_num = 3;
     std::atomic<int> accept_trigger = 0;
     std::atomic<int> handle_trigger = 0;
@@ -71,11 +72,10 @@ TEST_CASE("[core/acceptor]") {
       futs.push_back(std::move(fut));
     }
 
-    auto runner =
-        std::async(std::launch::async, [&]() { single_reactor->Loop(); });
+    auto runner = std::async(std::launch::async, [&]() { single_reactor->Loop(); });
     futs.push_back(std::move(runner));
     sleep(2);
-    single_reactor->SetExit(); // terminate the looper
+    single_reactor->SetExit();  // terminate the looper
 
     // accept & handle should be triggered exactly 3 times
     CHECK(accept_trigger == client_num);

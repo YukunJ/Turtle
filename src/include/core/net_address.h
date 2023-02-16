@@ -29,7 +29,7 @@ enum class Protocol { Ipv4, Ipv6 };
  * This class is compatible with both IPv4 and IPv6
  * */
 class NetAddress {
-public:
+ public:
   NetAddress() noexcept;
 
   NetAddress(const char *ip, uint16_t port, Protocol protocol = Protocol::Ipv4);
@@ -48,13 +48,13 @@ public:
 
   auto ToString() const noexcept -> std::string;
 
-private:
+ private:
   Protocol protocol_{Protocol::Ipv4};
   mutable struct sockaddr addr_ {};
   socklen_t addr_len_;
 };
 
-std::ostream &operator<<(std::ostream &os, const NetAddress &address);
+auto operator<<(std::ostream &os, const NetAddress &address) -> std::ostream &;
 
-} // namespace TURTLE_SERVER
-#endif // SRC_INCLUDE_CORE_NET_ADDRESS_H_
+}  // namespace TURTLE_SERVER
+#endif  // SRC_INCLUDE_CORE_NET_ADDRESS_H_

@@ -102,7 +102,7 @@ void ProcessHttpRequest( // NOLINT
     return;
   }
 }
-} // namespace TURTLE_SERVER::HTTP
+}  // namespace TURTLE_SERVER::HTTP
 
 int main(int argc, char *argv[]) {
   const std::string usage =

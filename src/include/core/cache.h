@@ -36,7 +36,7 @@ auto GetTimeUtc() noexcept -> uint64_t;
  * are closer to the tail, i.e. with newer timestamp
  */
 class Cache {
-public:
+ public:
   /**
    * Helper class inside the Cache
    * It represents a single file cached in the form of an unsigned char vector
@@ -45,9 +45,9 @@ public:
   class CacheNode {
     friend class Cache;
 
-  public:
+   public:
     CacheNode() noexcept;
-    CacheNode(const std::string &identifier,
+    CacheNode(std::string identifier,
               const std::vector<unsigned char> &data);
     void SetIdentifier(const std::string &identifier);
     void SetData(const std::vector<unsigned char> &data);
@@ -56,7 +56,7 @@ public:
     void UpdateTimestamp() noexcept;
     auto GetTimestamp() const noexcept -> uint64_t;
 
-  private:
+   private:
     /* the resource identifier for this node */
     std::string identifier_;
     /* may contain binary data */
@@ -97,7 +97,7 @@ public:
    */
   void Clear();
 
-private:
+ private:
   /**
    * Evict out the head cache node to save space
    */
@@ -107,12 +107,12 @@ private:
    * Helper function to remove a node from the doubly-linked list
    * essentially re-wire the prev and next pointers to each other
    */
-  void RemoveFromList(std::shared_ptr<CacheNode> node) noexcept;
+  void RemoveFromList(const std::shared_ptr<CacheNode>& node) noexcept;
 
   /**
    * Append a node to the tail of the doubly-linked list
    */
-  void AppendToListTail(std::shared_ptr<CacheNode> node) noexcept;
+  void AppendToListTail(const std::shared_ptr<CacheNode>& node) noexcept;
 
   /* concurrency */
   std::shared_mutex mtx_;
@@ -128,6 +128,6 @@ private:
   const std::shared_ptr<CacheNode> tailer_;
 };
 
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER
 
-#endif // SRC_INCLUDE_CORE_CACHE_H_
+#endif  // SRC_INCLUDE_CORE_CACHE_H_

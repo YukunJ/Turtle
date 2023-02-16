@@ -61,4 +61,4 @@ auto Buffer::ToStringView() const noexcept -> std::string_view {
 
 void Buffer::Clear() noexcept { buf_.clear(); }
 
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER

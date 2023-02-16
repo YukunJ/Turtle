@@ -107,7 +107,7 @@ void Request::ScanHeader(const Header &header) {
   }
 }
 
-std::ostream &operator<<(std::ostream &os, const Request &request) {
+auto operator<<(std::ostream &os, const Request &request) -> std::ostream & {
   if (!request.IsValid()) {
     os << "Request is not invalid." << std::endl;
     os << "Reason: " << request.invalid_reason_ << std::endl;
@@ -127,4 +127,4 @@ std::ostream &operator<<(std::ostream &os, const Request &request) {
   return os;
 }
 
-} // namespace TURTLE_SERVER::HTTP
+}  // namespace TURTLE_SERVER::HTTP

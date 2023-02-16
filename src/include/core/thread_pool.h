@@ -36,7 +36,7 @@ static constexpr int MIN_NUM_THREADS_IN_POOL = 2;
  * for
  * */
 class ThreadPool {
-public:
+ public:
   // save one thread for the main
   explicit ThreadPool(int size = std::thread::hardware_concurrency() - 1);
 
@@ -51,7 +51,7 @@ public:
 
   auto GetSize() -> size_t;
 
-private:
+ private:
   std::vector<std::thread> threads_;
   std::queue<std::function<void()>> tasks_;
   std::mutex mtx_;
@@ -60,7 +60,7 @@ private:
 };
 
 template <typename F, typename... Args>
-decltype(auto) ThreadPool::SubmitTask(F &&new_task, Args &&...args) {
+auto ThreadPool::SubmitTask(F &&new_task, Args &&...args) -> decltype(auto) {
   using return_type = std::invoke_result_t<F, Args...>;
   if (exit_) {
     throw std::runtime_error(
@@ -77,6 +77,6 @@ decltype(auto) ThreadPool::SubmitTask(F &&new_task, Args &&...args) {
   cv_.notify_one();
   return fut;
 }
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER
 
-#endif // SRC_INCLUDE_CORE_THREAD_POOL_H_
+#endif  // SRC_INCLUDE_CORE_THREAD_POOL_H_

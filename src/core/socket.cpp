@@ -22,8 +22,6 @@ namespace TURTLE_SERVER {
 
 static constexpr int BACK_LOG = 128;
 
-Socket::Socket() noexcept : fd_(-1) {}
-
 Socket::Socket(int fd) noexcept : fd_(fd) {}
 
 Socket::Socket(Socket &&other) noexcept {
@@ -31,7 +29,7 @@ Socket::Socket(Socket &&other) noexcept {
   other.fd_ = -1;
 }
 
-Socket &Socket::operator=(Socket &&other) noexcept {
+auto Socket::operator=(Socket &&other) noexcept -> Socket & {
   if (fd_ != -1) {
     close(fd_);
   }
@@ -80,9 +78,9 @@ void Socket::Listen() {
 
 auto Socket::Accept(NetAddress &client_address) -> int {
   assert(fd_ != -1 && "cannot Accept() with an invalid fd");
-  int client_fd = -1;
-  if ((client_fd = accept(fd_, client_address.YieldAddr(),
-                          client_address.YieldAddrLen())) == -1) {
+  int client_fd = accept(fd_, client_address.YieldAddr(),
+                         client_address.YieldAddrLen());
+  if (client_fd == -1) {
     // under high pressure, accept might fail.
     // but server should not fail at this time
   }
@@ -120,4 +118,4 @@ void Socket::CreateByProtocol(Protocol protocol) {
     throw std::logic_error("Socket: socket() error");
   }
 }
-} // namespace TURTLE_SERVER
+}  // namespace TURTLE_SERVER
