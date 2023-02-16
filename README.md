@@ -107,7 +107,7 @@ $ make benchmark
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
 + **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
-+ **QPS**: **49.7**k (no cache) | **50.4**k (with cache)
++ **QPS**: **58.6**k (no cache) | **59.0**k (with cache)
 
 The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
 
