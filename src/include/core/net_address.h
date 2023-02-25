@@ -50,7 +50,7 @@ class NetAddress {
 
  private:
   Protocol protocol_{Protocol::Ipv4};
-  mutable struct sockaddr addr_ {};
+  mutable struct sockaddr_storage addr_ {};
   socklen_t addr_len_;
 };
 
