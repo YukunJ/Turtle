@@ -37,7 +37,7 @@ NetAddress::NetAddress(const char *ip, uint16_t port, Protocol protocol)
 
 auto NetAddress::GetProtocol() const noexcept -> Protocol { return protocol_; }
 
-auto NetAddress::YieldAddr() -> struct sockaddr * { return &addr_; }
+auto NetAddress::YieldAddr() -> struct sockaddr * { return reinterpret_cast<struct sockaddr *>(&addr_); }
 
 auto NetAddress::YieldAddrLen() -> socklen_t * { return &addr_len_; }
 
