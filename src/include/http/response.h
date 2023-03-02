@@ -39,9 +39,8 @@ class Response {
   Response(const std::string &status_code, bool should_close,
            std::optional<std::string> resource_url);
 
+  /* no content, content should separately be loaded */
   void Serialize(std::vector<unsigned char> &buffer);  // NOLINT
-
-  void SetShouldTransferContent(bool should_transfer_content) noexcept;
 
   auto GetHeaders() -> std::vector<Header>;
 
@@ -50,7 +49,6 @@ class Response {
 
  private:
   std::string status_line_;
-  bool should_transfer_content_{true};
   bool should_close_;
   std::vector<Header> headers_;
   std::optional<std::string> resource_url_;

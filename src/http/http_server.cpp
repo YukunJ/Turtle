@@ -54,7 +54,6 @@ void ProcessHttpRequest( // NOLINT
                 Response::Make200Response(request.ShouldClose(), std::nullopt);
             response.ChangeHeader(HEADER_CONTENT_LENGTH,
                                   std::to_string(cgi_result.size()));
-            response.SetShouldTransferContent(false);
             no_more_parse = request.ShouldClose();
             response.Serialize(response_buf);
             response_buf.insert(response_buf.end(), cgi_result.begin(),
@@ -70,21 +69,22 @@ void ProcessHttpRequest( // NOLINT
         } else {
           auto response = Response::Make200Response(request.ShouldClose(),
                                                     resource_full_path);
-          std::vector<unsigned char> cache_buf;
-          auto resource_cached = cache->TryLoad(resource_full_path, cache_buf);
-          response.SetShouldTransferContent(
-              request.GetMethod() != Method::HEAD && !resource_cached);
-          no_more_parse = request.ShouldClose();
           response.Serialize(response_buf);
-          if (resource_cached) {
-            // content directly from cache, not disk file I/P
+          no_more_parse = request.ShouldClose();
+          std::vector<unsigned char> cache_buf;
+          if (request.GetMethod() == Method::GET) {
+              // only concern about carrying content when GET request
+              bool resource_cached = cache->TryLoad(resource_full_path, cache_buf);
+              if (!resource_cached) {
+                  // if content directly from cache, not disk file I/O
+                  // otherwise content not in cache, load from disk and try cache it
+                  LoadFile(resource_full_path, cache_buf);
+                  cache->TryInsert(resource_full_path, cache_buf);
+              }
+          }
+          // now cache_buf contains the file content anyway
             response_buf.insert(response_buf.end(), cache_buf.begin(),
                                 cache_buf.end());
-          } else {
-            // content not in cache, try store it
-            LoadFile(resource_full_path, cache_buf);
-            cache->TryInsert(resource_full_path, cache_buf);
-          }
         }
       }
     }
