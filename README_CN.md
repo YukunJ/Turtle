@@ -110,6 +110,35 @@ $ make benchmark
 
 我们相信在之后, 当数据库连接功能被支持并引入后, **Cache**缓存层的必要性会更加明显.
 
+为了更好的了解相对性能, 我们性能测试了一些其他的主流C++网络Web Server库, 并为了公平起见, 尽力采用它们最佳的设定.
+
+下列所有的性能测试比较都是在**相同的服务器**上进行, 使用webbench工具在**10500**个并发clients的情况下传输相同的1MB大小的**index.html**.
+
+1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): 最佳QPS = **37.2**k
+```console
+# 我们使用下列设定来运行TinyWebServer:
+# 1. 监听新链接模式 和 客户链接模式: -m 1 LT + ET | -m 3 ET + ET
+# 2. 8线程在 8-vCPUs 服务器上
+# 3. 关闭日志
+# 4. 反应堆模型: -a 0 Proactor | -a 1 Reactor
+
+# Proactor LT + ET
+$ ./server -m 1 -t 8 -c 1 -a 0
+$ QPS is 37.2k
+
+# Proactor ET + ET
+$ ./server -m 3 -t 8 -c 1 -a 0
+$ QPS is 37.0k
+
+# Reactor LT + ET
+$ ./server -m 1 -t 8 -c 1 -a 1
+$ QPS is 25.6k
+
+# Reactor ET + ET
+$ ./server -m 3 -t 8 -c 1 -a 1
+$ QPS is 25.0k
+```
+
 ### API风格
 **Turtle**库中的类在设计时将**解耦**这个重点牢牢挂在心中. 大部分的组件都可以单独或某几个拿出来独立使用, 尤其是**网络核心库**中的部分.
 
@@ -245,6 +274,7 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 - ✅ 支持动态CGI请求的处理回复
 - ✅ 通过kqueue来支持MacOS操作系统的构建兼容性
 - ✅ 完成单元测试的覆盖
+- [ ] 与其他主流网络Web Server库进行性能对比, 寻找Turtle的主要运行性能瓶颈
 - [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
 - [ ] 支持定时器功能来删除不活跃的用户连接
 - [ ] 支持数据库连接功能

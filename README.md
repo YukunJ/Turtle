@@ -113,6 +113,35 @@ The performance improvement from **Cache** might not seem significant. Partly be
 
 Later on, when database connector comes into play, the indispensability of the **Cache** layer will be more obvious.
 
+In order to gain a better sense of comparative performance, we benchmarked a few other leading popular C++ network webserver on the Internet with the best configuration to our knowledge in order to be fair. 
+
+All the benchmarks statistics listed below are performed on the **same hardware** and transferring same 1MB **index.html** file with **10500** concurrent clients using webbench tool.
+
+1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): best QPS = **37.2**k
+
+```console
+# we run the TinyWebServer with the configuration of:
+# 1. listener fd and connection fd mode: -m 1 LT + ET | -m 3 ET + ET
+# 2. 8 threads as on a 8 vCPUs instance
+# 3. turn off logging
+# 4. -a 0 Proactor | -a 1 Reactor
+
+# Proactor LT + ET
+$ ./server -m 1 -t 8 -c 1 -a 0
+$ QPS is 37.2k
+
+# Proactor ET + ET
+$ ./server -m 3 -t 8 -c 1 -a 0
+$ QPS is 37.0k
+
+# Reactor LT + ET
+$ ./server -m 1 -t 8 -c 1 -a 1
+$ QPS is 25.6k
+
+# Reactor ET + ET
+$ ./server -m 3 -t 8 -c 1 -a 1
+$ QPS is 25.0k
+```
 ### API Style
 The classes in the **Turtle** library are designed with the focus of decoupling firmly in mind. Most of the components can be taken out alone or a few together and used independently, especially those components in the **network core** module.
 
@@ -246,6 +275,7 @@ The followings are on the **TODO** list:
 - ✅ Enable dynamic CGI request support
 - ✅ Support MacOS build compatability by kqueue
 - ✅ Complete unit testing coverage
+- [ ] Benchmark with other leading libraries and profile Turtle's bottleneck
 - [ ] review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
 - [ ] Support timing each client connection and kills inactive ones
 - [ ] Support Database connection
