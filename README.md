@@ -86,7 +86,7 @@ $ make cpplint
 $ make linecount
 ```
 
-### Performance Testing
+### Performance Benchmark
 
 To test the performance of **Turtle** server under high concurrency, we adopt [Webbench](http://cs.uccs.edu/~cs526/webbench/webbench.htm) as the stress testing tool.
 
@@ -98,7 +98,7 @@ $ make benchmark
 
 # in Linux the above command will
 # 1. build the webbench tool
-# 2. run the http server in the background at default 20080 port, serving the ~1M index file
+# 2. run the http server in the background at default 20080 port, serving the dummy index file
 # 3. launch the webbench testing with 10500 concurrent clients for 5 seconds
 # 4. report back the result to the console
 # 5. harvest the background http server process and exit
@@ -107,7 +107,7 @@ $ make benchmark
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
 + **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume.
-+ **QPS**: **58.6**k (no cache) | **59.0**k (with cache)
++ **QPS**: **62.3**k (no cache) | **62.8**k (with cache)
 
 The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
 
@@ -117,9 +117,9 @@ In order to gain a better sense of comparative performance, we benchmarked a few
 
 To reiterate, by no means should we judge different libraries only on benchmark testing of limited scope and possible misconfiguration by the unfamiliar like us. It's solely for the purpose for getting the magnitude right.
 
-All the benchmarks statistics listed below are performed on the **same hardware** and transferring same 1MB **index.html** file with **10500** concurrent clients using webbench tool.
+All the benchmarks statistics listed below are performed on the **same hardware** and transferring same dummy index file with **10500** concurrent clients using webbench tool.
 
-1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): best QPS = **37.2**k
+1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): best QPS = **38.5**k
 
 ```console
 # we run the TinyWebServer with the configuration of:
@@ -127,22 +127,23 @@ All the benchmarks statistics listed below are performed on the **same hardware*
 # 2. 8 threads as on a 8 vCPUs instance
 # 3. turn off logging
 # 4. -a 0 Proactor | -a 1 Reactor
+# 5. compiler optimization level set to -O3
 
 # Proactor LT + ET
 $ ./server -m 1 -t 8 -c 1 -a 0
-$ QPS is 37.2k
+$ QPS is 38.5k
 
 # Proactor ET + ET
 $ ./server -m 3 -t 8 -c 1 -a 0
-$ QPS is 37.0k
+$ QPS is 38.2k
 
 # Reactor LT + ET
 $ ./server -m 1 -t 8 -c 1 -a 1
-$ QPS is 25.6k
+$ QPS is 26.7k
 
 # Reactor ET + ET
 $ ./server -m 3 -t 8 -c 1 -a 1
-$ QPS is 25.0k
+$ QPS is 25.6k
 ```
 
 2. [Muduo](https://github.com/chenshuo/muduo): best QPS = **48.3**k
@@ -151,9 +152,17 @@ $ QPS is 25.0k
 # We use the 'muduo/net/http/tests/HttpServer_test.cc' as the test program
 # set it to run in the benchmark mode with 8 threads in the pool
 # with most of the logging disabled
+```
 
-# However, when transferring the 1MB index.html, the server has a high rate of timeout thus failure
-# Therefore we choose to transfer a dummy 'hello world!' phrase instead in this benchmark
+3. [libevent](https://github.com/libevent/libevent): single-thread best QPS = **29.0**k
+
+We use the sample script [here](https://github.com/denischatelain/libevent-http-server-get-example) for easy testing.
+
+```console
+# Notice this testing is running libevent http server with single-thread using I/O multiplexing
+# it's already very performant and has not fully utilized the underlying 8-core hardware.
+# we might try test it with pthread and work queue under the multi-thread setting
+# but it's too much work for now for the benchmark purpose
 ```
 
 

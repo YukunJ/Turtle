@@ -84,7 +84,7 @@ $ make cpplint
 $ make linecount
 ```
 
-### 性能测试
+### 性能基准
 
 为了测试**Turtle**服务器在高并发情况下的性能, 我们采用[Webbench](http://cs.uccs.edu/~cs526/webbench/webbench.htm)作为压测的工具.
 
@@ -95,7 +95,7 @@ $ make benchmark
 
 # 以上指令在Linux环境中将会
 # 1. 构建Webbench压测工具
-# 2. 在背景模式中运行http服务器, 默认监听20080端口来传递一个大约1MB大小的index文件
+# 2. 在背景模式中运行http服务器, 默认监听20080端口来传递一个很小的dummy index文件
 # 3. 使用Webbench压测工具来创建10500个并发用户请求, 运行5秒时间
 # 4. 将性能统计数据汇报到终端
 # 5. 关闭背景模式运行中的http服务器并退出
@@ -104,9 +104,9 @@ $ make benchmark
 我们在Amazon EC2云服务器上进行了性能测试. 具体如下:
 
 + **硬件配置**: **m5.2xlarge**云服务器, 使用**Ubuntu 20.04 LTS**操作系统, 拥有**8**vCPUs, **32**GiB内存, **50**GiB根硬盘存储.
-+ **QPS**: **58.6**k (无缓存) | **59.0**k (激活缓存)
++ **QPS**: **62.3**k (无缓存) | **62.8**k (激活缓存)
 
-**Cache**缓存层所带来的性能提升或许不是很明显. 部分由于磁盘I/O现在也变得更快了, 从磁盘中加载一个1MB大小的index文件的代价或许小于在**Cache**上的互斥操作.
+**Cache**缓存层所带来的性能提升或许不是很明显. 部分由于磁盘I/O现在也变得更快了, 从磁盘中加载一个小的index文件的代价或许小于在**Cache**上的互斥操作.
 
 我们相信在之后, 当数据库连接功能被支持并引入后, **Cache**缓存层的必要性会更加明显.
 
@@ -114,31 +114,32 @@ $ make benchmark
 
 重申一下, 我们绝不应该仅仅根据范围有限的基准测试和像我们这样不熟悉的人可能使用的错误配置下的实验结果来判断不同的库的好坏. 此处仅仅是为了得到一个正确的性能数量级.
 
-下列所有的性能测试比较都是在**相同的服务器**上进行, 使用webbench工具在**10500**个并发clients的情况下传输相同的1MB大小的**index.html**.
+下列所有的性能测试比较都是在**相同的服务器**上进行, 使用webbench工具在**10500**个并发clients的情况下传输相同的小dummy index文件.
 
-1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): 最佳QPS = **37.2**k
+1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): 最佳QPS = **38.5**k
 ```console
 # 我们使用下列设定来运行TinyWebServer:
 # 1. 监听新链接模式 和 客户链接模式: -m 1 LT + ET | -m 3 ET + ET
 # 2. 8线程在 8-vCPUs 服务器上
 # 3. 关闭日志
 # 4. 反应堆模型: -a 0 Proactor | -a 1 Reactor
+# 5. 编译器优化级别设置为-O3
 
 # Proactor LT + ET
 $ ./server -m 1 -t 8 -c 1 -a 0
-$ QPS is 37.2k
+$ QPS is 38.5k
 
 # Proactor ET + ET
 $ ./server -m 3 -t 8 -c 1 -a 0
-$ QPS is 37.0k
+$ QPS is 38.2k
 
 # Reactor LT + ET
 $ ./server -m 1 -t 8 -c 1 -a 1
-$ QPS is 25.6k
+$ QPS is 26.7k
 
 # Reactor ET + ET
 $ ./server -m 3 -t 8 -c 1 -a 1
-$ QPS is 25.0k
+$ QPS is 25.6k
 ```
 
 2. [Muduo](https://github.com/chenshuo/muduo): 最佳QPS = **48.3**k
@@ -146,9 +147,17 @@ $ QPS is 25.0k
 ```console
 # 我们使用 'muduo/net/http/tests/HttpServer_test.cc' 作为基准测试程序
 # 设定它在基准模式下跑线程池大小=8, 并屏蔽绝大部分日志
+```
 
-# 然而, 当传输1MB的index.html文件时, 服务器有较高的一个超时率所以HTTP回复失败
-# 所以, 取而代之地, 在这个基准测试种我们选择去传输一个简单的 'hello world!'
+3. [libevent](https://github.com/libevent/libevent): 单线程 最佳QPS = **29.0**k
+
+我们使用这个示例[脚本](https://github.com/denischatelain/libevent-http-server-get-example)来快速测试
+
+```console
+# 注意这个测试是在单线程的设定下跑libevent的http server 使用I/O多路复用
+# 它的性能已经非常亮眼了, 并且还没有使用全8核的硬件条件
+# 我们在未来可能使用pthread和work queue来在多线程的设定下更充分的测试libevent
+# 不过对现在性能基准测试来说, 这是太多的工作量了
 ```
 
 ### API风格
