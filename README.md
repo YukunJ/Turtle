@@ -115,6 +115,8 @@ Later on, when database connector comes into play, the indispensability of the *
 
 In order to gain a better sense of comparative performance, we benchmarked a few other leading popular C++ network webserver on the Internet with the best configuration to our knowledge in order to be fair. 
 
+To reiterate, by no means should we judge different libraries only on benchmark testing of limited scope and possible misconfiguration by the unfamiliar like us. It's solely for the purpose for getting the magnitude right.
+
 All the benchmarks statistics listed below are performed on the **same hardware** and transferring same 1MB **index.html** file with **10500** concurrent clients using webbench tool.
 
 1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): best QPS = **37.2**k
@@ -142,6 +144,19 @@ $ QPS is 25.6k
 $ ./server -m 3 -t 8 -c 1 -a 1
 $ QPS is 25.0k
 ```
+
+2. [Muduo](https://github.com/chenshuo/muduo): best QPS = **48.3**k
+
+```console
+# We use the 'muduo/net/http/tests/HttpServer_test.cc' as the test program
+# set it to run in the benchmark mode with 8 threads in the pool
+# with most of the logging disabled
+
+# However, when transferring the 1MB index.html, the server has a high rate of timeout thus failure
+# Therefore we choose to transfer a dummy 'hello world!' phrase instead in this benchmark
+```
+
+
 ### API Style
 The classes in the **Turtle** library are designed with the focus of decoupling firmly in mind. Most of the components can be taken out alone or a few together and used independently, especially those components in the **network core** module.
 

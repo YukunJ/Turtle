@@ -112,6 +112,8 @@ $ make benchmark
 
 为了更好的了解相对性能, 我们性能测试了一些其他的主流C++网络Web Server库, 并为了公平起见, 尽力采用它们最佳的设定.
 
+重申一下, 我们绝不应该仅仅根据范围有限的基准测试和像我们这样不熟悉的人可能使用的错误配置下的实验结果来判断不同的库的好坏. 此处仅仅是为了得到一个正确的性能数量级.
+
 下列所有的性能测试比较都是在**相同的服务器**上进行, 使用webbench工具在**10500**个并发clients的情况下传输相同的1MB大小的**index.html**.
 
 1. [TinyWebServer](https://github.com/qinguoyi/TinyWebServer.git): 最佳QPS = **37.2**k
@@ -137,6 +139,16 @@ $ QPS is 25.6k
 # Reactor ET + ET
 $ ./server -m 3 -t 8 -c 1 -a 1
 $ QPS is 25.0k
+```
+
+2. [Muduo](https://github.com/chenshuo/muduo): 最佳QPS = **48.3**k
+
+```console
+# 我们使用 'muduo/net/http/tests/HttpServer_test.cc' 作为基准测试程序
+# 设定它在基准模式下跑线程池大小=8, 并屏蔽绝大部分日志
+
+# 然而, 当传输1MB的index.html文件时, 服务器有较高的一个超时率所以HTTP回复失败
+# 所以, 取而代之地, 在这个基准测试种我们选择去传输一个简单的 'hello world!'
 ```
 
 ### API风格
