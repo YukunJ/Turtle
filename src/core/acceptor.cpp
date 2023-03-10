@@ -28,10 +28,10 @@ Acceptor::Acceptor(Looper *listener, std::vector<Looper *> reactors,
   auto acceptor_sock = std::make_unique<Socket>();
   acceptor_sock->Bind(server_address, true);
   acceptor_sock->Listen();
-  acceptor_conn = std::make_unique<Connection>(std::move(acceptor_sock));
+  acceptor_conn = new Connection(std::move(acceptor_sock));
   acceptor_conn->SetEvents(POLL_READ);  // not edge-trigger for listener
   acceptor_conn->SetLooper(listener);
-  listener->AddAcceptor(acceptor_conn.get());
+  listener->AddAcceptor(acceptor_conn);
   SetCustomAcceptCallback([](Connection *) {});
   SetCustomHandleCallback([](Connection *) {});
 }
@@ -48,13 +48,13 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   }
   auto client_sock = std::make_unique<Socket>(accept_fd);
   client_sock->SetNonBlocking();
-  auto client_connection = std::make_unique<Connection>(std::move(client_sock));
+  auto client_connection = new Connection(std::move(client_sock));
   client_connection->SetEvents(POLL_READ | POLL_ET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
   // randomized distribution. uniform in long term.
   int idx = rand() % reactors_.size(); // NOLINT
   client_connection->SetLooper(reactors_[idx]);
-  reactors_[idx]->AddConnection(std::move(client_connection));
+  reactors_[idx]->AddConnection(client_connection);
 }
 
 void Acceptor::SetCustomAcceptCallback(
@@ -82,7 +82,7 @@ auto Acceptor::GetCustomHandleCallback() const noexcept
 }
 
 auto Acceptor::GetAcceptorConnection() noexcept -> Connection * {
-  return acceptor_conn.get();
+  return acceptor_conn;
 }
 
 }  // namespace TURTLE_SERVER

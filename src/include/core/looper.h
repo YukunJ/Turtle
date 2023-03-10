@@ -50,7 +50,7 @@ class Looper {
 
   void AddAcceptor(Connection *acceptor_conn);
 
-  void AddConnection(std::unique_ptr<Connection> new_conn);
+  void AddConnection(Connection* new_conn);
 
   auto DeleteConnection(int fd) -> bool;
 
@@ -59,7 +59,7 @@ class Looper {
  private:
   std::unique_ptr<Poller> poller_;
   std::mutex mtx_;
-  std::map<int, std::unique_ptr<Connection>> connections_;
+  std::map<int, Connection*> connections_;
   bool exit_{false};
 };
 }  // namespace TURTLE_SERVER

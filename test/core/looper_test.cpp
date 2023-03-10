@@ -62,10 +62,10 @@ TEST_CASE("[core/looper]") {
       auto client_sock = std::make_unique<Socket>(server_sock.Accept(client_address));
       CHECK(client_sock->GetFd() != -1);
       client_sock->SetNonBlocking();
-      auto client_conn = std::make_unique<Connection>(std::move(client_sock));
+      auto client_conn = new Connection(std::move(client_sock));
       client_conn->SetEvents(POLL_READ);
       client_conn->SetCallback([&reach = reach, index = i](Connection *conn) { reach[index] = 1; });
-      looper.AddConnection(std::move(client_conn));
+      looper.AddConnection(client_conn);
     }
 
     /* the looper execute each client's callback once, upon their exit */

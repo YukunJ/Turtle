@@ -33,20 +33,22 @@ void Looper::AddAcceptor(Connection *acceptor_conn) {
   poller_->AddConnection(acceptor_conn);
 }
 
-void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
+void Looper::AddConnection(Connection* new_conn) {
   std::unique_lock<std::mutex> lock(mtx_);
-  poller_->AddConnection(new_conn.get());
+  poller_->AddConnection(new_conn);
   int fd = new_conn->GetFd();
-  connections_.insert({fd, std::move(new_conn)});
+  connections_.insert({fd, new_conn});
 }
 
 auto Looper::DeleteConnection(int fd) -> bool {
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = connections_.find(fd);
+  auto conn = it->second;
   if (it == connections_.end()) {
     return false;
   }
   connections_.erase(it);
+  delete conn;
   return true;
 }
 

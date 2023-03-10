@@ -54,7 +54,7 @@ class Acceptor {
 
  private:
   std::vector<Looper *> reactors_;
-  std::unique_ptr<Connection> acceptor_conn;
+  Connection* acceptor_conn;
   std::function<void(Connection *)> custom_accept_callback_{};
   std::function<void(Connection *)> custom_handle_callback_{};
 };
