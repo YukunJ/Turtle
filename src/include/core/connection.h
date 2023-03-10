@@ -17,7 +17,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
 #include "core/buffer.h"
 #include "core/socket.h"
 #include "core/utils.h"
