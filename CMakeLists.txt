@@ -79,6 +79,7 @@ ENDIF ()
 # Includes header file path
 SET(TURTLE_SERVER_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(TURTLE_SERVER_SRC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
+SET(TURTLE_MYSQL_INCLUDE_DIR "/usr/include/cppconn") # Linux only, might not be portable
 SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
@@ -87,6 +88,7 @@ SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 # Build
 ######################################################################################################################
 SET(CMAKE_COMPILER_FLAG -O3 -Wall -Wextra -pedantic -Werror)
+SET(MYSQL_COMPILER_FLAG -I/usr/include/cppconn -L/usr/lib -lmysqlcppconn)
 
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
@@ -106,6 +108,17 @@ TARGET_INCLUDE_DIRECTORIES(
         turtle_http
         PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
 )
+
+# Build experiment db
+ADD_EXECUTABLE(db_server ${TURTLE_SERVER_SRC_DIR}/db/mysqler.cpp)
+TARGET_LINK_LIBRARIES(db_server mysqlcppconn)
+TARGET_COMPILE_OPTIONS(db_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        db_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+        PUBLIC ${TURTLE_MYSQL_INCLUDE_DIR}
+)
+
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
