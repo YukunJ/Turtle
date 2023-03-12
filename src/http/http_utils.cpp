@@ -86,8 +86,7 @@ auto ExtensionToMime(const Extension &extension) noexcept -> std::string {
   return MIME_OCTET;
 }
 
-auto Split(const std::string &str, const char *delim) noexcept
-    -> std::vector<std::string> {
+auto Split(const std::string &str, const char *delim) noexcept -> std::vector<std::string> {
   std::vector<std::string> tokens;
   if (str.empty()) {
     return tokens;
@@ -107,8 +106,7 @@ auto Split(const std::string &str, const char *delim) noexcept
   return tokens;
 }
 
-auto Join(const std::vector<std::string> &tokens, const char *delim) noexcept
-    -> std::string {
+auto Join(const std::vector<std::string> &tokens, const char *delim) noexcept -> std::string {
   if (tokens.empty()) {
     return {};
   }
@@ -133,14 +131,11 @@ auto Trim(const std::string &str, const char *delim) noexcept -> std::string {
 }
 
 auto ToUpper(std::string str) noexcept -> std::string {
-  std::transform(str.begin(), str.end(), str.begin(),
-                 [](char c) { return std::toupper(c); });
+  std::transform(str.begin(), str.end(), str.begin(), [](char c) { return std::toupper(c); });
   return str;
 }
 
-auto Format(const std::string &str) noexcept -> std::string {
-  return ToUpper(Trim(str));
-}
+auto Format(const std::string &str) noexcept -> std::string { return ToUpper(Trim(str)); }
 
 auto IsDirectoryExists(const std::string &directory_path) noexcept -> bool {
   return std::filesystem::is_directory(directory_path);
@@ -150,13 +145,9 @@ auto IsCgiRequest(const std::string &resource_url) noexcept -> bool {
   return resource_url.find(CGI_BIN) != std::string::npos;
 }
 
-auto IsFileExists(const std::string &file_path) noexcept -> bool {
-  return std::filesystem::exists(file_path);
-}
+auto IsFileExists(const std::string &file_path) noexcept -> bool { return std::filesystem::exists(file_path); }
 
-auto DeleteFile(const std::string &file_path) noexcept -> bool {
-  return std::filesystem::remove(file_path);
-}
+auto DeleteFile(const std::string &file_path) noexcept -> bool { return std::filesystem::remove(file_path); }
 
 auto CheckFileSize(const std::string &file_path) noexcept -> size_t {
   assert(IsFileExists(file_path));
@@ -164,14 +155,13 @@ auto CheckFileSize(const std::string &file_path) noexcept -> size_t {
 }
 
 void LoadFile(const std::string &file_path,
-              std::vector<unsigned char> &buffer) noexcept { // NOLINT
+              std::vector<unsigned char> &buffer) noexcept {  // NOLINT
   size_t file_size = CheckFileSize(file_path);
   size_t buffer_old_size = buffer.size();
   std::ifstream file(file_path);
   buffer.resize(buffer_old_size + file_size);
   assert(file.is_open());
-  file.read(reinterpret_cast<char *>(&buffer[buffer_old_size]),
-            static_cast<std::streamsize>(file_size));
+  file.read(reinterpret_cast<char *>(&buffer[buffer_old_size]), static_cast<std::streamsize>(file_size));
 }
 
 }  // namespace TURTLE_SERVER::HTTP

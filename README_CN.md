@@ -5,6 +5,7 @@
 <a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://img.shields.io/badge/Language-C++-red.svg"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/Database/MySQL/white?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
 <a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
 ## TURTLE
@@ -23,6 +24,7 @@
 + 支持HTTP协议的GET/HEAD请求与回复.
 + 支持动态CGI协议请求与回复.
 + 支持可调参的缓存层来加快响应与减低服务器负载.
++ 支持与MySQL数据库交互.
 + 利用kqueue来兼容在MacOS操作系统上的构建.
 + 使用[Catch2](https://github.com/catchorg/Catch2)测试框架进行单元测试覆盖
 
@@ -73,6 +75,11 @@
 当您在项目的根路径时, 可以执行以下指令:
 
 ```console
+// 环境设立 (Linux)
+$ sh setup/setup.sh
+$ sudo systemctl start mysql
+$ sudo mysql < setup/setup.sql  // 设立测试用的默认MySQL
+
 // Build
 $ mkdir build
 $ cd build
@@ -109,7 +116,7 @@ $ make benchmark
 
 **Cache**缓存层所带来的性能提升或许不是很明显. 部分由于磁盘I/O现在也变得更快了, 从磁盘中加载一个小的index文件的代价或许小于在**Cache**上的互斥操作.
 
-我们相信在之后, 当数据库连接功能被支持并引入后, **Cache**缓存层的必要性会更加明显.
+我们相信当数据库连接功能被引入后, **Cache**缓存层的必要性会更加明显.
 
 为了更好的了解相对性能, 我们性能测试了一些其他的主流C++网络Web Server库, 并为了公平起见, 尽力采用它们最佳的设定.
 
@@ -296,10 +303,11 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 - ✅ 支持动态CGI请求的处理回复
 - ✅ 通过kqueue来支持MacOS操作系统的构建兼容性
 - ✅ 完成单元测试的覆盖
-- [ ] 与其他主流网络Web Server库进行性能对比, 寻找Turtle的主要运行性能瓶颈
+- ✅ 与其他主流网络Web Server库进行性能对比
+- [ ] 寻找Turtle的主要运行性能瓶颈
 - [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
 - [ ] 支持定时器功能来删除不活跃的用户连接
-- [ ] 支持数据库连接功能
+- ✅ 支持数据库连接功能
 
 也欢迎大家提出新的功能需求, 我们会逐一考虑, 如果可行的话将会优先实现. 或者直接提pull request.
 

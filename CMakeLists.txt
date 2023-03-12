@@ -79,6 +79,7 @@ ENDIF ()
 # Includes header file path
 SET(TURTLE_SERVER_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(TURTLE_SERVER_SRC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
+SET(TURTLE_MYSQL_INCLUDE_DIR "/usr/include/cppconn") # Linux only, might not be portable
 SET(TURTLE_SERVER_TEST_DIR ${PROJECT_SOURCE_DIR}/test)
 SET(TURTLE_SERVER_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
@@ -87,6 +88,7 @@ SET(TURTLE_SERVER_DEMO_DIR ${PROJECT_SOURCE_DIR}/demo)
 # Build
 ######################################################################################################################
 SET(CMAKE_COMPILER_FLAG -O3 -Wall -Wextra -pedantic -Werror)
+SET(MYSQL_COMPILER_FLAG -I/usr/include/cppconn -L/usr/lib -lmysqlcppconn)
 
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
@@ -106,6 +108,18 @@ TARGET_INCLUDE_DIRECTORIES(
         turtle_http
         PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
 )
+
+# Build the turtle db library
+FILE(GLOB TURTLE_DB_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/db/*.cpp")
+ADD_LIBRARY(turtle_db ${TURTLE_DB_SOURCES})
+TARGET_LINK_LIBRARIES(turtle_db mysqlcppconn)
+TARGET_COMPILE_OPTIONS(turtle_db PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_db
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+        PUBLIC ${TURTLE_MYSQL_INCLUDE_DIR}
+)
+
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
@@ -187,6 +201,9 @@ TARGET_LINK_LIBRARIES(response_test PRIVATE Catch2::Catch2WithMain turtle_core t
 ADD_EXECUTABLE(cgier_test ${TURTLE_SERVER_TEST_DIR}/http/cgier_test.cpp)
 TARGET_LINK_LIBRARIES(cgier_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
 
+ADD_EXECUTABLE(mysqler_test ${TURTLE_SERVER_TEST_DIR}/db/mysqler_test.cpp)
+TARGET_LINK_LIBRARIES(mysqler_test PRIVATE Catch2::Catch2WithMain turtle_db)
+
 # helper program to test cgi module, used the `cgi_test`
 ADD_EXECUTABLE(add ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/add.c)
 ADD_EXECUTABLE(helloworld ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/helloworld.c)
@@ -213,20 +230,26 @@ CATCH_DISCOVER_TESTS(request_test)
 CATCH_DISCOVER_TESTS(response_test)
 CATCH_DISCOVER_TESTS(cgier_test)
 
+# DB Module
+CATCH_DISCOVER_TESTS(mysqler_test)
+
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
 ######################################################################################################################
 
 SET(FORMAT_STYLE google)
 
+string(CONCAT TURTLR_FORMAT_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src,"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test,"
+        )
+
 # "make format"
 ADD_CUSTOM_TARGET(format ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_format.py
         ${CLANG_FORMAT_BIN}
         ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/clang_format_exclusions.txt
         --source_dirs
-        ${TURTLE_SERVER_SRC_DIR}
-        --source_dirs
-        ${TURTLE_SERVER_TEST_DIR}
+        ${TURTLR_FORMAT_DIRS}
         --fix
         --quiet
 )

@@ -34,8 +34,7 @@ auto Cgier::ParseCgier(const std::string &resource_url) noexcept -> Cgier {
   auto cgi_pos = resource_url.find(CGI_BIN);
   auto cgi_separator = resource_url.find(PARAMETER_SEPARATOR, cgi_pos);
   auto cgi_path = resource_url.substr(0, cgi_separator);
-  auto arguments =
-      Split(resource_url.substr(cgi_separator + 1), PARAMETER_SEPARATOR);
+  auto arguments = Split(resource_url.substr(cgi_separator + 1), PARAMETER_SEPARATOR);
   return Cgier(cgi_path, arguments);
 }
 
@@ -45,8 +44,7 @@ auto Cgier::MakeInvalidCgier() noexcept -> Cgier {
   return invalid_cgier;
 }
 
-Cgier::Cgier(const std::string &path,
-             const std::vector<std::string> &arguments) noexcept
+Cgier::Cgier(const std::string &path, const std::vector<std::string> &arguments) noexcept
     : cgi_program_path_(path), cgi_arguments_(arguments), valid_(true) {}
 
 auto Cgier::Run() -> std::vector<unsigned char> {
@@ -57,8 +55,7 @@ auto Cgier::Run() -> std::vector<unsigned char> {
   std::stringstream ssr;
   ssr << CGI_PREFIX << UNDERSCORE << std::this_thread::get_id() << ".txt";
   std::string shared_file_name = ssr.str();
-  int fd = open(shared_file_name.c_str(), O_RDWR | O_APPEND | O_CREAT,
-                READ_WRITE_PERMISSION);
+  int fd = open(shared_file_name.c_str(), O_RDWR | O_APPEND | O_CREAT, READ_WRITE_PERMISSION);
   if (fd == -1) {
     std::string error = "fail to create/open the file " + shared_file_name;
     return {error.begin(), error.end()};
@@ -104,9 +101,7 @@ auto Cgier::Run() -> std::vector<unsigned char> {
 
 auto Cgier::IsValid() const noexcept -> bool { return valid_; }
 
-auto Cgier::GetPath() const noexcept -> std::string {
-  return cgi_program_path_;
-}
+auto Cgier::GetPath() const noexcept -> std::string { return cgi_program_path_; }
 
 auto Cgier::BuildArgumentList() -> char ** {
   assert(!cgi_program_path_.empty());
@@ -114,18 +109,16 @@ auto Cgier::BuildArgumentList() -> char ** {
   cgi_argv[0] = (char *)calloc(cgi_program_path_.size() + 1, sizeof(char));
   memcpy(cgi_argv[0], cgi_program_path_.c_str(), cgi_program_path_.size());
   for (size_t i = 0; i < cgi_arguments_.size(); i++) {
-    cgi_argv[i + 1] =
-        (char *)calloc(cgi_arguments_[i].size() + 1, sizeof(char));
-    memcpy(cgi_argv[i + 1], cgi_arguments_[i].c_str(),
-           cgi_arguments_[i].size());
+    cgi_argv[i + 1] = (char *)calloc(cgi_arguments_[i].size() + 1, sizeof(char));
+    memcpy(cgi_argv[i + 1], cgi_arguments_[i].c_str(), cgi_arguments_[i].size());
   }
   cgi_argv[cgi_arguments_.size() + 1] = nullptr;  // indicate the end of arg list
   return cgi_argv;
 }
 
-void Cgier::FreeArgumentList(char** arg_list) {
+void Cgier::FreeArgumentList(char **arg_list) {
   for (int i = 0; i < static_cast<int>(cgi_arguments_.size()) + 2; i++) {
-      free(arg_list[i]);
+    free(arg_list[i]);
   }
   free(arg_list);
 }

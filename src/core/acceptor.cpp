@@ -22,8 +22,7 @@
 
 namespace TURTLE_SERVER {
 
-Acceptor::Acceptor(Looper *listener, std::vector<Looper *> reactors,
-                   NetAddress server_address)
+Acceptor::Acceptor(Looper *listener, std::vector<Looper *> reactors, NetAddress server_address)
     : reactors_(std::move(reactors)) {
   auto acceptor_sock = std::make_unique<Socket>();
   acceptor_sock->Bind(server_address, true);
@@ -52,13 +51,12 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   client_connection->SetEvents(POLL_READ | POLL_ET);  // edge-trigger for client
   client_connection->SetCallback(GetCustomHandleCallback());
   // randomized distribution. uniform in long term.
-  int idx = rand() % reactors_.size(); // NOLINT
+  int idx = rand() % reactors_.size();  // NOLINT
   client_connection->SetLooper(reactors_[idx]);
   reactors_[idx]->AddConnection(std::move(client_connection));
 }
 
-void Acceptor::SetCustomAcceptCallback(
-    std::function<void(Connection *)> custom_accept_callback) {
+void Acceptor::SetCustomAcceptCallback(std::function<void(Connection *)> custom_accept_callback) {
   custom_accept_callback_ = std::move(custom_accept_callback);
   acceptor_conn->SetCallback([this](auto &&PH1) {
     BaseAcceptCallback(std::forward<decltype(PH1)>(PH1));
@@ -66,23 +64,18 @@ void Acceptor::SetCustomAcceptCallback(
   });
 }
 
-void Acceptor::SetCustomHandleCallback(
-    std::function<void(Connection *)> custom_handle_callback) {
+void Acceptor::SetCustomHandleCallback(std::function<void(Connection *)> custom_handle_callback) {
   custom_handle_callback_ = std::move(custom_handle_callback);
 }
 
-auto Acceptor::GetCustomAcceptCallback() const noexcept
-    -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomAcceptCallback() const noexcept -> std::function<void(Connection *)> {
   return custom_accept_callback_;
 }
 
-auto Acceptor::GetCustomHandleCallback() const noexcept
-    -> std::function<void(Connection *)> {
+auto Acceptor::GetCustomHandleCallback() const noexcept -> std::function<void(Connection *)> {
   return custom_handle_callback_;
 }
 
-auto Acceptor::GetAcceptorConnection() noexcept -> Connection * {
-  return acceptor_conn.get();
-}
+auto Acceptor::GetAcceptorConnection() noexcept -> Connection * { return acceptor_conn.get(); }
 
 }  // namespace TURTLE_SERVER

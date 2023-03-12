@@ -15,11 +15,8 @@
 #include "http/http_utils.h"
 namespace TURTLE_SERVER::HTTP {
 
-Request::Request(Method method, Version version, std::string resource_url,
-                 const std::vector<Header> &headers) noexcept
-    : method_(method), version_(version),
-      resource_url_(std::move(resource_url)), headers_(headers),
-      is_valid_(true) {}
+Request::Request(Method method, Version version, std::string resource_url, const std::vector<Header> &headers) noexcept
+    : method_(method), version_(version), resource_url_(std::move(resource_url)), headers_(headers), is_valid_(true) {}
 
 Request::Request(const std::string &request_str) noexcept {
   auto lines = Split(request_str, CRLF);
@@ -59,17 +56,11 @@ auto Request::GetMethod() const noexcept -> Method { return method_; }
 
 auto Request::GetVersion() const noexcept -> Version { return version_; }
 
-auto Request::GetResourceUrl() const noexcept -> std::string {
-  return resource_url_;
-}
+auto Request::GetResourceUrl() const noexcept -> std::string { return resource_url_; }
 
-auto Request::GetHeaders() const noexcept -> std::vector<Header> {
-  return headers_;
-}
+auto Request::GetHeaders() const noexcept -> std::vector<Header> { return headers_; }
 
-auto Request::GetInvalidReason() const noexcept -> std::string {
-  return invalid_reason_;
-}
+auto Request::GetInvalidReason() const noexcept -> std::string { return invalid_reason_; }
 
 auto Request::ParseRequestLine(const std::string &request_line) -> bool {
   auto tokens = Split(request_line, SPACE);
@@ -89,9 +80,7 @@ auto Request::ParseRequestLine(const std::string &request_line) -> bool {
   }
   // default route to index.html
   resource_url_ =
-      (tokens[1].empty() || tokens[1].at(tokens[1].size() - 1) == '/')
-          ? tokens[1] + DEFAULT_ROUTE
-          : tokens[1];
+      (tokens[1].empty() || tokens[1].at(tokens[1].size() - 1) == '/') ? tokens[1] + DEFAULT_ROUTE : tokens[1];
   return true;
 }
 
@@ -114,15 +103,12 @@ auto operator<<(std::ostream &os, const Request &request) -> std::ostream & {
   } else {
     os << "Request is valid." << std::endl;
     os << "Method: " << METHOD_TO_STRING.at(request.method_) << std::endl;
-    os << "HTTP Version: " << VERSION_TO_STRING.at(request.version_)
-       << std::endl;
+    os << "HTTP Version: " << VERSION_TO_STRING.at(request.version_) << std::endl;
     os << "Resource Url: " << request.resource_url_ << std::endl;
-    os << "Connection Keep Alive: "
-       << ((request.should_close_) ? "False" : "True") << std::endl;
+    os << "Connection Keep Alive: " << ((request.should_close_) ? "False" : "True") << std::endl;
     os << "Headers: " << std::endl;
     auto headers = request.GetHeaders();
-    std::for_each(headers.begin(), headers.end(),
-                  [&](auto header) { os << header.Serialize(); });
+    std::for_each(headers.begin(), headers.end(), [&](auto header) { os << header.Serialize(); });
   }
   return os;
 }

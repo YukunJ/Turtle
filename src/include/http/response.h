@@ -26,9 +26,7 @@ class Header;
 class Response {
  public:
   /* 200 OK response */
-  static auto Make200Response(bool should_close,
-                              std::optional<std::string> resource_url)
-      -> Response;
+  static auto Make200Response(bool should_close, std::optional<std::string> resource_url) -> Response;
   /* 400 Bad Request response, close connection */
   static auto Make400Response() noexcept -> Response;
   /* 404 Not Found response, close connection */
@@ -36,16 +34,14 @@ class Response {
   /* 503 Service Unavailable response, close connection */
   static auto Make503Response() noexcept -> Response;
 
-  Response(const std::string &status_code, bool should_close,
-           std::optional<std::string> resource_url);
+  Response(const std::string &status_code, bool should_close, std::optional<std::string> resource_url);
 
   /* no content, content should separately be loaded */
   void Serialize(std::vector<unsigned char> &buffer);  // NOLINT
 
   auto GetHeaders() -> std::vector<Header>;
 
-  auto ChangeHeader(const std::string &key,
-                    const std::string &new_value) noexcept -> bool;
+  auto ChangeHeader(const std::string &key, const std::string &new_value) noexcept -> bool;
 
  private:
   std::string status_line_;

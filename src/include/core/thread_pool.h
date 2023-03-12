@@ -11,13 +11,13 @@
 
 #include <algorithm>
 #include <atomic>
-#include <condition_variable> // NOLINT
+#include <condition_variable>  // NOLINT
 #include <functional>
-#include <future> // NOLINT
+#include <future>  // NOLINT
 #include <memory>
-#include <mutex> // NOLINT
+#include <mutex>  // NOLINT
 #include <queue>
-#include <thread> // NOLINT
+#include <thread>  // NOLINT
 #include <utility>
 #include <vector>
 
@@ -63,8 +63,7 @@ template <typename F, typename... Args>
 auto ThreadPool::SubmitTask(F &&new_task, Args &&...args) -> decltype(auto) {
   using return_type = std::invoke_result_t<F, Args...>;
   if (exit_) {
-    throw std::runtime_error(
-        "ThreadPool: SubmitTask() called while already exit_ being true");
+    throw std::runtime_error("ThreadPool: SubmitTask() called while already exit_ being true");
   }
   auto packaged_new_task = std::make_shared<std::packaged_task<return_type()>>(
       std::bind(std::forward<F>(new_task), std::forward<Args>(args)...));

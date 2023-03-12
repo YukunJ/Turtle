@@ -18,8 +18,7 @@ NetAddress::NetAddress() noexcept {
   addr_len_ = sizeof(addr_);
 }
 
-NetAddress::NetAddress(const char *ip, uint16_t port, Protocol protocol)
-    : protocol_(protocol) {
+NetAddress::NetAddress(const char *ip, uint16_t port, Protocol protocol) : protocol_(protocol) {
   memset(&addr_, 0, sizeof(addr_));
   addr_len_ = sizeof(addr_);
   if (protocol_ == Protocol::Ipv4) {

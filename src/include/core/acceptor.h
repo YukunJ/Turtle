@@ -29,8 +29,7 @@ class Connection;
  * */
 class Acceptor {
  public:
-  Acceptor(Looper *listener, std::vector<Looper *> reactors,
-                    NetAddress server_address);
+  Acceptor(Looper *listener, std::vector<Looper *> reactors, NetAddress server_address);
 
   ~Acceptor() = default;
 
@@ -38,17 +37,13 @@ class Acceptor {
 
   void BaseAcceptCallback(Connection *server_conn);
 
-  void SetCustomAcceptCallback(
-      std::function<void(Connection *)> custom_accept_callback);
+  void SetCustomAcceptCallback(std::function<void(Connection *)> custom_accept_callback);
 
-  void SetCustomHandleCallback(
-      std::function<void(Connection *)> custom_handle_callback);
+  void SetCustomHandleCallback(std::function<void(Connection *)> custom_handle_callback);
 
-  auto GetCustomAcceptCallback() const noexcept
-      -> std::function<void(Connection *)>;
+  auto GetCustomAcceptCallback() const noexcept -> std::function<void(Connection *)>;
 
-  auto GetCustomHandleCallback() const noexcept
-      -> std::function<void(Connection *)>;
+  auto GetCustomHandleCallback() const noexcept -> std::function<void(Connection *)>;
 
   auto GetAcceptorConnection() noexcept -> Connection *;
 

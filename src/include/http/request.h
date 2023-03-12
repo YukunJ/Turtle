@@ -29,10 +29,8 @@ enum class Version;
  */
 class Request {
  public:
-  Request(Method method, Version version, std::string resource_url,
-          const std::vector<Header> &headers) noexcept;
-  explicit Request(
-      const std::string &request_str) noexcept;  // deserialize method
+  Request(Method method, Version version, std::string resource_url, const std::vector<Header> &headers) noexcept;
+  explicit Request(const std::string &request_str) noexcept;  // deserialize method
   NON_COPYABLE(Request);
   auto IsValid() const noexcept -> bool;
   auto ShouldClose() const noexcept -> bool;
