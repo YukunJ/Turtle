@@ -12,7 +12,7 @@ jobs:
       - name: Start MySQL Server
         run: sudo systemctl start mysql
       - name: Setup default MySQL
-        run: sudo mysql < ./setup/setup.sql
+        run: sudo mysql -u root -p"root" < ./setup/setup.sql
       - name: Show CMake Version
         run: cmake --version
       - name: Build and Test Turtle
