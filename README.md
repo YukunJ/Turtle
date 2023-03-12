@@ -7,6 +7,7 @@
 <a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://img.shields.io/badge/Language-C++-red.svg"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/Database/MySQL/white?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
 <a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
 ## TURTLE
@@ -26,6 +27,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support HTTP GET/HEAD request & response.
 + Support dynamic CGI request & response.
 + Support Caching mechanism.
++ Support MySQL Database interaction.
 + Compatible building with MacOS using kqueue.
 + Unit test coverage by [Catch2](https://github.com/catchorg/Catch2) framework.
 
@@ -75,6 +77,11 @@ You may build the project using **CMake**.
 Once you are at the root directory of this project, execute the followings:
 
 ```console
+// Setup environment (Linux)
+$ sh setup/setup.sh
+$ sudo systemctl start mysql 
+$ sudo mysql < setup/setup.sql  // setup the default mysql role for testing
+
 // Build
 $ mkdir build
 $ cd build
@@ -112,7 +119,7 @@ We performed benchmark testing on an Amazon AWS EC2 instance. The details are as
 
 The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
 
-Later on, when database connector comes into play, the indispensability of the **Cache** layer will be more obvious.
+When database connector comes into play, the indispensability of the **Cache** layer will be more obvious.
 
 In order to gain a better sense of comparative performance, we benchmarked a few other leading popular C++ network webserver on the Internet with the best configuration to our knowledge in order to be fair. 
 
@@ -300,10 +307,11 @@ The followings are on the **TODO** list:
 - ✅ Enable dynamic CGI request support
 - ✅ Support MacOS build compatability by kqueue
 - ✅ Complete unit testing coverage
-- [ ] Benchmark with other leading libraries and profile Turtle's bottleneck
-- [ ] review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
+- ✅ Benchmark with other leading libraries
+- [ ] Profile Turtle's main runtime bottleneck
+- [ ] Review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
 - [ ] Support timing each client connection and kills inactive ones
-- [ ] Support Database connection
+- ✅ Support Database connection
 
 We also welcome new feature request. We will review them one by one, and priortize its implementation if applicable. Or direct pull request is also welcomed.
 
