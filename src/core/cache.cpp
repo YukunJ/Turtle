@@ -56,7 +56,8 @@ auto Cache::CacheNode::GetTimestamp() const noexcept -> uint64_t {
 }
 
 Cache::Cache(size_t capacity) noexcept
-    : capacity_(capacity), header_(std::make_unique<CacheNode>()),
+    : capacity_(capacity),
+      header_(std::make_unique<CacheNode>()),
       tailer_(std::make_unique<CacheNode>()) {
   header_->next_ = tailer_.get();
   tailer_->prev_ = header_.get();
@@ -121,7 +122,7 @@ void Cache::EvictOne() noexcept {
   occupancy_ -= resource_size;
 }
 
-void Cache::RemoveFromList(const std::shared_ptr<CacheNode>& node) noexcept {
+void Cache::RemoveFromList(const std::shared_ptr<CacheNode> &node) noexcept {
   auto *node_ptr = node.get();
   auto *node_prev = node_ptr->prev_;
   auto *node_next = node_ptr->next_;
@@ -129,7 +130,7 @@ void Cache::RemoveFromList(const std::shared_ptr<CacheNode>& node) noexcept {
   node_next->prev_ = node_prev;
 }
 
-void Cache::AppendToListTail(const std::shared_ptr<CacheNode>& node) noexcept {
+void Cache::AppendToListTail(const std::shared_ptr<CacheNode> &node) noexcept {
   auto *node_ptr = node.get();
   auto *node_prev = tailer_->prev_;
   node_prev->next_ = node_ptr;

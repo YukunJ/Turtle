@@ -17,7 +17,8 @@
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
-    : socket_(std::move(socket)), read_buffer_(std::make_unique<Buffer>()),
+    : socket_(std::move(socket)),
+      read_buffer_(std::make_unique<Buffer>()),
       write_buffer_(std::make_unique<Buffer>()) {}
 
 auto Connection::GetFd() const noexcept -> int { return socket_->GetFd(); }

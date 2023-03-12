@@ -119,13 +119,14 @@ auto Cgier::BuildArgumentList() -> char ** {
     memcpy(cgi_argv[i + 1], cgi_arguments_[i].c_str(),
            cgi_arguments_[i].size());
   }
-  cgi_argv[cgi_arguments_.size() + 1] = nullptr;  // indicate the end of arg list
+  cgi_argv[cgi_arguments_.size() + 1] =
+      nullptr;  // indicate the end of arg list
   return cgi_argv;
 }
 
-void Cgier::FreeArgumentList(char** arg_list) {
+void Cgier::FreeArgumentList(char **arg_list) {
   for (int i = 0; i < static_cast<int>(cgi_arguments_.size()) + 2; i++) {
-      free(arg_list[i]);
+    free(arg_list[i]);
   }
   free(arg_list);
 }

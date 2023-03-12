@@ -164,7 +164,7 @@ auto CheckFileSize(const std::string &file_path) noexcept -> size_t {
 }
 
 void LoadFile(const std::string &file_path,
-              std::vector<unsigned char> &buffer) noexcept { // NOLINT
+              std::vector<unsigned char> &buffer) noexcept {  // NOLINT
   size_t file_size = CheckFileSize(file_path);
   size_t buffer_old_size = buffer.size();
   std::ifstream file(file_path);

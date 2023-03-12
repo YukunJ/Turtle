@@ -78,8 +78,8 @@ void Socket::Listen() {
 
 auto Socket::Accept(NetAddress &client_address) -> int {
   assert(fd_ != -1 && "cannot Accept() with an invalid fd");
-  int client_fd = accept(fd_, client_address.YieldAddr(),
-                         client_address.YieldAddrLen());
+  int client_fd =
+      accept(fd_, client_address.YieldAddr(), client_address.YieldAddrLen());
   if (client_fd == -1) {
     // under high pressure, accept might fail.
     // but server should not fail at this time

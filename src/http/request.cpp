@@ -17,8 +17,10 @@ namespace TURTLE_SERVER::HTTP {
 
 Request::Request(Method method, Version version, std::string resource_url,
                  const std::vector<Header> &headers) noexcept
-    : method_(method), version_(version),
-      resource_url_(std::move(resource_url)), headers_(headers),
+    : method_(method),
+      version_(version),
+      resource_url_(std::move(resource_url)),
+      headers_(headers),
       is_valid_(true) {}
 
 Request::Request(const std::string &request_str) noexcept {

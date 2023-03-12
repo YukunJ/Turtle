@@ -35,7 +35,8 @@ Header::Header(const std::string &line) {
 }
 
 Header::Header(Header &&other) noexcept
-    : key_(std::move(other.key_)), value_(std::move(other.value_)),
+    : key_(std::move(other.key_)),
+      value_(std::move(other.value_)),
       valid_(other.valid_) {}
 
 auto Header::operator=(Header &&other) noexcept -> Header & {

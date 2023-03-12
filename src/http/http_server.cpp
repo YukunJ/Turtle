@@ -9,9 +9,9 @@
 
 namespace TURTLE_SERVER::HTTP {
 
-void ProcessHttpRequest( // NOLINT
+void ProcessHttpRequest(  // NOLINT
     const std::string &serving_directory,
-    std::shared_ptr<Cache> &cache, // NOLINT
+    std::shared_ptr<Cache> &cache,  // NOLINT
     Connection *client_conn) {
   // edge-trigger, first read all available bytes
   int from_fd = client_conn->GetFd();
@@ -73,18 +73,19 @@ void ProcessHttpRequest( // NOLINT
           no_more_parse = request.ShouldClose();
           std::vector<unsigned char> cache_buf;
           if (request.GetMethod() == Method::GET) {
-              // only concern about carrying content when GET request
-              bool resource_cached = cache->TryLoad(resource_full_path, cache_buf);
-              if (!resource_cached) {
-                  // if content directly from cache, not disk file I/O
-                  // otherwise content not in cache, load from disk and try cache it
-                  LoadFile(resource_full_path, cache_buf);
-                  cache->TryInsert(resource_full_path, cache_buf);
-              }
+            // only concern about carrying content when GET request
+            bool resource_cached =
+                cache->TryLoad(resource_full_path, cache_buf);
+            if (!resource_cached) {
+              // if content directly from cache, not disk file I/O
+              // otherwise content not in cache, load from disk and try cache it
+              LoadFile(resource_full_path, cache_buf);
+              cache->TryInsert(resource_full_path, cache_buf);
+            }
           }
           // now cache_buf contains the file content anyway
-            response_buf.insert(response_buf.end(), cache_buf.begin(),
-                                cache_buf.end());
+          response_buf.insert(response_buf.end(), cache_buf.begin(),
+                              cache_buf.end());
         }
       }
     }
