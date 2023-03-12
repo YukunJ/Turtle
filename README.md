@@ -16,7 +16,7 @@
 
 **Turtle** is a C++17-based lightweight network library for web server mainly on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
-For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj@andrew.cmu.edu) here.
+For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj.cs@gmail.com) here.
 
 ### Highlight
 
@@ -325,3 +325,4 @@ Serveral reference books and projects are consulted during the development of **
 + [TinyWebServer](https://github.com/qinguoyi/TinyWebServer)
 + [30dayMakeCppServer](https://github.com/yuesong-feng/30dayMakeCppServer)
 + [Very basic C++ HTTP Parser](https://codereview.stackexchange.com/questions/205704/very-basic-c-http-parser)
++ [MySQL C++ official Documentation](https://dev.mysql.com/doc/connector-cpp/1.1/en/connector-cpp-examples-complete-example-1.html)

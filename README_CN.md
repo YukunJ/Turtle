@@ -14,7 +14,7 @@
 
 **Turtle**是一个主要基于Linux的C++17轻量级网络库. 它将繁琐的套接字操作抽象为优雅可复用的类. 它支持自定义服务器的快速设立: 以回调函数的形式为每一个用户的TCP连接加入业务逻辑. 它同时支持HTTP协议的GET/HEAD请求与回复.
 
-如果有任何问题, 欢迎提出issue, 提交pull request或者给我们发一封[邮件](mailto:yukunj@andrew.cmu.edu).
+如果有任何问题, 欢迎提出issue, 提交pull request或者给我们发一封[邮件](mailto:yukunj.cs@gmail.com).
 
 ### 亮点概述
 
@@ -321,3 +321,4 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 + [TinyWebServer](https://github.com/qinguoyi/TinyWebServer)
 + [30天搭建cpp服务器](https://github.com/yuesong-feng/30dayMakeCppServer)
 + [Very basic C++ HTTP Parser](https://codereview.stackexchange.com/questions/205704/very-basic-c-http-parser)
++ [MySQL C++ 官方文档](https://dev.mysql.com/doc/connector-cpp/1.1/en/connector-cpp-examples-complete-example-1.html)
