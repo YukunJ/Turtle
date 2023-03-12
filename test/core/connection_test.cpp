@@ -11,7 +11,6 @@
 #include "core/connection.h"
 
 #include <unistd.h>
-
 #include <cstring>
 #include <memory>
 #include <string>
@@ -67,6 +66,7 @@ TEST_CASE("[core/connection]") {
       CHECK(client_conn.GetWriteBufferSize() == strlen(client_message));
       client_conn.Send();
       // recv a message from server
+      sleep(1);
       auto [read, exit] = client_conn.Recv();
       CHECK((read == strlen(server_message) && exit));
       CHECK(client_conn.ReadAsString() == std::string(server_message));
@@ -86,5 +86,6 @@ TEST_CASE("[core/connection]") {
     // send a message to client
     connected_conn.WriteToWriteBuffer(server_message);
     connected_conn.Send();
+    sleep(1);
   }
 }
