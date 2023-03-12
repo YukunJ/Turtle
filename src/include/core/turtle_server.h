@@ -53,11 +53,8 @@ namespace TURTLE_SERVER {
  */
 class TurtleServer {
  public:
-  TurtleServer(NetAddress server_address,
-                        int concurrency = static_cast<int>(std::thread::hardware_concurrency()) -
-                                          1)
-      : pool_(std::make_unique<ThreadPool>(concurrency)),
-        listener_(std::make_unique<Looper>()) {
+  TurtleServer(NetAddress server_address, int concurrency = static_cast<int>(std::thread::hardware_concurrency()) - 1)
+      : pool_(std::make_unique<ThreadPool>(concurrency)), listener_(std::make_unique<Looper>()) {
     for (size_t i = 0; i < pool_->GetSize(); i++) {
       reactors_.push_back(std::make_unique<Looper>());
     }
@@ -66,11 +63,9 @@ class TurtleServer {
     }
     std::vector<Looper *> raw_reactors;
     raw_reactors.reserve(reactors_.size());
-    std::transform(reactors_.begin(), reactors_.end(),
-                   std::back_inserter(raw_reactors),
+    std::transform(reactors_.begin(), reactors_.end(), std::back_inserter(raw_reactors),
                    [](auto &uni_ptr) { return uni_ptr.get(); });
-    acceptor_ = std::make_unique<Acceptor>(listener_.get(), raw_reactors,
-                                           server_address);
+    acceptor_ = std::make_unique<Acceptor>(listener_.get(), raw_reactors, server_address);
   }
 
   virtual ~TurtleServer() = default;
@@ -90,8 +85,7 @@ class TurtleServer {
 
   void Begin() {
     if (!on_handle_set_) {
-      throw std::logic_error(
-          "Please specify OnHandle callback function before starts");
+      throw std::logic_error("Please specify OnHandle callback function before starts");
     }
     listener_->Loop();
   }

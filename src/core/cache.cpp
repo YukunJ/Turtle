@@ -16,27 +16,21 @@ namespace TURTLE_SERVER {
 
 auto GetTimeUtc() noexcept -> uint64_t {
   auto mill_since_epoch =
-      std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::system_clock::now().time_since_epoch())
+      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
           .count();
   return mill_since_epoch;
 }
 
 Cache::CacheNode::CacheNode() noexcept { UpdateTimestamp(); }
 
-Cache::CacheNode::CacheNode(std::string identifier,
-                            const std::vector<unsigned char> &data)
+Cache::CacheNode::CacheNode(std::string identifier, const std::vector<unsigned char> &data)
     : identifier_(std::move(identifier)), data_(data) {
   UpdateTimestamp();
 }
 
-void Cache::CacheNode::SetIdentifier(const std::string &identifier) {
-  identifier_ = identifier;
-}
+void Cache::CacheNode::SetIdentifier(const std::string &identifier) { identifier_ = identifier; }
 
-void Cache::CacheNode::SetData(const std::vector<unsigned char> &data) {
-  data_ = data;
-}
+void Cache::CacheNode::SetData(const std::vector<unsigned char> &data) { data_ = data; }
 
 void Cache::CacheNode::Serialize(std::vector<unsigned char> &destination) {
   size_t resource_size = data_.size();
@@ -47,18 +41,12 @@ void Cache::CacheNode::Serialize(std::vector<unsigned char> &destination) {
 
 auto Cache::CacheNode::Size() const noexcept -> size_t { return data_.size(); }
 
-void Cache::CacheNode::UpdateTimestamp() noexcept {
-  last_access_ = GetTimeUtc();
-}
+void Cache::CacheNode::UpdateTimestamp() noexcept { last_access_ = GetTimeUtc(); }
 
-auto Cache::CacheNode::GetTimestamp() const noexcept -> uint64_t {
-  return last_access_;
-}
+auto Cache::CacheNode::GetTimestamp() const noexcept -> uint64_t { return last_access_; }
 
 Cache::Cache(size_t capacity) noexcept
-    : capacity_(capacity),
-      header_(std::make_unique<CacheNode>()),
-      tailer_(std::make_unique<CacheNode>()) {
+    : capacity_(capacity), header_(std::make_unique<CacheNode>()), tailer_(std::make_unique<CacheNode>()) {
   header_->next_ = tailer_.get();
   tailer_->prev_ = header_.get();
 }
@@ -67,8 +55,7 @@ auto Cache::GetOccupancy() const noexcept -> size_t { return occupancy_; }
 
 auto Cache::GetCapacity() const noexcept -> size_t { return capacity_; }
 
-auto Cache::TryLoad(const std::string &resource_url,
-                    std::vector<unsigned char> &destination) -> bool {
+auto Cache::TryLoad(const std::string &resource_url, std::vector<unsigned char> &destination) -> bool {
   std::shared_lock<std::shared_mutex> lock(mtx_);
   auto iter = mapping_.find(resource_url);
   if (iter != mapping_.end()) {
@@ -82,8 +69,7 @@ auto Cache::TryLoad(const std::string &resource_url,
   return false;
 }
 
-auto Cache::TryInsert(const std::string &resource_url,
-                      const std::vector<unsigned char> &source) -> bool {
+auto Cache::TryInsert(const std::string &resource_url, const std::vector<unsigned char> &source) -> bool {
   std::unique_lock<std::shared_mutex> lock(mtx_);
   auto iter = mapping_.find(resource_url);
   if (iter != mapping_.end()) {

@@ -50,8 +50,7 @@ void Socket::Connect(NetAddress &server_address) {
   if (fd_ == -1) {
     CreateByProtocol(server_address.GetProtocol());
   }
-  if (connect(fd_, server_address.YieldAddr(),
-              *server_address.YieldAddrLen()) == -1) {
+  if (connect(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) == -1) {
     throw std::logic_error("Socket: Connect() error");
   }
 }
@@ -63,8 +62,7 @@ void Socket::Bind(NetAddress &server_address, bool set_reusable) {
   if (set_reusable) {
     SetReusable();
   }
-  if (bind(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) ==
-      -1) {
+  if (bind(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) == -1) {
     throw std::logic_error("Socket: Bind() error");
   }
 }
@@ -78,8 +76,7 @@ void Socket::Listen() {
 
 auto Socket::Accept(NetAddress &client_address) -> int {
   assert(fd_ != -1 && "cannot Accept() with an invalid fd");
-  int client_fd =
-      accept(fd_, client_address.YieldAddr(), client_address.YieldAddrLen());
+  int client_fd = accept(fd_, client_address.YieldAddr(), client_address.YieldAddrLen());
   if (client_fd == -1) {
     // under high pressure, accept might fail.
     // but server should not fail at this time

@@ -71,8 +71,7 @@ void Poller::AddConnection(Connection *conn) {
   memset(event, 0, sizeof(event));
   EV_SET(&event[0], conn->GetFd(), POLL_ADD, conn->GetEvents(), 0, 0,
          conn);  // read-trigger-only
-  assert(kevent(poll_fd_, event, 1, nullptr, 0, nullptr) != -1 &&
-         "kevent add channel fails");
+  assert(kevent(poll_fd_, event, 1, nullptr, 0, nullptr) != -1 && "kevent add channel fails");
 }
 #endif
 
@@ -85,8 +84,7 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
     exit(EXIT_FAILURE);
   }
   for (int i = 0; i < ready; i++) {
-    Connection *ready_connection =
-        reinterpret_cast<Connection *>(poll_events_[i].data.ptr);
+    Connection *ready_connection = reinterpret_cast<Connection *>(poll_events_[i].data.ptr);
     ready_connection->SetRevents(poll_events_[i].events);
     events_happen.emplace_back(ready_connection);
   }
@@ -101,15 +99,13 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
   t.tv_sec = timeout / 1000;
   t.tv_nsec = (timeout % 1000) * 1000 * 1000;
 
-  int ready = kevent(poll_fd_, nullptr, 0, poll_events_,
-                     static_cast<int>(poll_size_), &t);
+  int ready = kevent(poll_fd_, nullptr, 0, poll_events_, static_cast<int>(poll_size_), &t);
   if (ready == -1) {
     perror("Poller: Poll() error");
     exit(EXIT_FAILURE);
   }
   for (int i = 0; i < ready; i++) {
-    auto *ready_connection =
-        reinterpret_cast<Connection *>(poll_events_[i].udata);
+    auto *ready_connection = reinterpret_cast<Connection *>(poll_events_[i].udata);
     ready_connection->SetRevents(poll_events_[i].filter);
     events_happen.emplace_back(ready_connection);
   }

@@ -17,26 +17,17 @@
 #include "http/http_utils.h"
 namespace TURTLE_SERVER::HTTP {
 
-auto Response::Make200Response(bool should_close,
-                               std::optional<std::string> resource_url)
-    -> Response {
+auto Response::Make200Response(bool should_close, std::optional<std::string> resource_url) -> Response {
   return {RESPONSE_OK, should_close, std::move(resource_url)};
 }
 
-auto Response::Make400Response() noexcept -> Response {
-  return {RESPONSE_BAD_REQUEST, true, std::nullopt};
-}
+auto Response::Make400Response() noexcept -> Response { return {RESPONSE_BAD_REQUEST, true, std::nullopt}; }
 
-auto Response::Make404Response() noexcept -> Response {
-  return {RESPONSE_NOT_FOUND, true, std::nullopt};
-}
+auto Response::Make404Response() noexcept -> Response { return {RESPONSE_NOT_FOUND, true, std::nullopt}; }
 
-auto Response::Make503Response() noexcept -> Response {
-  return {RESPONSE_SERVICE_UNAVAILABLE, true, std::nullopt};
-}
+auto Response::Make503Response() noexcept -> Response { return {RESPONSE_SERVICE_UNAVAILABLE, true, std::nullopt}; }
 
-Response::Response(const std::string &status_code, bool should_close,
-                   std::optional<std::string> resource_url)
+Response::Response(const std::string &status_code, bool should_close, std::optional<std::string> resource_url)
     : should_close_(should_close), resource_url_(std::move(resource_url)) {
   // construct the status line
   std::stringstream str_stream;
@@ -44,14 +35,11 @@ Response::Response(const std::string &status_code, bool should_close,
   status_line_ = str_stream.str();
   // add necessary headers
   headers_.emplace_back(HEADER_SERVER, SERVER_TURTLE);
-  headers_.emplace_back(
-      HEADER_CONNECTION,
-      ((should_close_) ? CONNECTION_CLOSE : CONNECTION_KEEP_ALIVE));
+  headers_.emplace_back(HEADER_CONNECTION, ((should_close_) ? CONNECTION_CLOSE : CONNECTION_KEEP_ALIVE));
   // if resource is specified and available
   if (resource_url_.has_value() && IsFileExists(resource_url_.value())) {
     size_t content_length = CheckFileSize(resource_url_.value());
-    headers_.emplace_back(HEADER_CONTENT_LENGTH,
-                          std::to_string(content_length));
+    headers_.emplace_back(HEADER_CONTENT_LENGTH, std::to_string(content_length));
     // parse out the extension
     auto last_dot = resource_url_.value().find_last_of(DOT);
     if (last_dot != std::string::npos) {
@@ -79,8 +67,7 @@ void Response::Serialize(std::vector<unsigned char> &buffer) {  // NOLINT
 
 auto Response::GetHeaders() -> std::vector<Header> { return headers_; }
 
-auto Response::ChangeHeader(const std::string &key,
-                            const std::string &new_value) noexcept -> bool {
+auto Response::ChangeHeader(const std::string &key, const std::string &new_value) noexcept -> bool {
   for (auto &it : headers_) {
     if (it.GetKey() == key) {
       it.SetValue(new_value);

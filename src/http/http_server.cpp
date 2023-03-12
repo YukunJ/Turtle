@@ -23,8 +23,7 @@ void ProcessHttpRequest(  // NOLINT
   }
   // check if there is any complete http request ready
   bool no_more_parse = false;
-  std::optional<std::string> request_op =
-      client_conn->FindAndPopTill("\r\n\r\n");
+  std::optional<std::string> request_op = client_conn->FindAndPopTill("\r\n\r\n");
   while (request_op != std::nullopt) {
     Request request{request_op.value()};
     std::vector<unsigned char> response_buf;
@@ -33,8 +32,7 @@ void ProcessHttpRequest(  // NOLINT
       no_more_parse = true;
       response.Serialize(response_buf);
     } else {
-      std::string resource_full_path =
-          serving_directory + request.GetResourceUrl();
+      std::string resource_full_path = serving_directory + request.GetResourceUrl();
       if (IsCgiRequest(resource_full_path)) {
         // dynamic CGI request
         Cgier cgier = Cgier::ParseCgier(resource_full_path);
@@ -50,14 +48,11 @@ void ProcessHttpRequest(  // NOLINT
             response.Serialize(response_buf);
           } else {
             auto cgi_result = cgier.Run();
-            auto response =
-                Response::Make200Response(request.ShouldClose(), std::nullopt);
-            response.ChangeHeader(HEADER_CONTENT_LENGTH,
-                                  std::to_string(cgi_result.size()));
+            auto response = Response::Make200Response(request.ShouldClose(), std::nullopt);
+            response.ChangeHeader(HEADER_CONTENT_LENGTH, std::to_string(cgi_result.size()));
             no_more_parse = request.ShouldClose();
             response.Serialize(response_buf);
-            response_buf.insert(response_buf.end(), cgi_result.begin(),
-                                cgi_result.end());
+            response_buf.insert(response_buf.end(), cgi_result.begin(), cgi_result.end());
           }
         }
       } else {
@@ -67,15 +62,13 @@ void ProcessHttpRequest(  // NOLINT
           no_more_parse = true;
           response.Serialize(response_buf);
         } else {
-          auto response = Response::Make200Response(request.ShouldClose(),
-                                                    resource_full_path);
+          auto response = Response::Make200Response(request.ShouldClose(), resource_full_path);
           response.Serialize(response_buf);
           no_more_parse = request.ShouldClose();
           std::vector<unsigned char> cache_buf;
           if (request.GetMethod() == Method::GET) {
             // only concern about carrying content when GET request
-            bool resource_cached =
-                cache->TryLoad(resource_full_path, cache_buf);
+            bool resource_cached = cache->TryLoad(resource_full_path, cache_buf);
             if (!resource_cached) {
               // if content directly from cache, not disk file I/O
               // otherwise content not in cache, load from disk and try cache it
@@ -84,8 +77,7 @@ void ProcessHttpRequest(  // NOLINT
             }
           }
           // now cache_buf contains the file content anyway
-          response_buf.insert(response_buf.end(), cache_buf.begin(),
-                              cache_buf.end());
+          response_buf.insert(response_buf.end(), cache_buf.begin(), cache_buf.end());
         }
       }
     }

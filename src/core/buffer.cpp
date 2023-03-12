@@ -19,13 +19,11 @@ void Buffer::Append(const unsigned char *new_char_data, size_t data_size) {
 }
 
 void Buffer::Append(const std::string &new_str_data) {
-  Append(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
-         new_str_data.size());
+  Append(reinterpret_cast<const unsigned char *>(new_str_data.c_str()), new_str_data.size());
 }
 
 void Buffer::Append(std::vector<unsigned char> &&other_buffer) {
-  buf_.insert(buf_.end(), std::make_move_iterator(other_buffer.begin()),
-              std::make_move_iterator(other_buffer.end()));
+  buf_.insert(buf_.end(), std::make_move_iterator(other_buffer.begin()), std::make_move_iterator(other_buffer.end()));
 }
 
 void Buffer::AppendHead(const unsigned char *new_char_data, size_t data_size) {
@@ -33,12 +31,10 @@ void Buffer::AppendHead(const unsigned char *new_char_data, size_t data_size) {
 }
 
 void Buffer::AppendHead(const std::string &new_str_data) {
-  AppendHead(reinterpret_cast<const unsigned char *>(new_str_data.c_str()),
-             new_str_data.size());
+  AppendHead(reinterpret_cast<const unsigned char *>(new_str_data.c_str()), new_str_data.size());
 }
 
-auto Buffer::FindAndPopTill(const std::string &target)
-    -> std::optional<std::string> {
+auto Buffer::FindAndPopTill(const std::string &target) -> std::optional<std::string> {
   std::optional<std::string> res = std::nullopt;
   auto curr_content = ToStringView();
   auto pos = curr_content.find(target);

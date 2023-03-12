@@ -54,8 +54,7 @@ static constexpr char MIME_OCTET[] = {"application/octet-stream"};
 static constexpr char RESPONSE_OK[] = {"200 OK"};
 static constexpr char RESPONSE_BAD_REQUEST[] = {"400 Bad Request"};
 static constexpr char RESPONSE_NOT_FOUND[] = {"404 Not Found"};
-static constexpr char RESPONSE_SERVICE_UNAVAILABLE[] = {
-    "503 Service Unavailable"};
+static constexpr char RESPONSE_SERVICE_UNAVAILABLE[] = {"503 Service Unavailable"};
 
 /* HTTP Method enum, only support GET/HEAD method now */
 enum class Method { GET, HEAD, UNSUPPORTED };
@@ -67,18 +66,14 @@ enum class Version { HTTP_1_1, UNSUPPORTED };
 enum class Extension { HTML, CSS, PNG, JPG, JPEG, GIF, OCTET };
 
 static const std::map<Method, std::string> METHOD_TO_STRING{
-    {Method::GET, "GET"},
-    {Method::HEAD, "HEAD"},
-    {Method::UNSUPPORTED, "UNSUPPORTED"}};
+    {Method::GET, "GET"}, {Method::HEAD, "HEAD"}, {Method::UNSUPPORTED, "UNSUPPORTED"}};
 
-static const std::map<Version, std::string> VERSION_TO_STRING{
-    {Version::HTTP_1_1, "HTTP/1.1"}, {Version::UNSUPPORTED, "UNSUPPORTED"}};
+static const std::map<Version, std::string> VERSION_TO_STRING{{Version::HTTP_1_1, "HTTP/1.1"},
+                                                              {Version::UNSUPPORTED, "UNSUPPORTED"}};
 
 static const std::map<Extension, std::string> EXTENSION_TO_STRING{
-    {Extension::HTML, "HTML"},  {Extension::CSS, "CSS"},
-    {Extension::PNG, "PNG"},    {Extension::JPG, "JPG"},
-    {Extension::JPEG, "JPEG"},  {Extension::GIF, "GIF"},
-    {Extension::OCTET, "OCTET"}};
+    {Extension::HTML, "HTML"}, {Extension::CSS, "CSS"}, {Extension::PNG, "PNG"},    {Extension::JPG, "JPG"},
+    {Extension::JPEG, "JPEG"}, {Extension::GIF, "GIF"}, {Extension::OCTET, "OCTET"}};
 
 /* space and case insensitive */
 auto ToMethod(const std::string &method_str) noexcept -> Method;
@@ -95,20 +90,17 @@ auto ExtensionToMime(const Extension &extension) noexcept -> std::string;
 /**
  * split a string into many sub strings, splitted by the specified delimiter
  */
-auto Split(const std::string &str, const char *delim = SPACE) noexcept
-    -> std::vector<std::string>;
+auto Split(const std::string &str, const char *delim = SPACE) noexcept -> std::vector<std::string>;
 
 /**
  * concatenate a collection of strings using the specified delimiter
  */
-auto Join(const std::vector<std::string> &tokens,
-          const char *delim = SPACE) noexcept -> std::string;
+auto Join(const std::vector<std::string> &tokens, const char *delim = SPACE) noexcept -> std::string;
 
 /**
  * Remove the leading and trailing specified delimiter (not inplace)
  */
-auto Trim(const std::string &str, const char *delim = SPACE) noexcept
-    -> std::string;
+auto Trim(const std::string &str, const char *delim = SPACE) noexcept -> std::string;
 
 /**
  * Convert each character in a string to upper case (not inplace)

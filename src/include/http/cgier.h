@@ -31,15 +31,14 @@ class Cgier {
  public:
   static auto ParseCgier(const std::string &resource_url) noexcept -> Cgier;
   static auto MakeInvalidCgier() noexcept -> Cgier;
-  explicit Cgier(const std::string &path,
-                 const std::vector<std::string> &arguments) noexcept;
+  explicit Cgier(const std::string &path, const std::vector<std::string> &arguments) noexcept;
   auto Run() -> std::vector<unsigned char>;
   auto IsValid() const noexcept -> bool;
   auto GetPath() const noexcept -> std::string;
 
  private:
   auto BuildArgumentList() -> char **;
-  void FreeArgumentList(char** arg_list);
+  void FreeArgumentList(char **arg_list);
   std::string cgi_program_path_;
   std::vector<std::string> cgi_arguments_;
   bool valid_{true};

@@ -14,8 +14,8 @@
 #include <core/utils.h>
 
 #include <memory>
-#include <mutex>        // NOLINT
-#include <shared_mutex> // NOLINT
+#include <mutex>         // NOLINT
+#include <shared_mutex>  // NOLINT
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -47,11 +47,10 @@ class Cache {
 
    public:
     CacheNode() noexcept;
-    CacheNode(std::string identifier,
-              const std::vector<unsigned char> &data);
+    CacheNode(std::string identifier, const std::vector<unsigned char> &data);
     void SetIdentifier(const std::string &identifier);
     void SetData(const std::vector<unsigned char> &data);
-    void Serialize(std::vector<unsigned char> &destination); // NOLINT
+    void Serialize(std::vector<unsigned char> &destination);  // NOLINT
     auto Size() const noexcept -> size_t;
     void UpdateTimestamp() noexcept;
     auto GetTimestamp() const noexcept -> uint64_t;
@@ -81,7 +80,7 @@ class Cache {
    * if not exists, return false
    */
   auto TryLoad(const std::string &resource_url,
-               std::vector<unsigned char> &destination) -> bool; // NOLINT
+               std::vector<unsigned char> &destination) -> bool;  // NOLINT
 
   /**
    * Given the resource_url and content, try to insert it into the cache
@@ -89,8 +88,7 @@ class Cache {
    * failure reason could be that the content is too big or identical
    * resource_url already cached
    */
-  auto TryInsert(const std::string &resource_url,
-                 const std::vector<unsigned char> &source) -> bool;
+  auto TryInsert(const std::string &resource_url, const std::vector<unsigned char> &source) -> bool;
 
   /**
    * Remove everything in the cache
@@ -107,12 +105,12 @@ class Cache {
    * Helper function to remove a node from the doubly-linked list
    * essentially re-wire the prev and next pointers to each other
    */
-  void RemoveFromList(const std::shared_ptr<CacheNode>& node) noexcept;
+  void RemoveFromList(const std::shared_ptr<CacheNode> &node) noexcept;
 
   /**
    * Append a node to the tail of the doubly-linked list
    */
-  void AppendToListTail(const std::shared_ptr<CacheNode>& node) noexcept;
+  void AppendToListTail(const std::shared_ptr<CacheNode> &node) noexcept;
 
   /* concurrency */
   std::shared_mutex mtx_;
