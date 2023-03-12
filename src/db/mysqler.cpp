@@ -5,75 +5,90 @@
  * program on Linux
  * @init_date Mar 11 2023
  *
- * This is an implementation file implementing the mysql connection and query execution
- * It assumes some pre-installment and setup on the localhost's mysql database
+ * This is an implementation file implementing the mysql connection and query
+ * execution It assumes some pre-installment and setup on the localhost's mysql
+ * database
  */
+
+#include <cppconn/exception.h>
+#include <cppconn/statement.h>
 
 #include "db/mysqler.h"
 
-/* Standard C++ includes */
-#include <stdlib.h>
-/*GRANT ALL PRIVILEGES ON test_db.user TO 'tester'@'localhost'; */
-/*g++ -Wall -I/usr/include/cppconn -o example example.cpp -L/usr/lib -lmysqlcppconn */
-/*g++ -Wall  -o example example.cpp -lmysqlcppconn */
-#include <iostream>
-#include <memory>
+namespace TURTLE_SERVER::DB {
 
 /*
-  Include directly the different
-  headers from cppconn/ and mysql_driver.h + mysql_util.h
-  (and mysql_connection.h). This will reduce your build time!
-*/
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
-
-#include "mysql_connection.h"
-
-using namespace std;
-
-int main(void) {
-    try {
-        sql::Driver *driver;
-        sql::Connection *con;
-        sql::Statement *stmt;
-        sql::ResultSet *res;
-
-        /* Create a connection */
-        driver = get_driver_instance();
-        con = driver->connect("tcp://127.0.0.1:3306", "tester", "tester");
-        /* Connect to the MySQL test database */
-        con->setSchema("test_db");
-
-        stmt = con->createStatement();
-        res = stmt->executeQuery("SELECT username, password from USER");
-        while (res->next()) {
-            cout << "\t... MySQL replies: ";
-            /* Access column data by alias or column name */
-            cout << "User:" << res->getString("username") << endl;
-            cout << "Password:" << res->getString("password") << endl;
-        }
-        std::unique_ptr<sql::ResultSet> set_mem(stmt->executeQuery("SELECT username, password from USER"));
-        while (set_mem->next()) {
-            cout << "\t... MySQL replies: ";
-            /* Access column data by alias or column name */
-            cout << "User:" << set_mem->getString("username") << endl;
-            cout << "Password:" << set_mem->getString("password") << endl;
-        }
-        delete res;
-        delete stmt;
-        delete con;
-
-    } catch (sql::SQLException &e) {
-        cout << "# ERR: SQLException in " << __FILE__;
-        cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
-        cout << "# ERR: " << e.what();
-        cout << " (MySQL error code: " << e.getErrorCode();
-        cout << ", SQLState: " << e.getSQLState() << " )" << endl;
-    }
-
-    cout << endl;
-
-    return EXIT_SUCCESS;
+ * Simple SQL Exception Logging
+ * Outside try-catch block should rethrow
+ */
+void LogMySqlError(const sql::SQLException &e) {
+  using std::cerr, std::endl;
+  cerr << "# ERR: " << e.what() << endl;
+  cerr << " (MySQL error code: " << e.getErrorCode();
+  cerr << ", SQLState: " << e.getSQLState() << " )" << endl;
 }
+
+std::string ConcatenateAddress(const std::string &protocol, const std::string &network_addr, int port) {
+  return protocol + "://" + network_addr + ":" + std::to_string(port);
+}
+
+MySqler::MySqler(const std::string &db_address, int db_port, const std::string &user, const std::string &password,
+                 const std::string &db_name) {
+  try {
+    driver_ = get_driver_instance();
+    std::string address = ConcatenateAddress(TCP_PROTOCOL, db_address, db_port);
+    conn_ = std::unique_ptr<sql::Connection>(driver_->connect(address, user, password));
+    conn_->setSchema(db_name);  // choose a specific database to stick this connection with
+    valid_ = true;
+  } catch (sql::SQLException &e) {
+    LogMySqlError(e);
+    throw;
+  }
+}
+
+MySqler::MySqler(MySqler &&rhs) noexcept {
+  driver_ = rhs.driver_;
+  rhs.driver_ = nullptr;
+  conn_ = std::move(rhs.conn_);
+  rhs.valid_ = false;
+}
+
+auto MySqler::operator=(MySqler &&rhs) noexcept -> MySqler & {
+  driver_ = rhs.driver_;
+  rhs.driver_ = nullptr;
+  conn_.reset(rhs.conn_.release());
+  valid_ = rhs.valid_;
+  return *this;
+}
+
+auto MySqler::ExecuteQueryBlocking(const std::string &command) -> std::unique_ptr<sql::ResultSet> {
+  try {
+    auto stmt = std::unique_ptr<sql::Statement>(conn_->createStatement());
+    return std::unique_ptr<sql::ResultSet>(stmt->executeQuery(command));
+  } catch (sql::SQLException &e) {
+    LogMySqlError(e);
+    throw;
+  }
+}
+
+auto MySqler::ExecuteQueryNonBlocking(const std::string &command) -> std::future<std::unique_ptr<sql::ResultSet>> {
+  return (std::async([&] { return ExecuteQueryBlocking(command); }));
+}
+
+auto MySqler::ExecuteBlocking(const std::string &command) -> bool {
+  try {
+    auto stmt = std::unique_ptr<sql::Statement>(conn_->createStatement());
+    return stmt->execute(command);
+  } catch (sql::SQLException &e) {
+    LogMySqlError(e);
+    throw;
+  }
+}
+
+auto MySqler::ExecuteNonBlocking(const std::string &command) -> std::future<bool> {
+  return (std::async([&] { return ExecuteBlocking(command); }));
+}
+
+auto MySqler::IsValid() -> bool { return valid_; }
+
+}  // namespace TURTLE_SERVER::DB

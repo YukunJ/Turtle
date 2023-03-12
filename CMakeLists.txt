@@ -109,12 +109,13 @@ TARGET_INCLUDE_DIRECTORIES(
         PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
 )
 
-# Build experiment db
-ADD_EXECUTABLE(db_server ${TURTLE_SERVER_SRC_DIR}/db/mysqler.cpp)
-TARGET_LINK_LIBRARIES(db_server mysqlcppconn)
-TARGET_COMPILE_OPTIONS(db_server PRIVATE ${CMAKE_COMPILER_FLAG})
+# Build the turtle db library
+FILE(GLOB TURTLE_DB_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/db/*.cpp")
+ADD_LIBRARY(turtle_db ${TURTLE_DB_SOURCES})
+TARGET_LINK_LIBRARIES(turtle_db mysqlcppconn)
+TARGET_COMPILE_OPTIONS(turtle_db PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
-        db_server
+        turtle_db
         PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
         PUBLIC ${TURTLE_MYSQL_INCLUDE_DIR}
 )
@@ -200,6 +201,9 @@ TARGET_LINK_LIBRARIES(response_test PRIVATE Catch2::Catch2WithMain turtle_core t
 ADD_EXECUTABLE(cgier_test ${TURTLE_SERVER_TEST_DIR}/http/cgier_test.cpp)
 TARGET_LINK_LIBRARIES(cgier_test PRIVATE Catch2::Catch2WithMain turtle_core turtle_http)
 
+ADD_EXECUTABLE(mysqler_test ${TURTLE_SERVER_TEST_DIR}/db/mysqler_test.cpp)
+TARGET_LINK_LIBRARIES(mysqler_test PRIVATE Catch2::Catch2WithMain turtle_db)
+
 # helper program to test cgi module, used the `cgi_test`
 ADD_EXECUTABLE(add ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/add.c)
 ADD_EXECUTABLE(helloworld ${CMAKE_SOURCE_DIR}/http_dir/cgi-bin/helloworld.c)
@@ -226,20 +230,26 @@ CATCH_DISCOVER_TESTS(request_test)
 CATCH_DISCOVER_TESTS(response_test)
 CATCH_DISCOVER_TESTS(cgier_test)
 
+# DB Module
+CATCH_DISCOVER_TESTS(mysqler_test)
+
 ######################################################################################################################
 # Format + Lint Check + Statistics Count
 ######################################################################################################################
 
 SET(FORMAT_STYLE google)
 
+string(CONCAT TURTLR_FORMAT_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src,"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test,"
+        )
+
 # "make format"
 ADD_CUSTOM_TARGET(format ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/run_clang_format.py
         ${CLANG_FORMAT_BIN}
         ${TURTLE_SERVER_BUILD_SUPPORT_DIR}/clang_format_exclusions.txt
         --source_dirs
-        ${TURTLE_SERVER_SRC_DIR}
-        --source_dirs
-        ${TURTLE_SERVER_TEST_DIR}
+        ${TURTLR_FORMAT_DIRS}
         --fix
         --quiet
 )

@@ -11,55 +11,62 @@
 #ifndef SRC_INCLUDE_DB_MYSQLER_H_
 #define SRC_INCLUDE_DB_MYSQLER_H_
 
-
 #include <cppconn/driver.h>
-#include <cppconn/exception.h>
 #include <cppconn/resultset.h>
-#include <cppconn/statement.h>
 
-#include <memory>
 #include <future>  // NOLINT
-#include <string>
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include "mysql_connection.h"
 
 #include "core/utils.h"
 
-namespace TURTLE_DB {
+namespace TURTLE_SERVER::DB {
+
+constexpr static char TCP_PROTOCOL[] = "tcp";
 
 /**
  * Each MySqler is a single mysql connection focused on one database for a given server addr + port + user
  * Query execution might throw SQL exception to be handled by caller
  *
  */
-class MySqler{
+class MySqler {
  public:
-    /* upon ctor, connect and create a live connection */
-    explicit MySqler(std::string db_address = "127.0.0.1", int db_port = 3306, std::string user = "root",
-                     std::string password = "root", std::string db_name = "test_db") throw(sql::SQLException);
+  /* upon ctor, connect and create a live connection */
+  explicit MySqler(const std::string &db_address = "127.0.0.1", int db_port = 3306, const std::string &user = "tester",
+                   const std::string &password = "tester", const std::string &db_name = "tester_db");
 
-    ~MySqler() = default;
+  ~MySqler() = default;
 
-    NON_COPYABLE(MySqler);
+  NON_COPYABLE(MySqler);
 
-    /* support move */
-    MySqler(MySqler&& rhs);
-    MySqler& operator=(MySqler&& rhs);
+  /* support move */
+  MySqler(MySqler &&rhs) noexcept;
+  auto operator=(MySqler &&rhs) noexcept -> MySqler &;
 
-    /* blocking */
-    auto ExecuteBlocking(const std::string& command) throw(sql::SQLException) -> std::unique_ptr<sql::ResultSet>;
+  /* blocking query that returns resultset (select) */
+  auto ExecuteQueryBlocking(const std::string &command) -> std::unique_ptr<sql::ResultSet>;
 
-    /* non-blocking */
-    auto ExecuteNonBlocking(const std::string& command) throw(sql::SQLException)
-        -> std::future<std::unique_ptr<sql::ResultSet>>;
+  /* non-blocking query that returns resultset (select) */
+  auto ExecuteQueryNonBlocking(const std::string &command) -> std::future<std::unique_ptr<sql::ResultSet>>;
+
+  /* blocking true/false command (insert/delete/create/drop/etc) */
+  auto ExecuteBlocking(const std::string &command) -> bool;
+
+  /* non-blocking true/false command (insert/delete/create/drop/etc) */
+  auto ExecuteNonBlocking(const std::string &command) -> std::future<bool>;
+
+  auto IsValid() -> bool;
 
  private:
-    /* one driver per MySqler lifecycle */
-    std::unique_ptr<sql::Driver> driver_;
-    std::unique_ptr<sql::Connection> conn_;
+  /* one driver per MySqler lifecycle */
+  sql::Driver *driver_;  // no need to delete it
+  std::unique_ptr<sql::Connection> conn_;
+  bool valid_{false};
 };
 
-}  // namespace TURTLE_DB
+}  // namespace TURTLE_SERVER::DB
 
 #endif  // SRC_INCLUDE_DB_MYSQLER_H_
