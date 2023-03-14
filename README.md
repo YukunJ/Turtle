@@ -235,8 +235,9 @@ There are many other components in **Turtle** that are easy to decouple and use 
 
 ### Usage
 
+#### General 
 
-To setup a custom server, user should create an instance of **TurtleServer** and then only needs to provide two callback functions:
+To setup a general custom server, user should create an instance of **TurtleServer** and then only needs to provide two callback functions:
 1. **OnAccept(Connection \*)**: A function to do extra business logic when accepting a new client connection.
 2. **OnHandle(Connection \*)**: A function to serve an existing client's request.
 
@@ -284,8 +285,11 @@ $ ./echo_server
 $ ./echo_client
 ```
 
-The HTTP server [demo](./src/http/http_server.cpp) is under `./src/http` folder for reference as well. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
+#### HTTP
 
+The HTTP server [demo](./src/http/http_server.cpp) is under `./src/http` folder for reference as well. It supports **GET** and **HEAD** methods. A simple HTTP server could be set up in less than 50 lines with the help of **Turtle** core and http module. 
+
+#### CGI
 The CGI module is built upon HTTP server and executes in the traditional parent-child cross-process way. After parsing the arguments, the [**Cgier**](./src/include/http/cgier.h) `fork` a child process to execute the cgi program and communicate back the result to parent process through a shared temporary file. 
 
 It assumes the cgi program resides under a `/cgi-bin` folder and arguments are separated by `&`. For example, if there is a remote CGI program `int add(int a, int b)` that adds up two integers. To compute `1+2=3`, The HTTP request line should be
@@ -293,6 +297,42 @@ It assumes the cgi program resides under a `/cgi-bin` folder and arguments are s
 ```console
 GET /cgi-bin/add&1&2 HTTP/1.1
 ```
+
+#### Database
+Since database is an indispensable part of many web applications, **Turtle** also supports basic interactions with databases, **MySQL** in specific. We wrap the official MySQL C++ Connector into simple connections that can execute queries and return back results. Users of **Turtle** may consider plug in this component when implementing custom service callback functions.
+
+The relevant source code is under [db](./src/db) folder. Users may refer to [setup.sql](./setup/setup.sql) and [mysqler_test](./test/db/mysqler_test.cpp) for setup and simple usage reference.
+
+For a bare minimal use example, suppose on port `3306` of `localhost` the `root` user with password `root` in the database `test_db` has a table `user` of two fields `firstname` and `lastname`. We could update and query as follows:
+
+```CPP
+#include <string>
+#include "db/mysqler.h"
+
+/* for convenience reason */
+using TURTLE_SERVER::DB::MySqler;
+
+int main(int argc, char* argv[]) {
+    // init a db connection
+    MySqler mysqler = MySqler("127.0.0.1", 3306, "root", "root", "test_db");
+    // insert a new user Barack Obama, synchronously
+    std::string command_insert = "INSERT INTO user (firstname, lastname) VALUES ('Barack', 'Obama');";
+    mysqler.ExecuteBlocking(command_insert);
+    // query for whose firstname is Barack, asynchronously via std::async
+    std::string command_query = "SELECT firstname, lastname FROM user WHERE firstname = 'Barack';"
+    auto fut = mysqler.ExecuteQueryNonBlocking(command_query);      
+    sql::ResultSet result_set = fut.get();  // execute
+    // maybe many people has firstname Barack, iterator
+    size_t return_size = result_set->rowsCount();
+    while (result_set->next()) {
+        // the corresponding lastname for this user
+        std::string lastname = result_set->getString("lastname");
+    }
+    return 0;
+}
+```
+
+
 
 ### Future Work
 This repo is under active development and maintainence. New features and fixes are updated periodically as time and skill permit.
@@ -310,6 +350,7 @@ The followings are on the **TODO** list:
 - ✅ Benchmark with other leading libraries
 - [ ] Profile Turtle's main runtime bottleneck
 - [ ] Review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
+- [ ] Support asynchronous logging mechanism
 - [ ] Support timing each client connection and kills inactive ones
 - ✅ Support Database connection
 

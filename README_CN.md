@@ -229,7 +229,9 @@ int client_fd = server_sock.Accept(client_address);
 
 ### 用例展示
 
-为设立一个自定义化的服务器, 用户需要构建一个**TurtleServer**的实例, 然后只需要提供2个回调函数:
+#### 通用
+
+为设立一个自定义化的通用服务器, 用户需要构建一个**TurtleServer**的实例, 然后只需要提供2个回调函数:
 1. **OnAccept(Connection \*)**: 在接收新用户连接请求时执行额外的业务逻辑.
 2. **OnHandle(Connetion \*)**: 在用户发来请求时的业务逻辑.
 
@@ -280,7 +282,11 @@ $ ./echo_server
 $ ./echo_client
 ```
 
-HTTP协议服务端的[demo](./src/http/http_server.cpp)在`./src/http`文件夹中供参考. 一个简单的HTTP协议服务器可以在**Turtle**核心库和HTTP模块扩展库的帮助下在50行内被搭建起来.
+#### HTTP
+
+HTTP协议服务端的[demo](./src/http/http_server.cpp)在`./src/http`文件夹中供参考. 它支持**GET**和**HEAD**方法. 一个简单的HTTP协议服务器可以在**Turtle**核心库和HTTP模块扩展库的帮助下在50行内被搭建起来.
+
+#### CGI
 
 CGI模块构建在HTTP服务器上, 并以传统的父子跨进程方式执行. 在解析完参数后, [**Cgier**](./src/include/http/cgier.h)会`fork`一个子进程来执行cgi程序, 并通过临时共享文件的方式将结果返回给父进程.
 
@@ -289,6 +295,41 @@ CGI模块构建在HTTP服务器上, 并以传统的父子跨进程方式执行. 
 ```console
 GET /cgi-bin/add&1&2 HTTP/1.1
 ```
+
+#### 数据库
+由于数据库是许多web应用程序不可缺少的一部分, **Turtle**也支持与数据库的基本交互, 特别是与**MySQL**. 我们将官方MySQL C++ Connector包装成可以执行查询并返回结果的简单连接. **Turtle**的用户在实现自定义服务回调函数时可以考虑插入此组件使用.
+
+相关的源代码在[db](./src/db)文件夹下. 用户可以参考[setup.sql](./setup/setup.sql)和[mysqler_test](./test/db/mysqler_test.cpp)进行初始设置和简单使用样例参考.
+
+举一个简单的使用样例, 假设在`localhost`的`3306`端口上, 有一个密码为`root`的`root`用户, 且在数据库`test_db`上有一个包含`firstname`和`lastname`两个字段的`user`表. 我们可以进行如下更新和查询:
+
+```CPP
+#include <string>
+#include "db/mysqler.h"
+
+/* 方便起见 */
+using TURTLE_SERVER::DB::MySqler;
+
+int main(int argc, char* argv[]) {
+    // 初始化一条数据库连接
+    MySqler mysqler = MySqler("127.0.0.1", 3306, "root", "root", "test_db");
+    // 同步插入一个新用户 Barack Obama
+    std::string command_insert = "INSERT INTO user (firstname, lastname) VALUES ('Barack', 'Obama');";
+    mysqler.ExecuteBlocking(command_insert);
+    // std::async异步查询所有firstname是Barack的用户
+    std::string command_query = "SELECT firstname, lastname FROM user WHERE firstname = 'Barack';"
+    auto fut = mysqler.ExecuteQueryNonBlocking(command_query);      
+    sql::ResultSet result_set = fut.get();  // 执行
+    // 迭代器遍历, 或许很多人的firstname都是Barack
+    size_t return_size = result_set->rowsCount();
+    while (result_set->next()) {
+        // 获取匹配的用户的lastname
+        std::string lastname = result_set->getString("lastname");
+    }
+    return 0;
+}
+```
+
 ### 未来计划
 
 本项目正处于积极的维护和更新中. 新的修正和功能时常会被更新, 在我们时间和技术允许的条件下.
@@ -306,6 +347,7 @@ GET /cgi-bin/add&1&2 HTTP/1.1
 - ✅ 与其他主流网络Web Server库进行性能对比
 - [ ] 寻找Turtle的主要运行性能瓶颈
 - [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
+- [ ] 支持异步日志机制
 - [ ] 支持定时器功能来删除不活跃的用户连接
 - ✅ 支持数据库连接功能
 
