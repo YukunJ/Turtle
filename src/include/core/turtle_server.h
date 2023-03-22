@@ -24,11 +24,6 @@
 #include "core/socket.h"
 #include "core/thread_pool.h"
 #include "core/utils.h"
-#include "http/cgier.h"
-#include "http/header.h"
-#include "http/http_utils.h"
-#include "http/request.h"
-#include "http/response.h"
 
 #ifndef SRC_INCLUDE_CORE_TURTLE_SERVER_H_
 #define SRC_INCLUDE_CORE_TURTLE_SERVER_H_

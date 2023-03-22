@@ -6,6 +6,11 @@
  */
 
 #include "core/turtle_server.h"
+#include "http/cgier.h"
+#include "http/header.h"
+#include "http/http_utils.h"
+#include "http/request.h"
+#include "http/response.h"
 
 namespace TURTLE_SERVER::HTTP {
 
