@@ -24,6 +24,12 @@ ELSE()
     MESSAGE(FATAL_ERROR "Your operating system ${CMAKE_SYSTEM_NAME} is not supported.")
 ENDIF()
 
+IF (${LOG_LEVEL} MATCHES "NOLOG")
+    MESSAGE("Build in ${LOG_LEVEL} mode without Logging")
+    ADD_DEFINITIONS(-DNOLOG)
+ELSE()
+    MESSAGE("Build with Logging enabled")
+ENDIF()
 ######################################################################################################################
 # Search Path Specification
 ######################################################################################################################
@@ -93,7 +99,7 @@ SET(MYSQL_COMPILER_FLAG -I/usr/include/cppconn -L/usr/lib -lmysqlcppconn)
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
-TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
+TARGET_LINK_LIBRARIES(turtle_core turtle_log Threads::Threads)
 TARGET_COMPILE_OPTIONS(turtle_core PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_core
@@ -103,6 +109,7 @@ TARGET_INCLUDE_DIRECTORIES(
 # Build the turtle http library
 FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
 ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
+TARGET_LINK_LIBRARIES(turtle_http turtle_log)
 TARGET_COMPILE_OPTIONS(turtle_http PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_http
@@ -112,7 +119,7 @@ TARGET_INCLUDE_DIRECTORIES(
 # Build the turtle db library
 FILE(GLOB TURTLE_DB_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/db/*.cpp")
 ADD_LIBRARY(turtle_db ${TURTLE_DB_SOURCES})
-TARGET_LINK_LIBRARIES(turtle_db mysqlcppconn)
+TARGET_LINK_LIBRARIES(turtle_db turtle_log mysqlcppconn)
 TARGET_COMPILE_OPTIONS(turtle_db PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_db
@@ -120,6 +127,15 @@ TARGET_INCLUDE_DIRECTORIES(
         PUBLIC ${TURTLE_MYSQL_INCLUDE_DIR}
 )
 
+# Build the turtle logging library
+FILE(GLOB TURTLE_LOG_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/log/*.cpp")
+ADD_LIBRARY(turtle_log ${TURTLE_LOG_SOURCES})
+TARGET_LINK_LIBRARIES(turtle_db Threads::Threads)
+TARGET_COMPILE_OPTIONS(turtle_log PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        turtle_log
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
 
 # Build the echo server
 ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)

@@ -29,6 +29,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support Caching mechanism.
 + Support MySQL Database interaction.
 + Compatible building with MacOS using kqueue.
++ Support asynchronous consumer-producer logging.
 + Unit test coverage by [Catch2](https://github.com/catchorg/Catch2) framework.
 
 ### System Diagram
@@ -85,7 +86,7 @@ $ sudo mysql < setup/setup.sql  // setup the default mysql role for testing
 // Build
 $ mkdir build
 $ cd build
-$ cmake .. // because CMakeList.txt is in the root directory
+$ cmake .. // You may add -DLOG_LEVEL=NOLOG to disable logging
 $ make
 
 // Format & Style Check & Line Count
@@ -332,7 +333,17 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+#### Logging
+Logging is supported in an asynchronous consumer-producer fashion with Singleton pattern. Callers non-blockingly produce logs, and a background worker thread periodically takes care of all the logs produced since its last wakeup in a FIFO fashion. The exact way to "take care" of the logs is up to customization by strategy plugin. The default is to write to a log file on disk. And you may also tune refresh interval length or refresh log count.
 
+Four levels of logging is available in terms of macros:
+
++ `LOG_INFO`
++ `LOG_WARNING`
++ `LOG_ERROR`
++ `LOG_FATAL`
+
+You may disable any logging by passing the flag `-DLOG_LEVEL=NOLOG` in CMake build.
 
 ### Future Work
 This repo is under active development and maintainence. New features and fixes are updated periodically as time and skill permit.
@@ -350,7 +361,7 @@ The followings are on the **TODO** list:
 - ✅ Benchmark with other leading libraries
 - [ ] Profile Turtle's main runtime bottleneck
 - [ ] Review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
-- [ ] Support asynchronous logging mechanism
+- ✅ Support asynchronous logging mechanism
 - [ ] Support timing each client connection and kills inactive ones
 - ✅ Support Database connection
 
@@ -366,4 +377,5 @@ Serveral reference books and projects are consulted during the development of **
 + [TinyWebServer](https://github.com/qinguoyi/TinyWebServer)
 + [30dayMakeCppServer](https://github.com/yuesong-feng/30dayMakeCppServer)
 + [Very basic C++ HTTP Parser](https://codereview.stackexchange.com/questions/205704/very-basic-c-http-parser)
++ [C++ Threaded Logger](https://codereview.stackexchange.com/questions/191880/c-threaded-logger)
 + [MySQL C++ official Documentation](https://dev.mysql.com/doc/connector-cpp/1.1/en/connector-cpp-examples-complete-example-1.html)

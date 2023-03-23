@@ -18,6 +18,8 @@
 #include <stdexcept>
 
 #include "core/net_address.h"
+#include "log/logger.h"
+
 namespace TURTLE_SERVER {
 
 static constexpr int BACK_LOG = 128;
@@ -51,6 +53,7 @@ void Socket::Connect(NetAddress &server_address) {
     CreateByProtocol(server_address.GetProtocol());
   }
   if (connect(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) == -1) {
+    LOG_ERROR("Socket: Connect() error");
     throw std::logic_error("Socket: Connect() error");
   }
 }
@@ -63,6 +66,7 @@ void Socket::Bind(NetAddress &server_address, bool set_reusable) {
     SetReusable();
   }
   if (bind(fd_, server_address.YieldAddr(), *server_address.YieldAddrLen()) == -1) {
+    LOG_ERROR("Socket: Bind() error");
     throw std::logic_error("Socket: Bind() error");
   }
 }
@@ -70,6 +74,7 @@ void Socket::Bind(NetAddress &server_address, bool set_reusable) {
 void Socket::Listen() {
   assert(fd_ != -1 && "cannot Listen() with an invalid fd");
   if (listen(fd_, BACK_LOG) == -1) {
+    LOG_ERROR("Socket: Listen() error");
     throw std::logic_error("Socket: Listen() error");
   }
 }
@@ -80,6 +85,7 @@ auto Socket::Accept(NetAddress &client_address) -> int {
   if (client_fd == -1) {
     // under high pressure, accept might fail.
     // but server should not fail at this time
+    LOG_WARNING("Socket: Accept() error");
   }
   return client_fd;
 }
@@ -89,6 +95,7 @@ void Socket::SetReusable() {
   int yes = 1;
   if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof yes) == -1 ||
       setsockopt(fd_, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof yes) == -1) {
+    LOG_ERROR("Socket: SetReusable() error");
     throw std::logic_error("Socket: SetReusable() error");
   }
 }
@@ -96,6 +103,7 @@ void Socket::SetReusable() {
 void Socket::SetNonBlocking() {
   assert(fd_ != -1 && "cannot SetNonBlocking() with an invalid fd");
   if (fcntl(fd_, F_SETFL, fcntl(fd_, F_GETFL) | O_NONBLOCK) == -1) {
+    LOG_ERROR("Socket: SetNonBlocking() error");
     throw std::logic_error("Socket: SetNonBlocking() error");
   }
 }
@@ -112,6 +120,7 @@ void Socket::CreateByProtocol(Protocol protocol) {
     fd_ = socket(AF_INET6, SOCK_STREAM, 0);
   }
   if (fd_ == -1) {
+    LOG_ERROR("Socket: socket() error");
     throw std::logic_error("Socket: socket() error");
   }
 }
