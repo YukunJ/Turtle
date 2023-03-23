@@ -26,6 +26,7 @@
 + 支持可调参的缓存层来加快响应与减低服务器负载.
 + 支持与MySQL数据库交互.
 + 利用kqueue来兼容在MacOS操作系统上的构建.
++ 支持异步消费者-生产者模式的日志记录
 + 使用[Catch2](https://github.com/catchorg/Catch2)测试框架进行单元测试覆盖
 
 
@@ -83,7 +84,7 @@ $ sudo mysql < setup/setup.sql  // 设立测试用的默认MySQL
 // Build
 $ mkdir build
 $ cd build
-$ cmake ..
+$ cmake .. // 可以添加 -DLOG_LEVEL=NOLOG 来关闭日志记录功能
 $ make
 
 // 格式化 & 风格检验 & 代码行数统计
@@ -330,6 +331,17 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+#### 日志
+使用单例模式以异步消费者-生产者模式来支持日志记录. 调用者以非阻塞的方式生产日志, 后台工作线程会定期以FIFO方式处理自从上次唤醒以来生成的所有日志. "处理"日志的确切方法可以取决于自定义的策略插件. 默认是写入磁盘上的日志文件. 您还可以调整日志刷新间隔长度或刷新日志记数.
+
+宏定义有四个级别的日志记录:
++ `LOG_INFO`
++ `LOG_WARNING`
++ `LOG_ERROR`
++ `LOG_FATAL`
+
+您可以通过在CMake构建中传递标志`-DLOG_LEVEL=NOLOG`来禁用任何日志记录.
+
 ### 未来计划
 
 本项目正处于积极的维护和更新中. 新的修正和功能时常会被更新, 在我们时间和技术允许的条件下.
@@ -347,7 +359,7 @@ int main(int argc, char* argv[]) {
 - ✅ 与其他主流网络Web Server库进行性能对比
 - [ ] 寻找Turtle的主要运行性能瓶颈
 - [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
-- [ ] 支持异步日志机制
+- ✅ 支持异步日志机制
 - [ ] 支持定时器功能来删除不活跃的用户连接
 - ✅ 支持数据库连接功能
 
@@ -363,4 +375,5 @@ int main(int argc, char* argv[]) {
 + [TinyWebServer](https://github.com/qinguoyi/TinyWebServer)
 + [30天搭建cpp服务器](https://github.com/yuesong-feng/30dayMakeCppServer)
 + [Very basic C++ HTTP Parser](https://codereview.stackexchange.com/questions/205704/very-basic-c-http-parser)
++ [C++ Threaded Logger](https://codereview.stackexchange.com/questions/191880/c-threaded-logger)
 + [MySQL C++ 官方文档](https://dev.mysql.com/doc/connector-cpp/1.1/en/connector-cpp-examples-complete-example-1.html)
