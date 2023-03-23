@@ -14,6 +14,7 @@
 #include <cppconn/statement.h>
 
 #include "db/mysqler.h"
+#include "log/logger.h"
 
 namespace TURTLE_SERVER::DB {
 
@@ -41,6 +42,7 @@ MySqler::MySqler(const std::string &db_address, int db_port, const std::string &
     conn_->setSchema(db_name);  // choose a specific database to stick this connection with
     valid_ = true;
   } catch (sql::SQLException &e) {
+    LOG_ERROR("Fail to Connect to MySQL database");
     LogMySqlError(e);
     throw;
   }
@@ -66,6 +68,7 @@ auto MySqler::ExecuteQueryBlocking(const std::string &command) -> std::unique_pt
     auto stmt = std::unique_ptr<sql::Statement>(conn_->createStatement());
     return std::unique_ptr<sql::ResultSet>(stmt->executeQuery(command));
   } catch (sql::SQLException &e) {
+    LOG_ERROR("Fail to execute query [" + command + "]");
     LogMySqlError(e);
     throw;
   }
@@ -80,6 +83,7 @@ auto MySqler::ExecuteBlocking(const std::string &command) -> bool {
     auto stmt = std::unique_ptr<sql::Statement>(conn_->createStatement());
     return stmt->execute(command);
   } catch (sql::SQLException &e) {
+    LOG_ERROR("Fail to execute command [" + command + "]");
     LogMySqlError(e);
     throw;
   }

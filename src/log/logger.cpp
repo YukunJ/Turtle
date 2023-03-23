@@ -10,6 +10,8 @@
  */
 
 #include "log/logger.h"
+#include <filesystem>
+#include <fstream>
 
 namespace TURTLE_SERVER {
 
@@ -22,9 +24,45 @@ auto GetCurrentTime() -> std::chrono::milliseconds {
   return duration_cast<milliseconds>(system_clock::now().time_since_epoch());
 }
 
+/* helper function to get current datetime in format DDMMYYYY */
+auto GetCurrentDate() -> std::string {
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  std::ostringstream stream;
+  stream << std::put_time(&tm, "%d%b%Y");
+  return stream.str();
+}
+
 /* simple printing to stdout logging strategy, caller should ensure thread-safe access */
 void PrintToScreen(const std::deque<Logger::Log> &logs) {
   std::for_each(logs.begin(), logs.end(), [](const auto &log) { std::cout << log; });
+}
+
+/* opened log stream during the lifetime of the entire server */
+struct StreamWriter {
+  std::fstream f_;
+
+  explicit StreamWriter(const std::string &path = LOG_PATH) {
+    f_.open(path + "_" + GetCurrentDate(), std::fstream::out | std::fstream::trunc);
+  }
+
+  ~StreamWriter() {
+    if (f_.is_open()) {
+      f_.flush();
+      f_.close();
+    }
+  }
+
+  void WriteLogs(const std::deque<Logger::Log> &logs) {
+    std::for_each(logs.begin(), logs.end(), [this](auto &log) { f_ << log; });
+    f_.flush();
+  }
+};
+
+/* simple printing to a file logging strategy, caller should ensure thread-safe access */
+void PrintToFile(const std::deque<Logger::Log> &logs) {
+  static StreamWriter stream_writer;
+  stream_writer.WriteLogs(logs);
 }
 
 /*
@@ -52,13 +90,15 @@ void Logger::LogMsg(LogLevel log_level, const std::string &msg) noexcept {
  * Singleton Pattern access point
  */
 auto Logger::GetInstance() noexcept -> Logger & {
-  // insert your logging strategy here instead of the default one for customization
-  static Logger single_logger{PrintToScreen};
+  // insert your logging strategy here in ctor
+  // instead of the default one for customization
+  // see example of 'PrintToScreen' and 'PrintToFile'
+  static Logger single_logger{PrintToFile};
   return single_logger;
 }
 
 /*
- * private constructor
+ * private constructor, takes in a logging strategy
  * upon ctor, launch backend worker thread
  */
 Logger::Logger(const std::function<void(const std::deque<Log> &logs)> &log_strategy) {

@@ -10,10 +10,9 @@
  */
 
 #include "core/connection.h"
-
 #include <sys/socket.h>
-
 #include <cstring>
+#include "log/logger.h"
 namespace TURTLE_SERVER {
 
 Connection::Connection(std::unique_ptr<Socket> socket)
@@ -86,7 +85,7 @@ auto Connection::Recv() -> std::pair<ssize_t, bool> {
       // all data read
       break;
     } else {
-      perror("HandleConnection: recv() error");
+      LOG_ERROR("HandleConnection: recv() error");
       return {read, true};
     }
   }
@@ -103,7 +102,7 @@ void Connection::Send() {
     write = send(GetFd(), buf + curr_write, to_write - curr_write, 0);
     if (write <= 0) {
       if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK) {
-        perror("Error in Connection::Send()");
+        LOG_ERROR("Error in Connection::Send()");
         ClearWriteBuffer();
         return;
       }

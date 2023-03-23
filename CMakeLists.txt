@@ -24,6 +24,12 @@ ELSE()
     MESSAGE(FATAL_ERROR "Your operating system ${CMAKE_SYSTEM_NAME} is not supported.")
 ENDIF()
 
+IF (${LOG_LEVEL} MATCHES "NOLOG")
+    MESSAGE("Build in ${LOG_LEVEL} mode without Logging")
+    ADD_DEFINITIONS(-DNOLOG)
+ELSE()
+    MESSAGE("Build with Logging enabled")
+ENDIF()
 ######################################################################################################################
 # Search Path Specification
 ######################################################################################################################
@@ -103,6 +109,7 @@ TARGET_INCLUDE_DIRECTORIES(
 # Build the turtle http library
 FILE(GLOB TURTLE_HTTP_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/http/*.cpp")
 ADD_LIBRARY(turtle_http ${TURTLE_HTTP_SOURCES})
+TARGET_LINK_LIBRARIES(turtle_http turtle_log)
 TARGET_COMPILE_OPTIONS(turtle_http PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_http
@@ -112,7 +119,7 @@ TARGET_INCLUDE_DIRECTORIES(
 # Build the turtle db library
 FILE(GLOB TURTLE_DB_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/db/*.cpp")
 ADD_LIBRARY(turtle_db ${TURTLE_DB_SOURCES})
-TARGET_LINK_LIBRARIES(turtle_db mysqlcppconn)
+TARGET_LINK_LIBRARIES(turtle_db turtle_log mysqlcppconn)
 TARGET_COMPILE_OPTIONS(turtle_db PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_db

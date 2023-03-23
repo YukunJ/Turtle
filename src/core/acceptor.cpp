@@ -19,6 +19,7 @@
 #include "core/net_address.h"
 #include "core/poller.h"
 #include "core/socket.h"
+#include "log/logger.h"
 
 namespace TURTLE_SERVER {
 
@@ -52,6 +53,7 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   client_connection->SetCallback(GetCustomHandleCallback());
   // randomized distribution. uniform in long term.
   int idx = rand() % reactors_.size();  // NOLINT
+  LOG_INFO("new client fd=" + std::to_string(client_connection->GetFd()) + " maps to reactor " + std::to_string(idx));
   client_connection->SetLooper(reactors_[idx]);
   reactors_[idx]->AddConnection(std::move(client_connection));
 }

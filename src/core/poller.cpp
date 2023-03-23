@@ -18,7 +18,7 @@
 #include <cstring>
 
 #include "core/connection.h"
-
+#include "log/logger.h"
 namespace TURTLE_SERVER {
 
 #ifdef OS_LINUX
@@ -35,7 +35,7 @@ Poller::Poller(uint64_t poll_size) : poll_size_(poll_size) {
 Poller::Poller(uint64_t poll_size) : poll_size_(poll_size) {
   poll_fd_ = kqueue();
   if (poll_fd_ == -1) {
-    perror("Poller: kqueue() error");
+    LOG_ERROR("Poller: kqueue() error");
     exit(EXIT_FAILURE);
   }
   poll_events_ = new struct kevent[poll_size];
@@ -101,7 +101,7 @@ auto Poller::Poll(int timeout) -> std::vector<Connection *> {
 
   int ready = kevent(poll_fd_, nullptr, 0, poll_events_, static_cast<int>(poll_size_), &t);
   if (ready == -1) {
-    perror("Poller: Poll() error");
+    LOG_ERROR("Poller: Poll() error");
     exit(EXIT_FAILURE);
   }
   for (int i = 0; i < ready; i++) {

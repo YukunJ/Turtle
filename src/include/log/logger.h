@@ -35,6 +35,9 @@ enum class LogLevel { INFO, WARNING, ERROR, FATAL };
 constexpr int COUNT_THRESHOLD = 1000;
 constexpr std::chrono::duration REFRESH_THRESHOLD = std::chrono::microseconds(3000);
 
+/* log file name if used */
+const std::string LOG_PATH = std::string("TurtleLog");  // NOLINT
+
 /**
  * A simple asynchronous logger
  * All callers counts as frontend-producer and is non-blocking
@@ -75,7 +78,7 @@ class Logger {
 
  private:
   /*
-   * private constructor
+   * private constructor, takes in a logging strategy
    * upon ctor, launch backend worker thread
    */
   explicit Logger(const std::function<void(const std::deque<Log> &logs)> &log_strategy);
@@ -107,11 +110,17 @@ class Logger {
 };
 
 /* macro definitions for 4 levels of logging */
+#ifdef NOLOG
+#define LOG_INFO(x) {};
+#define LOG_WARNING(x) {};
+#define LOG_ERROR(x) {};
+#define LOG_FATAL(x) {};
+#else
 #define LOG_INFO(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::INFO, (x));
 #define LOG_WARNING(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::WARNING, (x));
 #define LOG_ERROR(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::ERROR, (x));
 #define LOG_FATAL(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::FATAL, (x));
-
+#endif
 }  // namespace TURTLE_SERVER
 
 #endif  // SRC_INCLUDE_LOG_LOGGER_H_

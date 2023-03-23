@@ -11,6 +11,7 @@
 #include "http/http_utils.h"
 #include "http/request.h"
 #include "http/response.h"
+#include "log/logger.h"
 
 namespace TURTLE_SERVER::HTTP {
 
@@ -23,6 +24,7 @@ void ProcessHttpRequest(  // NOLINT
   auto [read, exit] = client_conn->Recv();
   if (exit) {
     client_conn->GetLooper()->DeleteConnection(from_fd);
+    LOG_INFO("client fd=" + std::to_string(from_fd) + " has exited");
     // client_conn ptr is invalid below here, do not touch it again
     return;
   }
