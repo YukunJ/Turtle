@@ -8,14 +8,17 @@
  * This is a header file implementing the Singleton Logger class
  * for the logging purpose across Turtle system
  */
+#pragma once
 
 #ifndef SRC_INCLUDE_LOG_LOGGER_H_
 #define SRC_INCLUDE_LOG_LOGGER_H_
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>              // NOLINT
 #include <condition_variable>  // NOLINT
 #include <deque>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <mutex>  // NOLINT
@@ -28,14 +31,9 @@ namespace TURTLE_SERVER {
 
 enum class LogLevel { INFO, WARNING, ERROR, FATAL };
 
-/* mapping LogLevel enum to string representation */
-const char *log_level_names[] = {"INFO: ", "WARNING: ", "ERROR: ", "FATAL: "};
-
-constexpr int INIT_CAPACITY = 1000;
-
 /* threshold */
-constexpr int COUNT_THRESHOLD = 100;
-constexpr uint64_t REFRESH_THRESHOLD = 3000;
+constexpr int COUNT_THRESHOLD = 1000;
+constexpr std::chrono::duration REFRESH_THRESHOLD = std::chrono::microseconds(3000);
 
 /**
  * A simple asynchronous logger
@@ -43,24 +41,6 @@ constexpr uint64_t REFRESH_THRESHOLD = 3000;
  * a backend worker thread periodically flush the log to persistent storage
  */
 class Logger {
-  /*
-   * Each individual Log message
-   * upon construction, the date time is prepended
-   */
-  struct Log {
-    std::string stamped_msg;
-
-    /* stamp datetime and log level */
-    Log(const LogLevel log_level, const std::string &log_msg) noexcept {
-      auto t = std::time(nullptr);
-      auto tm = *std::localtime(&t);
-      std::ostringstream stream;
-      stream << std::put_time(&tm, "[%d %b %Y %H:%M:%S]") << log_level_names[static_cast<int>(log_level)] << log_msg
-             << std::endl;
-      stamped_msg = stream.str();
-    }
-  };
-
  public:
   /*
    * public logging entry
@@ -70,16 +50,35 @@ class Logger {
   /*
    * Singleton Pattern access point
    */
-  static Logger &GetInstance() noexcept;
+  static auto GetInstance() noexcept -> Logger &;
 
   NON_COPYABLE_AND_MOVEABLE(Logger);
+
+  /*
+   * Each individual Log message
+   * upon construction, the date time is prepended
+   */
+  struct Log {
+    std::string stamped_msg_;
+
+    /*
+     stamp datetime and log level
+     not guaranteed to be output in the stamped time order, best effort approach
+    */
+    Log(LogLevel log_level, const std::string &log_msg) noexcept;
+
+    friend auto operator<<(std::ostream &os, const Log &log) -> std::ostream & {
+      os << log.stamped_msg_;
+      return os;
+    }
+  };
 
  private:
   /*
    * private constructor
    * upon ctor, launch backend worker thread
    */
-  Logger();
+  explicit Logger(const std::function<void(const std::deque<Log> &logs)> &log_strategy);
 
   /*
    * signal and harvest backend thread
@@ -91,20 +90,27 @@ class Logger {
    * potentially notify the backend worker to swap and flush
    * if threshold criteria is met
    */
-  void PushLog(Log&& log);
+  void PushLog(Log &&log);
 
   /*
    * The thread routine for the backend log writer
    */
-  static void LogWriting(Logger *logger);
+  void LogWriting();
 
+  std::function<void(const std::deque<Log> &)> log_strategy_;
   std::atomic<bool> done_ = false;
   std::mutex mtx_;
   std::condition_variable cv_;
   std::deque<Log> queue_;
   std::thread log_writer_;
-  uint64_t last_flush_;
+  std::chrono::microseconds last_flush_;
 };
+
+/* macro definitions for 4 levels of logging */
+#define LOG_INFO(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::INFO, (x));
+#define LOG_WARNING(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::WARNING, (x));
+#define LOG_ERROR(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::ERROR, (x));
+#define LOG_FATAL(x) TURTLE_SERVER::Logger::LogMsg(TURTLE_SERVER::LogLevel::FATAL, (x));
 
 }  // namespace TURTLE_SERVER
 

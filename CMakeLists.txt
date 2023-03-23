@@ -93,7 +93,7 @@ SET(MYSQL_COMPILER_FLAG -I/usr/include/cppconn -L/usr/lib -lmysqlcppconn)
 # Build the turtle core library
 FILE(GLOB TURTLE_CORE_SOURCE RELATIVE ${CMAKE_SOURCE_DIR} "src/core/*.cpp")
 ADD_LIBRARY(turtle_core ${TURTLE_CORE_SOURCE})
-TARGET_LINK_LIBRARIES(turtle_core Threads::Threads)
+TARGET_LINK_LIBRARIES(turtle_core turtle_log Threads::Threads)
 TARGET_COMPILE_OPTIONS(turtle_core PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
         turtle_core
