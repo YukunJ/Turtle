@@ -181,6 +181,9 @@ FetchContent_MakeAvailable(Catch2)
 ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
 TARGET_LINK_LIBRARIES(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
+ADD_EXECUTABLE(single_timer_test ${TURTLE_SERVER_TEST_DIR}/core/single_timer_test.cpp)
+TARGET_LINK_LIBRARIES(single_timer_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
 ADD_EXECUTABLE(cache_test ${TURTLE_SERVER_TEST_DIR}/core/cache_test.cpp)
 TARGET_LINK_LIBRARIES(cache_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
@@ -232,6 +235,7 @@ INCLUDE(Catch)
 # Core Module
 CATCH_DISCOVER_TESTS(buffer_test)
 CATCH_DISCOVER_TESTS(cache_test)
+CATCH_DISCOVER_TESTS(single_timer_test)
 CATCH_DISCOVER_TESTS(net_address_test)
 CATCH_DISCOVER_TESTS(socket_test)
 CATCH_DISCOVER_TESTS(connection_test)
