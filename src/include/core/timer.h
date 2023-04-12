@@ -13,19 +13,43 @@
 #ifndef SRC_INCLUDE_CORE_TIMER_H_
 #define SRC_INCLUDE_CORE_TIMER_H_
 
+#include <sys/timerfd.h>
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
+#include <vector>
 
 namespace TURTLE_SERVER {
+
+class Socket;
+class Connection;
 
 /*
  * helper to get current time in milliseconds since epoch
  */
 auto NowSinceEpoch() noexcept -> uint64_t;
-class Timer;
 
+/*
+ * helper to offset a timestamp as how far from now
+ * must return a non-negative number
+ */
+auto FromNow(uint64_t timestamp) noexcept -> uint64_t;
+
+/*
+ * same as FromNow, but translate into the struct timespec
+ */
+auto FromNowInTimeSpec(uint64_t timestamp) noexcept -> struct timespec;
+
+/*
+ * helper to refresh the registered timer fd
+ */
+void ResetTimerFd(int timer_fd, struct timespec);
+
+/*
+ * Not thread-safe, designed to run in a single thread Looper class
+ * One timer per Looper
+ */
 class Timer {
  public:
   class SingleTimer {
@@ -43,6 +67,12 @@ class Timer {
     std::function<void()> callback_{nullptr};
   };
 
+  Timer();
+
+  auto GetTimerConnection() -> Connection *;
+
+  auto GetTimerFd() -> int;
+
   auto AddSingleTimer(uint64_t expire_from_now, const std::function<void()> &callback) noexcept -> SingleTimer *;
 
   auto RemoveSingleTimer(SingleTimer *single_timer) noexcept -> bool;
@@ -58,6 +88,9 @@ class Timer {
     auto operator()(const SingleTimer *lhs, const SingleTimer *rhs) const noexcept -> bool;
   };
 
+  int timer_fd_;
+  uint64_t next_expire_{0};
+  std::unique_ptr<Connection> timer_conn_;
   std::map<SingleTimer *, std::unique_ptr<SingleTimer>, SingleTimerCompartor> timer_queue_;
 };
 
