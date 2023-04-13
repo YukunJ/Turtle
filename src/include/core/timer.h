@@ -18,6 +18,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>  // NOLINT
 #include <vector>
 
 namespace TURTLE_SERVER {
@@ -88,8 +89,11 @@ class Timer {
     auto operator()(const SingleTimer *lhs, const SingleTimer *rhs) const noexcept -> bool;
   };
 
+  void HandleRead();
+
   int timer_fd_;
   uint64_t next_expire_{0};
+  mutable std::mutex mtx_;
   std::unique_ptr<Connection> timer_conn_;
   std::map<SingleTimer *, std::unique_ptr<SingleTimer>, SingleTimerCompartor> timer_queue_;
 };

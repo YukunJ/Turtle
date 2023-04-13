@@ -181,11 +181,11 @@ FetchContent_MakeAvailable(Catch2)
 ADD_EXECUTABLE(buffer_test ${TURTLE_SERVER_TEST_DIR}/core/buffer_test.cpp)
 TARGET_LINK_LIBRARIES(buffer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
-ADD_EXECUTABLE(timer_test ${TURTLE_SERVER_TEST_DIR}/core/timer_test.cpp)
-TARGET_LINK_LIBRARIES(timer_test PRIVATE Catch2::Catch2WithMain turtle_core)
-
 ADD_EXECUTABLE(cache_test ${TURTLE_SERVER_TEST_DIR}/core/cache_test.cpp)
 TARGET_LINK_LIBRARIES(cache_test PRIVATE Catch2::Catch2WithMain turtle_core)
+
+ADD_EXECUTABLE(timer_test ${TURTLE_SERVER_TEST_DIR}/core/timer_test.cpp)
+TARGET_LINK_LIBRARIES(timer_test PRIVATE Catch2::Catch2WithMain turtle_core)
 
 ADD_EXECUTABLE(net_address_test ${TURTLE_SERVER_TEST_DIR}/core/net_address_test.cpp)
 TARGET_LINK_LIBRARIES(net_address_test PRIVATE Catch2::Catch2WithMain turtle_core)

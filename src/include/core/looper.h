@@ -13,18 +13,23 @@
 #define SRC_INCLUDE_CORE_LOOPER_H_
 
 #include <atomic>
+#include <cstdint>
 #include <functional>
 #include <future>  // NOLINT
 #include <map>
 #include <memory>
 #include <mutex>  // NOLINT
 
+#include "core/timer.h"
 #include "core/utils.h"
 
 namespace TURTLE_SERVER {
 
 /* the epoll_wait time in milliseconds */
 static constexpr int TIMEOUT = 3000;
+
+/* a connection must be finished within this amount of time */
+static constexpr uint64_t INACTIVE_TIMEOUT = 3000;
 
 class Poller;
 
@@ -40,7 +45,7 @@ class Acceptor;
  * */
 class Looper {
  public:
-  Looper();
+  explicit Looper(bool use_timer = false);
 
   ~Looper() = default;
 
@@ -60,7 +65,10 @@ class Looper {
   std::unique_ptr<Poller> poller_;
   std::mutex mtx_;
   std::map<int, std::unique_ptr<Connection>> connections_;
+  std::map<int, Timer::SingleTimer *> timers_mapping_;
+  Timer timer_{};
   bool exit_{false};
+  bool use_timer_{false};
 };
 }  // namespace TURTLE_SERVER
 #endif  // SRC_INCLUDE_CORE_LOOPER_H_

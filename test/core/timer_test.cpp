@@ -10,7 +10,10 @@
 
 #include "core/timer.h"
 #include "catch2/catch_test_macros.hpp"
+#include "core/acceptor.h"
 #include "core/connection.h"
+#include "core/looper.h"
+#include "core/net_address.h"
 #include "core/poller.h"
 
 #include <chrono>  // NOLINT
@@ -97,5 +100,38 @@ TEST_CASE("[core/timer]") {
     auto now = TURTLE_SERVER::NowSinceEpoch();
     auto next_expire = t.NextExpireTime();
     REQUIRE((next_expire > now + 75 && next_expire < now + 125));
+  }
+
+  SECTION("timer is really triggered when running in Looper") {
+    // this test relies on put a std::cout in the Looper
+    // to check if a connection has timed out
+    // there is no very clear way to acquire this knowledge
+    // under current architecture
+    // built an acceptor will one listener looper and one reactor together
+    std::vector<std::thread> threads;
+    TURTLE_SERVER::NetAddress local_host("127.0.0.1", 20080);
+    auto single_reactor = std::make_unique<TURTLE_SERVER::Looper>(true);
+
+    std::vector<TURTLE_SERVER::Looper *> raw_reactors = {single_reactor.get()};
+    auto acceptor = TURTLE_SERVER::Acceptor(single_reactor.get(), raw_reactors, local_host);
+    REQUIRE(acceptor.GetAcceptorConnection()->GetFd() != -1);
+
+    threads.emplace_back([&]() { single_reactor->Loop(); });
+    threads.emplace_back([&]() {
+      // create a client that stays inactive for more than 3 seconds to be expired
+      TURTLE_SERVER::Socket client_sock;
+      client_sock.Connect(local_host);
+      CHECK(client_sock.GetFd() != -1);
+      std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+      // check std output to verify killed
+    });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+    single_reactor->SetExit();
+    for (auto &t : threads) {
+      if (t.joinable()) {
+        t.join();
+      }
+    }
   }
 }

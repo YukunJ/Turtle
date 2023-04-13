@@ -10,6 +10,7 @@
  */
 
 #include "core/timer.h"
+#include <unistd.h>
 #include <chrono>  // NOLINT
 #include <cstring>
 #include "core/connection.h"
@@ -75,6 +76,7 @@ Timer::Timer() : timer_fd_(timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CL
   }
   timer_conn_ = std::make_unique<Connection>(std::make_unique<Socket>(timer_fd_));
   timer_conn_->SetEvents(POLL_READ | POLL_ET);  // enable READ in Epoll
+  timer_conn_->SetCallback(std::bind(&Timer::HandleRead, this));
 }
 
 auto Timer::GetTimerConnection() -> Connection * { return timer_conn_.get(); }
@@ -83,6 +85,7 @@ auto Timer::GetTimerFd() -> int { return timer_fd_; }
 
 auto Timer::AddSingleTimer(uint64_t expire_from_now, const std::function<void()> &callback) noexcept
     -> Timer::SingleTimer * {
+  std::unique_lock<std::mutex> lock(mtx_);
   auto new_timer = std::make_unique<SingleTimer>(expire_from_now, callback);
   auto raw_timer = new_timer.get();
   timer_queue_.emplace(raw_timer, std::move(new_timer));
@@ -95,6 +98,7 @@ auto Timer::AddSingleTimer(uint64_t expire_from_now, const std::function<void()>
 }
 
 auto Timer::RemoveSingleTimer(Timer::SingleTimer *single_timer) noexcept -> bool {
+  std::unique_lock<std::mutex> lock(mtx_);
   auto it = timer_queue_.find(single_timer);
   if (it != timer_queue_.end()) {
     timer_queue_.erase(it);
@@ -107,6 +111,8 @@ auto Timer::RemoveSingleTimer(Timer::SingleTimer *single_timer) noexcept -> bool
   }
   return false;
 }
+
+/* internal call only, no lock */
 auto Timer::NextExpireTime() const noexcept -> uint64_t {
   if (timer_queue_.empty()) {
     return 0;
@@ -117,6 +123,7 @@ auto Timer::NextExpireTime() const noexcept -> uint64_t {
 auto Timer::TimerCount() const noexcept -> size_t { return timer_queue_.size(); }
 
 auto Timer::PruneExpiredTimer() noexcept -> std::vector<std::unique_ptr<SingleTimer>> {
+  std::unique_lock<std::mutex> lock(mtx_);
   std::vector<std::unique_ptr<SingleTimer>> expired;
   auto it = timer_queue_.begin();
   for (; it != timer_queue_.end(); it++) {
@@ -135,6 +142,18 @@ auto Timer::PruneExpiredTimer() noexcept -> std::vector<std::unique_ptr<SingleTi
     ResetTimerFd(timer_fd_, FromNowInTimeSpec(new_next_expire));
   }
   return expired;
+}
+
+void Timer::HandleRead() {
+  uint64_t expired_count;
+  ssize_t n = read(timer_fd_, &expired_count, sizeof expired_count);
+  if (n != sizeof expired_count) {
+    LOG_ERROR("Timer: HandleRead() read from timer_fd doesn't get a byte of 8");
+  }
+  auto expired_timer = PruneExpiredTimer();
+  for (const auto &single_expired : expired_timer) {
+    single_expired->Run();
+  }
 }
 
 auto Timer::SingleTimerCompartor::operator()(const SingleTimer *lhs, const SingleTimer *rhs) const noexcept -> bool {
