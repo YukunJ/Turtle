@@ -40,7 +40,7 @@ auto FromNowInTimeSpec(uint64_t timestamp) noexcept -> struct timespec {
   ts.tv_sec = static_cast<time_t>(from_now_mills / MILLS_IN_SECOND);
   ts.tv_nsec = static_cast<int64_t>((from_now_mills % MILLS_IN_SECOND) * NANOS_IN_MILL);
   return ts;
-};
+}
 
 void ResetTimerFd(int timer_fd, struct timespec ts) {
   struct itimerspec new_value;
