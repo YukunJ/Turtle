@@ -15,9 +15,14 @@
 #include "core/connection.h"
 #include "core/poller.h"
 #include "core/thread_pool.h"
+#include "log/logger.h"
 namespace TURTLE_SERVER {
 
-Looper::Looper() : poller_(std::make_unique<Poller>()) {}
+Looper::Looper(bool use_timer) : poller_(std::make_unique<Poller>()), use_timer_(use_timer) {
+  if (use_timer_) {
+    poller_->AddConnection(timer_.GetTimerConnection());
+  }
+}
 
 void Looper::Loop() {
   while (!exit_) {
@@ -38,6 +43,13 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
   poller_->AddConnection(new_conn.get());
   int fd = new_conn->GetFd();
   connections_.insert({fd, std::move(new_conn)});
+  if (use_timer_) {
+    auto single_timer = timer_.AddSingleTimer(INACTIVE_TIMEOUT, [this, fd = fd]() {
+      LOG_INFO("client fd=" + std::to_string(fd) + " has expired and will be kicked out");
+      DeleteConnection(fd);
+    });
+    timers_mapping_.insert({fd, single_timer});
+  }
 }
 
 auto Looper::DeleteConnection(int fd) -> bool {
@@ -47,6 +59,14 @@ auto Looper::DeleteConnection(int fd) -> bool {
     return false;
   }
   connections_.erase(it);
+  if (use_timer_) {
+    auto timer_it = timers_mapping_.find(fd);
+    if (timer_it != timers_mapping_.end()) {
+      timer_.RemoveSingleTimer(timer_it->second);
+    } else {
+      LOG_ERROR("Looper: DeleteConnection() the fd " + std::to_string(fd) + " not in timers_mapping_");
+    }
+  }
   return true;
 }
 

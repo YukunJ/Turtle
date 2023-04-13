@@ -4,7 +4,7 @@
 [![Build & Test](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml/badge.svg?branch=main)](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml)
 <a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://img.shields.io/badge/Language-C++-red.svg"></a>
-<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux/cyan?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/Database/MySQL/white?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
 <a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
@@ -12,7 +12,7 @@
 
 [**English Version** 英文文档](./README.md)
 
-**Turtle**是一个主要基于Linux的C++17轻量级网络库. 它将繁琐的套接字操作抽象为优雅可复用的类. 它支持自定义服务器的快速设立: 以回调函数的形式为每一个用户的TCP连接加入业务逻辑. 它同时支持HTTP协议的GET/HEAD请求与回复.
+**Turtle**是一个基于Linux的C++17轻量级网络库. 它将繁琐的套接字操作抽象为优雅可复用的类. 它支持自定义服务器的快速设立: 以回调函数的形式为每一个用户的TCP连接加入业务逻辑. 它同时支持HTTP协议的GET/HEAD请求与回复.
 
 如果有任何问题, 欢迎提出issue, 提交pull request或者给我们发一封[邮件](mailto:yukunj.cs@gmail.com).
 
@@ -25,7 +25,6 @@
 + 支持动态CGI协议请求与回复.
 + 支持可调参的缓存层来加快响应与减低服务器负载.
 + 支持与MySQL数据库交互.
-+ 利用kqueue来兼容在MacOS操作系统上的构建.
 + 支持异步消费者-生产者模式的日志记录
 + 使用[Catch2](https://github.com/catchorg/Catch2)测试框架进行单元测试覆盖
 
@@ -113,11 +112,13 @@ $ make benchmark
 我们在Amazon EC2云服务器上进行了性能测试. 具体如下:
 
 + **硬件配置**: **m5.2xlarge**云服务器, 使用**Ubuntu 20.04 LTS**操作系统, 拥有**8**vCPUs, **32**GiB内存, **50**GiB根硬盘存储. (请注意vCPU不是真正的CPU核, 试验了一下`std::hardware_concurrency() = 2`在这种机型上)
-+ **QPS**: **62.3**k (无缓存) | **62.8**k (激活缓存)
++ **QPS**:
+  - **62.3**k (无日志, 无计时器)
+  - **52.5**k (有日志, 无计时器)
+  - **36.5**k (无日志, 有计时器)
+  - **29.8**k (有日志, 有计时器)
 
-**Cache**缓存层所带来的性能提升或许不是很明显. 部分由于磁盘I/O现在也变得更快了, 从磁盘中加载一个小的index文件的代价或许小于在**Cache**上的互斥操作.
-
-我们相信当数据库连接功能被引入后, **Cache**缓存层的必要性会更加明显.
+我们可以发现, 异步日志只会给系统带来轻微的运行时性能损失, 而计时器功能会带来一定的性能损失, 因为它需要同步操作.
 
 为了更好的了解相对性能, 我们性能测试了一些其他的主流C++网络Web Server库, 并为了公平起见, 尽力采用它们最佳的设定.
 
@@ -354,13 +355,12 @@ int main(int argc, char* argv[]) {
 - ✅ 加入性能测试的benchmark
 - ✅ 加入缓存层来减轻服务器负载并加快响应
 - ✅ 支持动态CGI请求的处理回复
-- ✅ 通过kqueue来支持MacOS操作系统的构建兼容性
 - ✅ 完成单元测试的覆盖
 - ✅ 与其他主流网络Web Server库进行性能对比
 - [ ] 寻找Turtle的主要运行性能瓶颈
 - [ ] 在 [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/)上收到的review建议放在issues上有待仔细研读实验
 - ✅ 支持异步日志机制
-- [ ] 支持定时器功能来删除不活跃的用户连接
+- ✅ 支持定时器功能来删除不活跃的用户连接
 - ✅ 支持数据库连接功能
 
 也欢迎大家提出新的功能需求, 我们会逐一考虑, 如果可行的话将会优先实现. 或者直接提pull request.

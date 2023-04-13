@@ -6,7 +6,7 @@
 [![Build & Test](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml/badge.svg?branch=main)](https://github.com/YukunJ/Turtle/actions/workflows/build_actions.yml)
 <a href="https://github.com/YukunJ/Turtle/blob/main/LICENSE"><img src="https://badgen.net/github/license/YukunJ/Turtle?color=orange" alt="license"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://img.shields.io/badge/Language-C++-red.svg"></a>
-<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux,MacOS/cyan?list=1" alt="os"></a>
+<a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/OS Support/Linux/cyan?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle"><img src="https://badgen.net/badge/Database/MySQL/white?list=1" alt="os"></a>
 <a href="https://github.com/YukunJ/Turtle/stargazers"><img src="https://badgen.net/github/stars/YukunJ/Turtle?color=yellow" alt="stars"></a>
 <a href="https://github.com/YukunJ/Turtle/network/members"><img src="https://badgen.net/github/forks/YukunJ/Turtle?color=black" alt="forks"></a>
@@ -14,7 +14,7 @@
 
 [**中文文档** Chinese Version](./README_CN.md)
 
-**Turtle** is a C++17-based lightweight network library for web server mainly on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
+**Turtle** is a C++17-based lightweight network library for web server on Linux. It abstracts the tedious manipulations on the socket into elegant and reusable classes. It allows a fast server side setup where the custom business logic could be specified for each client TCP connection in the form of a callback function. It now supports HTTP GET/HEAD request and response as well.
 
 For any question, feel free to raise issue or pull request or drop me an [email](mailto:yukunj.cs@gmail.com) here.
 
@@ -28,7 +28,6 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support dynamic CGI request & response.
 + Support Caching mechanism.
 + Support MySQL Database interaction.
-+ Compatible building with MacOS using kqueue.
 + Support asynchronous consumer-producer logging.
 + Unit test coverage by [Catch2](https://github.com/catchorg/Catch2) framework.
 
@@ -116,11 +115,13 @@ $ make benchmark
 We performed benchmark testing on an Amazon AWS EC2 instance. The details are as follows:
 
 + **Hardware**: m5.2xlarge instance on **Ubuntu 20.04 LTS** with **8** vCPUs, **32** GiB memory, **50** GiB root storage volume. (Be careful that vCPU is not real CPU core, by experiment `std::hardware_concurrency() = 2` in this case)
-+ **QPS**: **62.3**k (no cache) | **62.8**k (with cache)
++ **QPS**:
+  - **62.3**k (no logging, no timer) 
+  - **52.5**k (logging, no timer)
+  - **36.5**k (no logging, timer)
+  - **29.8**k (logging, timer)
 
-The performance improvement from **Cache** might not seem significant. Partly because disk I/O is getting faster nowadays, the cost of loading a small `index.html` might be smaller than the mutual exclusive operations in the **Cache**.
-
-When database connector comes into play, the indispensability of the **Cache** layer will be more obvious.
+We see that the asynchronous logging only brings a minor runtime performance penalty on the system, while the timer functionality comes with certain performance hit since it requires synchronization.
 
 In order to gain a better sense of comparative performance, we benchmarked a few other leading popular C++ network webserver on the Internet with the best configuration to our knowledge in order to be fair. 
 
@@ -356,13 +357,12 @@ The followings are on the **TODO** list:
 - ✅ Add performance testing benchmark
 - ✅ Add a Cache layer to reduce server load and increase responsiveness
 - ✅ Enable dynamic CGI request support
-- ✅ Support MacOS build compatability by kqueue
 - ✅ Complete unit testing coverage
 - ✅ Benchmark with other leading libraries
 - [ ] Profile Turtle's main runtime bottleneck
 - [ ] Review suggestions on [reddit](https://www.reddit.com/r/cpp/comments/10vrv4i/seeking_improve_advice_on_my_c_network_library/) are listed on issues to contemplate and experiment
 - ✅ Support asynchronous logging mechanism
-- [ ] Support timing each client connection and kills inactive ones
+- ✅ Support timing each client connection and kills inactive ones
 - ✅ Support Database connection
 
 We also welcome new feature request. We will review them one by one, and priortize its implementation if applicable. Or direct pull request is also welcomed.
