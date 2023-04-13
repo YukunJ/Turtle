@@ -28,6 +28,7 @@ For any question, feel free to raise issue or pull request or drop me an [email]
 + Support dynamic CGI request & response.
 + Support Caching mechanism.
 + Support MySQL Database interaction.
++ Support Timer to kill inactive client connections to save system resources.
 + Support asynchronous consumer-producer logging.
 + Unit test coverage by [Catch2](https://github.com/catchorg/Catch2) framework.
 
