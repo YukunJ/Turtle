@@ -83,10 +83,12 @@ $ sh setup/setup.sh
 $ sudo systemctl start mysql 
 $ sudo mysql < setup/setup.sql  // setup the default mysql role for testing
 
-// Build
+// Build, multiple build options
 $ mkdir build
 $ cd build
-$ cmake .. // You may add -DLOG_LEVEL=NOLOG to disable logging
+$ cmake .. // default is with logging, no timer
+$ cmake -DLOG_LEVEL=NOLOG .. // no logging
+$ cmake -DTIMER=3000 .. // enable timer expiration of 3000 milliseconds
 $ make
 
 // Format & Style Check & Line Count

@@ -24,12 +24,23 @@ ELSE()
     MESSAGE(FATAL_ERROR "Your operating system ${CMAKE_SYSTEM_NAME} is not supported.")
 ENDIF()
 
+# Use Logger or not
 IF (${LOG_LEVEL} MATCHES "NOLOG")
     MESSAGE("Build in ${LOG_LEVEL} mode without Logging")
     ADD_DEFINITIONS(-DNOLOG)
 ELSE()
     MESSAGE("Build with Logging enabled")
 ENDIF()
+
+# Use Timer or not
+IF (DEFINED TIMER)
+    MESSAGE("Build using timer of expiration ${TIMER}")
+    ADD_DEFINITIONS(-DTIMER_EXPIRATION=${TIMER})
+ELSE()
+    MESSAGE("Build without timer")
+    ADD_DEFINITIONS(-DTIMER_EXPIRATION=0)
+ENDIF()
+
 ######################################################################################################################
 # Search Path Specification
 ######################################################################################################################

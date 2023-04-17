@@ -51,7 +51,7 @@ class TurtleServer {
   TurtleServer(NetAddress server_address, int concurrency = static_cast<int>(std::thread::hardware_concurrency()) - 1)
       : pool_(std::make_unique<ThreadPool>(concurrency)), listener_(std::make_unique<Looper>()) {
     for (size_t i = 0; i < pool_->GetSize(); i++) {
-      reactors_.push_back(std::make_unique<Looper>());
+      reactors_.push_back(std::make_unique<Looper>(TIMER_EXPIRATION));
     }
     for (auto &reactor : reactors_) {
       pool_->SubmitTask([capture0 = reactor.get()] { capture0->Loop(); });

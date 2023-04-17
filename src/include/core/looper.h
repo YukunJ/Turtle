@@ -45,7 +45,8 @@ class Acceptor;
  * */
 class Looper {
  public:
-  explicit Looper(bool use_timer = false);
+  /* timer_expiration = 0 stands for no timer activated */
+  explicit Looper(uint64_t timer_expiration = 0);
 
   ~Looper() = default;
 
@@ -69,6 +70,7 @@ class Looper {
   Timer timer_{};
   bool exit_{false};
   bool use_timer_{false};
+  uint64_t timer_expiration_{0};
 };
 }  // namespace TURTLE_SERVER
 #endif  // SRC_INCLUDE_CORE_LOOPER_H_

@@ -110,7 +110,7 @@ TEST_CASE("[core/timer]") {
     // built an acceptor will one listener looper and one reactor together
     std::vector<std::thread> threads;
     TURTLE_SERVER::NetAddress local_host("127.0.0.1", 20080);
-    auto single_reactor = std::make_unique<TURTLE_SERVER::Looper>(true);
+    auto single_reactor = std::make_unique<TURTLE_SERVER::Looper>(3000);
 
     std::vector<TURTLE_SERVER::Looper *> raw_reactors = {single_reactor.get()};
     auto acceptor = TURTLE_SERVER::Acceptor(single_reactor.get(), raw_reactors, local_host);

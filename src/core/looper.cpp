@@ -18,7 +18,7 @@
 #include "log/logger.h"
 namespace TURTLE_SERVER {
 
-Looper::Looper(bool use_timer) : poller_(std::make_unique<Poller>()), use_timer_(use_timer) {
+Looper::Looper(uint64_t timer_expiration) : poller_(std::make_unique<Poller>()), use_timer_(timer_expiration != 0), timer_expiration_(timer_expiration) {
   if (use_timer_) {
     poller_->AddConnection(timer_.GetTimerConnection());
   }
@@ -44,7 +44,7 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
   int fd = new_conn->GetFd();
   connections_.insert({fd, std::move(new_conn)});
   if (use_timer_) {
-    auto single_timer = timer_.AddSingleTimer(INACTIVE_TIMEOUT, [this, fd = fd]() {
+    auto single_timer = timer_.AddSingleTimer(timer_expiration_, [this, fd = fd]() {
       LOG_INFO("client fd=" + std::to_string(fd) + " has expired and will be kicked out");
       DeleteConnection(fd);
     });

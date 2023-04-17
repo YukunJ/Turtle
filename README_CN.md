@@ -81,10 +81,12 @@ $ sh setup/setup.sh
 $ sudo systemctl start mysql
 $ sudo mysql < setup/setup.sql  // 设立测试用的默认MySQL
 
-// Build
+// Build, 多种选项
 $ mkdir build
 $ cd build
-$ cmake .. // 可以添加 -DLOG_LEVEL=NOLOG 来关闭日志记录功能
+$ cmake .. // 默认为有日志, 不启用定时器
+$ cmake -DLOG_LEVEL=NOLOG .. // 无日志
+$ cmake -DTIMER=3000 .. // 开启定时器 3000毫秒定时
 $ make
 
 // 格式化 & 风格检验 & 代码行数统计
