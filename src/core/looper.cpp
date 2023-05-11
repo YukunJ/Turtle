@@ -28,8 +28,16 @@ Looper::Looper(uint64_t timer_expiration)
 void Looper::Loop() {
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
+    Connection* timer_conn = nullptr;
     for (auto &conn : ready_connections) {
+      if (conn == timer_.GetTimerConnection()) {
+          timer_conn = conn;
+          continue;
+      }
       conn->GetCallback()();
+    }
+    if (timer_conn) {
+        timer_conn->GetCallback()();
     }
   }
 }
@@ -80,6 +88,7 @@ auto Looper::DeleteConnection(int fd) noexcept -> bool {
     auto timer_it = timers_mapping_.find(fd);
     if (timer_it != timers_mapping_.end()) {
       timer_.RemoveSingleTimer(timer_it->second);
+      timers_mapping_.erase(timer_it);
     } else {
       LOG_ERROR("Looper: DeleteConnection() the fd " + std::to_string(fd) + " not in timers_mapping_");
     }
