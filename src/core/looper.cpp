@@ -28,8 +28,25 @@ Looper::Looper(uint64_t timer_expiration)
 void Looper::Loop() {
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
+    Connection* timer_conn = nullptr;
+    /*
+     * subtle details here:
+     * if a client connection expires, it triggers Timer
+     * but if at the same time it sends us a message
+     * The timer and client conn will both be in the 'ready_connections'
+     * it's crucial that we do not delete the client connection first
+     * because otherwise we will hit segmentation fault when we iterate to that client conneciton
+     * so we do timer hanlding at last of this round
+     */
     for (auto &conn : ready_connections) {
+      if (conn == timer_.GetTimerConnection()) {
+          timer_conn = conn; // save it for last
+          continue;
+      }
       conn->GetCallback()();
+    }
+    if (timer_conn != nullptr) {
+        timer_conn->GetCallback()();
     }
   }
 }
@@ -54,10 +71,17 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
 }
 
 auto Looper::RefreshConnection(int fd) noexcept -> bool {
+  if (!use_timer_) {
+      return false;
+  }
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = timers_mapping_.find(fd);
   if (use_timer_ && it != timers_mapping_.end()) {
-    return timer_.RefreshSingleTimer(it->second, timer_expiration_);
+    auto new_timer = timer_.RefreshSingleTimer(it->second, timer_expiration_);
+    if (new_timer != nullptr) {
+        timers_mapping_.insert({fd, new_timer});
+    }
+    return true;
   }
   return false;
 }
@@ -73,6 +97,7 @@ auto Looper::DeleteConnection(int fd) noexcept -> bool {
     auto timer_it = timers_mapping_.find(fd);
     if (timer_it != timers_mapping_.end()) {
       timer_.RemoveSingleTimer(timer_it->second);
+      timers_mapping_.erase(timer_it);
     } else {
       LOG_ERROR("Looper: DeleteConnection() the fd " + std::to_string(fd) + " not in timers_mapping_");
     }

@@ -113,21 +113,22 @@ auto Timer::RemoveSingleTimer(Timer::SingleTimer *single_timer) noexcept -> bool
   return false;
 }
 
-auto Timer::RefreshSingleTimer(Timer::SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> bool {
+auto Timer::RefreshSingleTimer(Timer::SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> Timer::SingleTimer * {
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = timer_queue_.find(single_timer);
   if (it == timer_queue_.end()) {
-    return false;
+    return nullptr;
   }
   auto new_timer = std::make_unique<SingleTimer>(expire_from_now, it->first->GetCallback());
+  auto raw_new_timer = new_timer.get();
   timer_queue_.erase(it);
-  timer_queue_.emplace(new_timer.get(), std::move(new_timer));
+  timer_queue_.emplace(raw_new_timer, std::move(new_timer));
   uint64_t new_next_expire = NextExpireTime();
   if (new_next_expire != next_expire_) {
     next_expire_ = new_next_expire;
     ResetTimerFd(timer_fd_, FromNowInTimeSpec(new_next_expire));
   }
-  return true;
+  return raw_new_timer;
 }
 
 /* internal call only, no lock */

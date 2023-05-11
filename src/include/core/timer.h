@@ -80,7 +80,7 @@ class Timer {
 
   auto RemoveSingleTimer(SingleTimer *single_timer) noexcept -> bool;
 
-  auto RefreshSingleTimer(SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> bool;
+  auto RefreshSingleTimer(SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> Timer::SingleTimer *;
 
   auto NextExpireTime() const noexcept -> uint64_t;
 
