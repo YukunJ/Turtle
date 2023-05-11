@@ -29,14 +29,23 @@ void Looper::Loop() {
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
     Connection* timer_conn = nullptr;
+    /*
+     * subtle details here:
+     * if a client connection expires, it triggers Timer
+     * but if at the same time it sends us a message
+     * The timer and client conn will both be in the 'ready_connections'
+     * it's crucial that we do not delete the client connection first
+     * because otherwise we will hit segmentation fault when we iterate to that client conneciton
+     * so we do timer hanlding at last of this round
+     */
     for (auto &conn : ready_connections) {
       if (conn == timer_.GetTimerConnection()) {
-          timer_conn = conn;
+          timer_conn = conn; // save it for last
           continue;
       }
       conn->GetCallback()();
     }
-    if (timer_conn) {
+    if (timer_conn != nullptr) {
         timer_conn->GetCallback()();
     }
   }
