@@ -54,10 +54,17 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
 }
 
 auto Looper::RefreshConnection(int fd) noexcept -> bool {
+  if (!use_timer_) {
+      return false;
+  }
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = timers_mapping_.find(fd);
   if (use_timer_ && it != timers_mapping_.end()) {
-    return timer_.RefreshSingleTimer(it->second, timer_expiration_);
+    auto new_timer = timer_.RefreshSingleTimer(it->second, timer_expiration_);
+    if (new_timer != nullptr) {
+        timers_mapping_.insert({fd, new_timer});
+    }
+    return true;
   }
   return false;
 }
