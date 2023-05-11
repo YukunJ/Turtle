@@ -58,6 +58,13 @@ void Acceptor::BaseAcceptCallback(Connection *server_conn) {
   reactors_[idx]->AddConnection(std::move(client_connection));
 }
 
+void Acceptor::BaseHandleCallback(Connection *client_conn) {
+  int fd = client_conn->GetFd();
+  if (client_conn->GetLooper()) {
+    client_conn->GetLooper()->RefreshConnection(fd);
+  }
+}
+
 void Acceptor::SetCustomAcceptCallback(std::function<void(Connection *)> custom_accept_callback) {
   custom_accept_callback_ = std::move(custom_accept_callback);
   acceptor_conn->SetCallback([this](auto &&PH1) {
@@ -67,7 +74,10 @@ void Acceptor::SetCustomAcceptCallback(std::function<void(Connection *)> custom_
 }
 
 void Acceptor::SetCustomHandleCallback(std::function<void(Connection *)> custom_handle_callback) {
-  custom_handle_callback_ = std::move(custom_handle_callback);
+  custom_handle_callback_ = [this, callback = std::move(custom_handle_callback)](auto &&PH1) {
+    BaseHandleCallback(std::forward<decltype(PH1)>(PH1));
+    callback(std::forward<decltype(PH1)>(PH1));
+  };
 }
 
 auto Acceptor::GetCustomAcceptCallback() const noexcept -> std::function<void(Connection *)> {

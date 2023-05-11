@@ -68,6 +68,7 @@ void Timer::SingleTimer::Run() noexcept {
   }
 }
 
+auto Timer::SingleTimer::GetCallback() const noexcept -> std::function<void()> { return callback_; }
 /* ------------ Timer --------------- */
 Timer::Timer() : timer_fd_(timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC)) {
   if (timer_fd_ < 0) {
@@ -110,6 +111,23 @@ auto Timer::RemoveSingleTimer(Timer::SingleTimer *single_timer) noexcept -> bool
     return true;
   }
   return false;
+}
+
+auto Timer::RefreshSingleTimer(Timer::SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> bool {
+  std::unique_lock<std::mutex> lock(mtx_);
+  auto it = timer_queue_.find(single_timer);
+  if (it == timer_queue_.end()) {
+    return false;
+  }
+  auto new_timer = std::make_unique<SingleTimer>(expire_from_now, it->first->GetCallback());
+  timer_queue_.erase(it);
+  timer_queue_.emplace(new_timer.get(), std::move(new_timer));
+  uint64_t new_next_expire = NextExpireTime();
+  if (new_next_expire != next_expire_) {
+    next_expire_ = new_next_expire;
+    ResetTimerFd(timer_fd_, FromNowInTimeSpec(new_next_expire));
+  }
+  return true;
 }
 
 /* internal call only, no lock */

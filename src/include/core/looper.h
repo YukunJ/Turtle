@@ -58,7 +58,9 @@ class Looper {
 
   void AddConnection(std::unique_ptr<Connection> new_conn);
 
-  auto DeleteConnection(int fd) -> bool;
+  auto RefreshConnection(int fd) noexcept -> bool;
+
+  auto DeleteConnection(int fd) noexcept -> bool;
 
   void SetExit() noexcept;
 

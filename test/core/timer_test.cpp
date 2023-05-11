@@ -54,6 +54,19 @@ TEST_CASE("[core/timer]") {
     REQUIRE(t.TimerCount() == 3);
   }
 
+  SECTION("timer queue is able to refresh ane existing timer") {
+    TURTLE_SERVER::Timer t;
+    REQUIRE(t.NextExpireTime() == 0);
+    auto now = TURTLE_SERVER::NowSinceEpoch();
+    auto raw_timer = t.AddSingleTimer(200, nullptr);
+    auto next_expire = t.NextExpireTime();
+    REQUIRE((next_expire < (now + 210) && next_expire > (now + 190)));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));  // should expired by now
+    t.RefreshSingleTimer(raw_timer, 200);
+    next_expire = t.NextExpireTime();
+    REQUIRE((next_expire < (now + 410) && next_expire > (now + 390)));
+  }
+
   SECTION("timer queue is able to remove a timer based on raw pointer") {
     TURTLE_SERVER::Timer t;
     t.AddSingleTimer(200, nullptr);

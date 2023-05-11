@@ -18,7 +18,8 @@
 #include "log/logger.h"
 namespace TURTLE_SERVER {
 
-Looper::Looper(uint64_t timer_expiration) : poller_(std::make_unique<Poller>()), use_timer_(timer_expiration != 0), timer_expiration_(timer_expiration) {
+Looper::Looper(uint64_t timer_expiration)
+    : poller_(std::make_unique<Poller>()), use_timer_(timer_expiration != 0), timer_expiration_(timer_expiration) {
   if (use_timer_) {
     poller_->AddConnection(timer_.GetTimerConnection());
   }
@@ -52,7 +53,16 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
   }
 }
 
-auto Looper::DeleteConnection(int fd) -> bool {
+auto Looper::RefreshConnection(int fd) noexcept -> bool {
+  std::unique_lock<std::mutex> lock(mtx_);
+  auto it = timers_mapping_.find(fd);
+  if (use_timer_ && it != timers_mapping_.end()) {
+    return timer_.RefreshSingleTimer(it->second, timer_expiration_);
+  }
+  return false;
+}
+
+auto Looper::DeleteConnection(int fd) noexcept -> bool {
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = connections_.find(fd);
   if (it == connections_.end()) {

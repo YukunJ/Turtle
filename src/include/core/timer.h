@@ -63,6 +63,8 @@ class Timer {
 
     void Run() noexcept;
 
+    auto GetCallback() const noexcept -> std::function<void()>;
+
    private:
     uint64_t expire_time_;
     std::function<void()> callback_{nullptr};
@@ -77,6 +79,8 @@ class Timer {
   auto AddSingleTimer(uint64_t expire_from_now, const std::function<void()> &callback) noexcept -> SingleTimer *;
 
   auto RemoveSingleTimer(SingleTimer *single_timer) noexcept -> bool;
+
+  auto RefreshSingleTimer(SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> bool;
 
   auto NextExpireTime() const noexcept -> uint64_t;
 

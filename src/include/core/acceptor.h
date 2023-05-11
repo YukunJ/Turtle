@@ -37,6 +37,8 @@ class Acceptor {
 
   void BaseAcceptCallback(Connection *server_conn);
 
+  void BaseHandleCallback(Connection *client_conn);
+
   void SetCustomAcceptCallback(std::function<void(Connection *)> custom_accept_callback);
 
   void SetCustomHandleCallback(std::function<void(Connection *)> custom_handle_callback);
