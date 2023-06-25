@@ -274,7 +274,7 @@ int main() {
 }
 ```
 
-这个echo[服务端](./demo/echo_server.cpp)和[用户端](./demo/echo_client.cpp)的demo在`./demo`文件夹中供您参考. 在`build`文件夹路径中, 可以执行以下指令来运行它:
+这个echo[服务端](./demo/echo/echo_server.cpp)和[用户端](./demo/echo/echo_client.cpp)的demo在`./demo/echo`文件夹中供您参考. 在`build`文件夹路径中, 可以执行以下指令来运行它:
 
 ```console
 $ make echo_server
@@ -286,6 +286,8 @@ $ ./echo_server
 // 在另一个终端窗口
 $ ./echo_client
 ```
+
+同时在`./demo/kvstore`下还有简易的仿**Redis** KV-Store的实现来演示**Turtle**的多种使用方法.
 
 #### HTTP
 
