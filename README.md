@@ -277,7 +277,7 @@ int main() {
   return 0;
 }
 ```
-The demo of this echo [server](./demo/echo_server.cpp) and [client](./demo/echo_client.cpp) is provided under the `./demo` folder for your reference. In the `build` directory, you can execute the following and try it out.
+The demo of this echo [server](./demo/echo/echo_server.cpp) and [client](./demo/echo/echo_client.cpp) is provided under the `./demo/echo` folder for your reference. In the `build` directory, you can execute the following and try it out.
 
 ```console
 $ make echo_server
@@ -289,6 +289,8 @@ $ ./echo_server
 // in another terminal
 $ ./echo_client
 ```
+
+There are also simple **Redis**-like KV-Store demo provided under `./demo/kvstore` to illustrate various usages of **Turtle**.
 
 #### HTTP
 

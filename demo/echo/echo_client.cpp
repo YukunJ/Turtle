@@ -8,7 +8,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include <fstream>
 #include <memory>
 
 #include "core/connection.h"
