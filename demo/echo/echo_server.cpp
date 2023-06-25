@@ -11,7 +11,7 @@ int main() {
   TURTLE_SERVER::NetAddress local_address("0.0.0.0", 20080);
   TURTLE_SERVER::TurtleServer echo_server(local_address);
   echo_server
-      .OnHandle([&](TURTLE_SERVER::Connection* client_conn) {
+      .OnHandle([&](TURTLE_SERVER::Connection *client_conn) {
         int from_fd = client_conn->GetFd();
         auto [read, exit] = client_conn->Recv();
         if (exit) {

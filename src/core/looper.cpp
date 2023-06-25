@@ -28,7 +28,7 @@ Looper::Looper(uint64_t timer_expiration)
 void Looper::Loop() {
   while (!exit_) {
     auto ready_connections = poller_->Poll(TIMEOUT);
-    Connection* timer_conn = nullptr;
+    Connection *timer_conn = nullptr;
     /*
      * subtle details here:
      * if a client connection expires, it triggers Timer
@@ -40,13 +40,13 @@ void Looper::Loop() {
      */
     for (auto &conn : ready_connections) {
       if (conn == timer_.GetTimerConnection()) {
-          timer_conn = conn; // save it for last
-          continue;
+        timer_conn = conn;  // save it for last
+        continue;
       }
       conn->GetCallback()();
     }
     if (timer_conn != nullptr) {
-        timer_conn->GetCallback()();
+      timer_conn->GetCallback()();
     }
   }
 }
@@ -72,14 +72,14 @@ void Looper::AddConnection(std::unique_ptr<Connection> new_conn) {
 
 auto Looper::RefreshConnection(int fd) noexcept -> bool {
   if (!use_timer_) {
-      return false;
+    return false;
   }
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = timers_mapping_.find(fd);
   if (use_timer_ && it != timers_mapping_.end()) {
     auto new_timer = timer_.RefreshSingleTimer(it->second, timer_expiration_);
     if (new_timer != nullptr) {
-        timers_mapping_.insert({fd, new_timer});
+      timers_mapping_.insert({fd, new_timer});
     }
     return true;
   }

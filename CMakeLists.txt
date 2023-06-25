@@ -149,7 +149,7 @@ TARGET_INCLUDE_DIRECTORIES(
 )
 
 # Build the echo server
-ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo_server.cpp)
+ADD_EXECUTABLE(echo_server ${TURTLE_SERVER_DEMO_DIR}/echo/echo_server.cpp)
 TARGET_LINK_LIBRARIES(echo_server turtle_core)
 TARGET_COMPILE_OPTIONS(echo_server PRIVATE ${CMAKE_COMPILER_FLAG})
 TARGET_INCLUDE_DIRECTORIES(
@@ -158,10 +158,27 @@ TARGET_INCLUDE_DIRECTORIES(
 )
 
 # Build the echo client
-ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo_client.cpp)
+ADD_EXECUTABLE(echo_client ${TURTLE_SERVER_DEMO_DIR}/echo/echo_client.cpp)
 TARGET_LINK_LIBRARIES(echo_client turtle_core)
 TARGET_INCLUDE_DIRECTORIES(
         echo_client
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
+
+# Build the kvstore dict server
+ADD_EXECUTABLE(dict_server ${TURTLE_SERVER_DEMO_DIR}/kvstore/dict_server.cpp)
+TARGET_LINK_LIBRARIES(dict_server turtle_core turtle_http)
+TARGET_COMPILE_OPTIONS(dict_server PRIVATE ${CMAKE_COMPILER_FLAG})
+TARGET_INCLUDE_DIRECTORIES(
+        dict_server
+        PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
+)
+
+# Build the kvstore dict client
+ADD_EXECUTABLE(dict_client ${TURTLE_SERVER_DEMO_DIR}/kvstore/dict_client.cpp)
+TARGET_LINK_LIBRARIES(dict_client turtle_core turtle_http)
+TARGET_INCLUDE_DIRECTORIES(
+        dict_client
         PUBLIC ${TURTLE_SERVER_SRC_INCLUDE_DIR}
 )
 
@@ -272,6 +289,7 @@ SET(FORMAT_STYLE google)
 
 string(CONCAT TURTLR_FORMAT_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/src,"
+        "${CMAKE_CURRENT_SOURCE_DIR}/demo,"
         "${CMAKE_CURRENT_SOURCE_DIR}/test,"
         )
 

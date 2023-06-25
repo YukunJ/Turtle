@@ -113,7 +113,8 @@ auto Timer::RemoveSingleTimer(Timer::SingleTimer *single_timer) noexcept -> bool
   return false;
 }
 
-auto Timer::RefreshSingleTimer(Timer::SingleTimer *single_timer, uint64_t expire_from_now) noexcept -> Timer::SingleTimer * {
+auto Timer::RefreshSingleTimer(Timer::SingleTimer *single_timer, uint64_t expire_from_now) noexcept
+    -> Timer::SingleTimer * {
   std::unique_lock<std::mutex> lock(mtx_);
   auto it = timer_queue_.find(single_timer);
   if (it == timer_queue_.end()) {
